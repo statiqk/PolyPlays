@@ -1,7 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
 <title>PolyPlays</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15131C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PolyPlays">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/instrument-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/instrument-sans-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/instrument-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/geist-mono-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/geist-mono-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/geist-mono-latin-600-normal.woff2) format('woff2')}
 /* Tokens. Single dark look on purpose: the game colours read best on a deep violet-black. */
 :root {
   color-scheme: dark;
@@ -28,7 +48,8 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.45;
-  padding-block: 20px 32px;
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
@@ -501,11 +522,11 @@ canvas {
 /* Screen lock while a game is open: the page itself cannot scroll or rubber-band; only .app may scroll when a game is taller than the screen. */
 html { overscroll-behavior-x: none; }
 body.locked { position: fixed; inset: 0; width: 100%; padding: 0; overflow: hidden; overscroll-behavior: none; }
-body.locked .app { box-sizing: border-box; max-width: 592px; padding: 20px 16px 32px; height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
+body.locked .app { box-sizing: border-box; max-width: 592px; padding: max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
 body.locked .app::-webkit-scrollbar { display: none; }
 /* Fit mode (screen locked): Flipper, Snake and Cube are sized to the screen height, so nothing scrolls while playing. */
 .fitbox { display: contents; }
-body.locked[data-fit] .app { display: flex; flex-direction: column; gap: 8px; padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
+body.locked[data-fit] .app { display: flex; flex-direction: column; gap: 8px; padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
 body.locked[data-fit] #gview:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 body.locked[data-fit] .ghd { flex: none; padding: 6px 8px; gap: 8px; border-radius: 22px; }
 body.locked[data-fit] .ghd h2 { font-size: 1.3rem; }
@@ -658,6 +679,18 @@ body.locked[data-fit].showhint .panel:not([hidden]) .hint { display: block; posi
 .cbkey:hover:not(:disabled) { border-color: var(--ink); }
 .cbkey:disabled { opacity: .45; cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) { .cbstage.win { animation: none; } }
+/* Mobile comfort: no zoom/selection/callout, bigger targets, update bar */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+button, [role="button"], input[type="range"] { touch-action: manipulation; }
+.cbkey { min-height: 44px; }
+.seg button { min-height: 44px; }
+.updbar { position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom, 0px)); z-index: 200; max-width: 536px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 16px; border-radius: 20px; background: rgba(38, 34, 51, .96); border: 1px solid rgba(255, 255, 255, .2); box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .8); font-weight: 600; font-size: .95rem; }
+.updbar[hidden] { display: none; }
+.updbar span { flex: 1; }
+.updbar button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 14px; font: inherit; font-weight: 700; cursor: pointer; color: #1B1530; background: var(--amber); }
+.updbar button.x { background: transparent; color: var(--muted); padding: 0 10px; font-size: 1.2rem; }
 </style>
 
 <main class="app">
@@ -1095,6 +1128,7 @@ body.locked[data-fit].showhint .panel:not([hidden]) .hint { display: block; posi
   </div>
 </div>
 <div class="toast7" id="sndToast" hidden></div>
+<div class="updbar" id="updBar" role="status" hidden><span>Mise à jour disponible</span><button type="button" id="updGo">Mettre à jour</button><button type="button" class="x" id="updX" aria-label="Plus tard">✕</button></div>
 
 
 <script>
@@ -4940,5 +4974,35 @@ function glyph(id, a, b, c) {
     if (!tab) return;
     if (document.hidden) TABS[tab].leave(); else TABS[tab].enter();
   });
+  /* Mobile: block pinch / double-tap zoom and the long-press menu */
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach((n) => document.addEventListener(n, (e) => e.preventDefault()));
+  document.addEventListener('contextmenu', (e) => { if (!(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); });
+  document.addEventListener('dblclick', (e) => e.preventDefault());
+
+  /* PWA: offline cache + update flow. Silent no-op where sw.js is not served (e.g. inside the preview). */
+  try {
+    if ('serviceWorker' in navigator && /^(https:|http:)$/.test(location.protocol) && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+      const bar = $('updBar');
+      let reloading = false;
+      const offer = (w) => {
+        bar.hidden = false;
+        $('updGo').onclick = () => { w.postMessage('SKIP_WAITING'); };
+        $('updX').onclick = () => { bar.hidden = true; };
+      };
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading) return; reloading = true; location.reload(); });
+      navigator.serviceWorker.register('sw.js').then((reg) => {
+        if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
+        reg.addEventListener('updatefound', () => {
+          const w = reg.installing;
+          if (w) w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) offer(w); });
+        });
+        const check = () => reg.update().catch(() => {});
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+        setInterval(check, 30 * 60 * 1000);
+      }).catch(() => {});
+    }
+  } catch (e) {}
 })();
 </script>
+
+</html>
