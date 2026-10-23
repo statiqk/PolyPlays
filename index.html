@@ -718,7 +718,41 @@ body.locked[data-fit] #panel-reflexes #rpad { flex: 1 1 0; min-height: 0; }
 body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 body.locked[data-fit] .pdkb { gap: 4px; }
 body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+/* Démineur */
+.mnb { display: grid; grid-template-columns: repeat(var(--c, 9), minmax(0, 1fr)); grid-template-rows: repeat(var(--r, 9), minmax(0, 1fr)); gap: 3px; width: 100%; aspect-ratio: var(--c, 9) / var(--r, 9); padding: 6px; box-sizing: border-box; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); user-select: none; -webkit-user-select: none; touch-action: manipulation; margin-inline: auto; }
+.mnb i { display: grid; place-items: center; border-radius: clamp(4px, 1.6vw, 8px); font: 700 clamp(.8rem, 4.4vw, 1.3rem) var(--font-mono); font-style: normal; cursor: pointer; min-width: 0; min-height: 0; -webkit-tap-highlight-color: transparent; }
+.mnb i.h { background: linear-gradient(160deg, #5a5475, #3c3752); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 1px 0 rgba(0, 0, 0, .4); }
+.mnb i.o { background: #14121c; cursor: default; }
+.mnb i.x { background: #E5484D; }
+.mnb i.m { background: #2a2438; }
+.mnb i.w { background: linear-gradient(160deg, #5a5475, #3c3752); outline: 2px solid #E5484D; outline-offset: -2px; }
+.mnb i svg { width: 72%; height: 72%; pointer-events: none; }
+.mnb i.n1 { color: #7DD3FC; } .mnb i.n2 { color: #86EFAC; } .mnb i.n3 { color: #FCA5A5; } .mnb i.n4 { color: #C4B5FD; }
+.mnb i.n5 { color: #FDBA74; } .mnb i.n6 { color: #5EEAD4; } .mnb i.n7 { color: #F4F2FA; } .mnb i.n8 { color: #9A94AE; }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+body.locked[data-fit] .fitbox.rc > .mnb { width: min(100cqw, calc(100cqh * var(--c) / var(--r))); max-width: none; flex: none; }
+/* Sudoku */
+.sdb { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); grid-template-rows: repeat(9, minmax(0, 1fr)); width: 100%; max-width: min(100%, 60vh); margin-inline: auto; aspect-ratio: 1; border: 2px solid #8a84a3; border-radius: 14px; overflow: hidden; background: var(--surface); user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.sdb .c { position: relative; display: grid; place-items: center; border: .5px solid var(--line); font: 600 clamp(1rem, 5.4vw, 1.5rem) var(--font-mono); color: #8FD3FF; cursor: pointer; min-width: 0; min-height: 0; -webkit-tap-highlight-color: transparent; }
+.sdb .c.g { color: var(--ink); background: rgba(255, 255, 255, .035); }
+.sdb .c.br { border-right: 2px solid #6b6585; }
+.sdb .c.bb { border-bottom: 2px solid #6b6585; }
+.sdb .c.pr { background: rgba(125, 211, 252, .09); }
+.sdb .c.sm { background: rgba(125, 211, 252, .24); }
+.sdb .c.sel { background: rgba(255, 194, 26, .32); outline: 2px solid var(--amber); outline-offset: -2px; z-index: 1; }
+.sdb .c.er { color: #FF6B6B; background: rgba(255, 45, 45, .2); }
+.sdb .nt { position: absolute; inset: 1px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); font: 500 clamp(.5rem, 2.3vw, .72rem) var(--font-mono); color: var(--muted); line-height: 1; place-items: center; pointer-events: none; }
+.sdpad { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+.sdpad button { position: relative; height: 50px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: 600 1.25rem var(--font-mono); cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.sdpad button small { position: absolute; right: 4px; bottom: 2px; font: 500 .55rem var(--font-mono); color: var(--muted); }
+.sdpad button:disabled { opacity: .25; cursor: default; }
+.sdpad.nm button { background: rgba(255, 194, 26, .16); border-color: var(--amber); }
+.sdtools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.sdtools .btn { padding: 0 4px; min-height: 44px; font-size: .85rem; }
+body.locked[data-fit] .sdpad button { height: 46px; }
+body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 </style>
+
 
 <main class="app">
   <section class="home" id="home">
@@ -1157,6 +1191,56 @@ body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-ins
     <div class="cbkeys" id="cbKeys"></div>
     <p class="hint"><b>U</b> haut · <b>D</b> bas · <b>L</b> gauche · <b>R</b> droite · <b>F</b> face · <b>B</b> arrière. Le signe ′ inverse le sens. Au clavier, tape la lettre, avec Maj pour l'inverse. Glisse à côté du cube pour changer de point de vue. Le chrono démarre à ton premier mouvement après un mélange.</p>
   </section>
+  <section class="panel" id="panel-demineur" aria-labelledby="gTitle" hidden>
+    <div class="stats">
+      <div class="stat"><div class="k">Mines</div><div class="v" id="mnMines">10</div></div>
+      <div class="stat"><div class="k">Temps</div><div class="v" id="mnTime">0:00</div></div>
+      <div class="stat"><div class="k">Record</div><div class="v" id="mnBest">—</div></div>
+    </div>
+    <p class="status" id="mnStatus" aria-live="polite"></p>
+    <div class="fitbox rc"><div class="mnb" id="mnBd" role="group" aria-label="Champ de mines"></div></div>
+    <div class="fitmenu">
+    <div class="row">
+      <span class="k" id="mnLvLab">Niveau</span>
+      <div class="seg" role="group" aria-labelledby="mnLvLab">
+        <button type="button" id="mnLE" aria-pressed="true">Facile</button>
+        <button type="button" id="mnLM" aria-pressed="false">Moyen</button>
+        <button type="button" id="mnLH" aria-pressed="false">Difficile</button>
+      </div>
+    </div></div>
+    <div class="actions">
+      <button type="button" class="btn" id="mnFlag" aria-pressed="false">⚑ Drapeau</button>
+      <button type="button" class="btn primary" id="mnNew">Nouvelle partie</button>
+    </div>
+    <p class="hint"><b>Touche</b> une case pour la dévoiler (le premier coup est toujours sûr). <b>Appui long</b> ou bouton <b>Drapeau</b> pour marquer une mine. Touche un chiffre dont les drapeaux sont posés pour dévoiler les cases autour.</p>
+  </section>
+  <section class="panel" id="panel-sudoku" aria-labelledby="gTitle" hidden>
+    <div class="stats">
+      <div class="stat"><div class="k">Niveau</div><div class="v" id="sdLv">Facile</div></div>
+      <div class="stat"><div class="k">Erreurs</div><div class="v" id="sdErr">0 / 3</div></div>
+      <div class="stat"><div class="k">Temps</div><div class="v" id="sdTime">0:00</div></div>
+    </div>
+    <p class="status" id="sdStatus" aria-live="polite"></p>
+    <div class="fitbox sq"><div class="sdb" id="sdBd" role="group" aria-label="Grille de Sudoku"></div></div>
+    <div class="sdpad" id="sdPad" role="group" aria-label="Chiffres"></div>
+    <div class="sdtools">
+      <button type="button" class="btn" id="sdUndo">Annuler</button>
+      <button type="button" class="btn" id="sdErase">Effacer</button>
+      <button type="button" class="btn" id="sdNotes" aria-pressed="false">Notes</button>
+      <button type="button" class="btn" id="sdHint">Indice</button>
+    </div>
+    <div class="fitmenu">
+    <div class="row">
+      <span class="k" id="sdLvLab">Niveau</span>
+      <div class="seg" role="group" aria-labelledby="sdLvLab">
+        <button type="button" id="sdLE" aria-pressed="true">Facile</button>
+        <button type="button" id="sdLM" aria-pressed="false">Moyen</button>
+        <button type="button" id="sdLH" aria-pressed="false">Difficile</button>
+      </div>
+    </div>
+    <div class="actions"><button type="button" class="btn primary" id="sdNew">Nouvelle grille</button></div></div>
+    <p class="hint">Remplis la grille pour que chaque ligne, colonne et bloc de 3×3 contienne les chiffres de 1 à 9. Touche une case puis un chiffre. <b>Notes</b> pour noter des candidats, <b>Indice</b> pour révéler la case choisie. Trois erreurs et la partie est perdue.</p>
+  </section>
     </div>
   </section>
 </main>
@@ -1313,6 +1397,7 @@ body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-ins
       ['Fléchettes', [['Dans la cible', 'dart'], ['Bullseye', 'bull'], ['180', 'one80'], ['Hors cible', 'miss']]],
       ['Pong et Briques', [['Raquette', 'paddle'], ['Mur', 'wall'], ['Brique cassée', 'brick'], ['Point', 'point'], ['Vie perdue', 'life']]],
       ['Cartes et Memory', [['Carte retournée', 'flip'], ['Paire trouvée', 'pair'], ['Mauvaise paire', 'wrong']]],
+      ['Démineur et Sudoku', [['Case ouverte', 'flip'], ['Zone dégagée', 'pair'], ['Drapeau', 'place2'], ['Mine', 'boom'], ['Chiffre posé', 'place'], ['Erreur', 'wrong']]],
       ['Bataille navale', [['À l\'eau', 'splash'], ['Touché', 'boom'], ['Coulé', 'sunk']]],
       ['Partout', [['Bouton', 'click'], ['Gagné', 'win'], ['Perdu', 'lose'], ['Nouveau record', 'record']]]
     ];
@@ -4727,7 +4812,392 @@ body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-ins
     };
   })();
 
-  if (window.__arcadeTest) window.__arcadeTest.games = { SL, PD, MM, MP, DT, PB };
+  /* =====================  DÉMINEUR  ===================== */
+  const MN = (function () {
+    const LV = { e: { c: 9, r: 9, m: 10, n: 'Facile' }, m: { c: 10, r: 14, m: 28, n: 'Moyen' }, h: { c: 11, r: 16, m: 38, n: 'Difficile' } };
+    const bdEl = $('mnBd'), stEl = $('mnStatus'), eMines = $('mnMines'), eTime = $('mnTime'), eBest = $('mnBest'), bNew = $('mnNew'), bFlag = $('mnFlag');
+    const lvBtn = { e: $('mnLE'), m: $('mnLM'), h: $('mnLH') };
+    const FLAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v18" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M8 4l11 4.5L8 13z" fill="#FF4D5E"/></svg>';
+    const MINE = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="#F4F2FA"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.3 5.3l2.8 2.8M15.9 15.9l2.8 2.8M18.7 5.3l-2.8 2.8M8.1 15.9l-2.8 2.8" stroke="#F4F2FA" stroke-width="2.2" stroke-linecap="round"/><circle cx="10" cy="10" r="1.8" fill="#15131C"/></svg>';
+    let lv = store.get('arcade.mines.lv', 'e'); if (!LV[lv]) lv = 'e';
+    let best = store.get('arcade.mines.best', {}); if (!best || typeof best !== 'object') best = {};
+    let wins = +store.get('arcade.mines.wins', 0) || 0;
+    let C = 9, R = 9, N = 10, mine, num, st, els = [], shown = [], started = false, over = false, won = false, flags = 0, opened = 0, boom = -1;
+    let elapsed = 0, t0 = 0, timer = 0, active = false, flagMode = false, hold = null, holdT = 0, suppress = false, newRec = false;
+    const fmt = (ms) => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+    const now = () => elapsed + (timer ? performance.now() - t0 : 0);
+    const tick = () => setText(eTime, fmt(now()));
+    function startTimer() { if (timer || over || !started) return; t0 = performance.now(); timer = setInterval(tick, 250); }
+    function stopTimer() { if (!timer) return; elapsed += performance.now() - t0; clearInterval(timer); timer = 0; tick(); }
+    function nb(i) {
+      const r = (i / C) | 0, c = i % C, out = [];
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        if (!dr && !dc) continue;
+        const rr = r + dr, cc = c + dc;
+        if (rr >= 0 && rr < R && cc >= 0 && cc < C) out.push(rr * C + cc);
+      }
+      return out;
+    }
+    function place(first) {
+      const ban = new Set([first].concat(nb(first)));
+      let pool = [];
+      for (let i = 0; i < C * R; i++) if (!ban.has(i)) pool.push(i);
+      if (pool.length < N) { pool = []; for (let i = 0; i < C * R; i++) if (i !== first) pool.push(i); }
+      for (let k = 0; k < N; k++) {
+        const j = k + Math.floor(Math.random() * (pool.length - k));
+        const t = pool[k]; pool[k] = pool[j]; pool[j] = t;
+        mine[pool[k]] = 1;
+      }
+      for (let i = 0; i < C * R; i++) { let n = 0; nb(i).forEach((j) => { n += mine[j]; }); num[i] = n; }
+    }
+    function openCell(i) {
+      if (over || st[i] !== 0) return;
+      if (!started) { started = true; place(i); if (active) startTimer(); }
+      if (mine[i]) { boom = i; lose(); return; }
+      const stack = [i]; let n = 0;
+      while (stack.length) {
+        const k = stack.pop();
+        if (st[k] !== 0) continue;
+        st[k] = 1; opened++; n++;
+        if (num[k] === 0) nb(k).forEach((j) => { if (st[j] === 0) stack.push(j); });
+      }
+      SFX.play(n > 4 ? 'pair' : 'flip');
+      if (opened === C * R - N) win(); else render();
+    }
+    function flagAt(i) {
+      if (over || st[i] === 1) return;
+      st[i] = st[i] === 2 ? 0 : 2; flags += st[i] === 2 ? 1 : -1;
+      SFX.play('place2'); render();
+    }
+    function chord(i) {
+      if (over || st[i] !== 1 || !num[i]) return;
+      const ns = nb(i); let f = 0;
+      ns.forEach((j) => { if (st[j] === 2) f++; });
+      if (f !== num[i]) return;
+      ns.forEach((j) => { if (st[j] === 0) openCell(j); });
+    }
+    function tap(i) {
+      if (over) return;
+      if (st[i] === 1) { chord(i); return; }
+      if (flagMode) { flagAt(i); return; }
+      if (st[i] === 2) return;
+      openCell(i);
+    }
+    function win() {
+      over = true; won = true; stopTimer();
+      for (let i = 0; i < C * R; i++) if (mine[i]) st[i] = 2;
+      flags = N; wins++; store.set('arcade.mines.wins', wins);
+      const t = Math.round(elapsed);
+      newRec = !best[lv] || t < best[lv];
+      if (newRec) { best[lv] = t; store.set('arcade.mines.best', best); }
+      SFX.play(newRec ? 'record' : 'win', 250); render();
+    }
+    function lose() {
+      over = true; won = false; stopTimer();
+      SFX.play('boom'); SFX.play('lose', 450); render();
+    }
+    function cellView(i) {
+      const s = st[i];
+      if (over && !won) {
+        if (i === boom) return ['x', MINE];
+        if (mine[i] && s !== 2) return ['m', MINE];
+        if (s === 2 && !mine[i]) return ['w', FLAG];
+      }
+      if (s === 2) return ['h', FLAG];
+      if (s === 1) return num[i] ? ['o n' + num[i], String(num[i])] : ['o', ''];
+      return ['h', ''];
+    }
+    function statusText() {
+      if (over) return won ? 'Bravo ! Terrain nettoyé en ' + fmt(elapsed) + (newRec ? ' · nouveau record !' : '.') : 'Boum ! Tu as touché une mine. Rejoue.';
+      if (!started) return 'Touche une case pour commencer : le premier coup est toujours sûr.';
+      return flagMode ? 'Mode drapeau : touche une case pour la marquer.' : 'Appui long ou bouton Drapeau pour marquer une mine.';
+    }
+    function render() {
+      for (let i = 0; i < C * R; i++) {
+        const v = cellView(i), key = v[0] + '|' + v[1];
+        if (shown[i] !== key) { shown[i] = key; els[i].className = v[0]; els[i].innerHTML = v[1]; }
+      }
+      setText(eMines, N - flags); tick();
+      setText(eBest, best[lv] ? fmt(best[lv]) : '—');
+      setText(stEl, statusText());
+    }
+    function build() {
+      bdEl.textContent = ''; els = []; shown = [];
+      bdEl.style.setProperty('--c', C); bdEl.style.setProperty('--r', R);
+      for (let i = 0; i < C * R; i++) {
+        const e = document.createElement('i'); e.dataset.i = i; e.setAttribute('role', 'button');
+        bdEl.appendChild(e); els.push(e);
+      }
+    }
+    function newGame() {
+      const L = LV[lv]; C = L.c; R = L.r; N = L.m;
+      stopTimer(); elapsed = 0; started = false; over = false; won = false; flags = 0; opened = 0; boom = -1; newRec = false;
+      mine = new Uint8Array(C * R); num = new Uint8Array(C * R); st = new Uint8Array(C * R);
+      build(); render();
+    }
+    function setLevel(l) {
+      lv = l; store.set('arcade.mines.lv', l);
+      Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === l)));
+      newGame();
+    }
+    const cellOf = (e) => { const c = e.target.closest && e.target.closest('i[data-i]'); return c ? +c.dataset.i : -1; };
+    bdEl.addEventListener('pointerdown', (e) => {
+      suppress = false; clearTimeout(holdT);
+      const i = cellOf(e); if (i < 0 || e.button) return;
+      hold = { i, x: e.clientX, y: e.clientY };
+      holdT = setTimeout(() => {
+        if (!hold) return;
+        suppress = true; const k = hold.i; hold = null;
+        if (st[k] === 1) { chord(k); return; }
+        flagAt(k);
+        if (navigator.vibrate && !over) { try { navigator.vibrate(12); } catch (err) { /* ignore */ } }
+      }, 380);
+    });
+    bdEl.addEventListener('pointermove', (e) => { if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > 12) { clearTimeout(holdT); hold = null; } });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((n) => bdEl.addEventListener(n, () => { clearTimeout(holdT); hold = null; }));
+    bdEl.addEventListener('click', (e) => { const i = cellOf(e); if (i < 0) return; if (suppress) { suppress = false; return; } tap(i); });
+    bdEl.addEventListener('contextmenu', (e) => { e.preventDefault(); const i = cellOf(e); if (i < 0 || suppress) return; flagAt(i); });
+    bFlag.addEventListener('click', () => { flagMode = !flagMode; bFlag.setAttribute('aria-pressed', String(flagMode)); render(); });
+    bNew.addEventListener('click', newGame);
+    Object.keys(lvBtn).forEach((k) => lvBtn[k].addEventListener('click', () => setLevel(k)));
+    setLevel(lv);
+    return {
+      activate() { active = true; if (started && !over) startTimer(); },
+      deactivate() { active = false; stopTimer(); },
+      _test: { get C() { return C; }, get R() { return R; }, get N() { return N; }, get over() { return over; }, get won() { return won; }, get mine() { return mine; }, get num() { return num; }, get st() { return st; }, get started() { return started; }, tap, flagAt, chord, newGame, setLevel, openCell }
+    };
+  })();
+
+  /* =====================  SUDOKU  ===================== */
+  const SD = (function () {
+    const LV = { e: { k: 40, n: 'Facile' }, m: { k: 32, n: 'Moyen' }, h: { k: 26, n: 'Difficile' } };
+    const bdEl = $('sdBd'), stEl = $('sdStatus'), eLv = $('sdLv'), eErr = $('sdErr'), eTime = $('sdTime'), padEl = $('sdPad'), panel = $('panel-sudoku');
+    const bUndo = $('sdUndo'), bErase = $('sdErase'), bNotes = $('sdNotes'), bHint = $('sdHint'), bNew = $('sdNew');
+    const lvBtn = { e: $('sdLE'), m: $('sdLM'), h: $('sdLH') };
+    const BOX = new Uint8Array(81);
+    for (let i = 0; i < 81; i++) BOX[i] = ((i / 27) | 0) * 3 + (((i % 9) / 3) | 0);
+    const PEERS = [];
+    for (let i = 0; i < 81; i++) {
+      const p = [];
+      for (let j = 0; j < 81; j++) if (j !== i && (((j / 9) | 0) === ((i / 9) | 0) || j % 9 === i % 9 || BOX[j] === BOX[i])) p.push(j);
+      PEERS.push(p);
+    }
+    const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+    const pc = (m) => { let c = 0; while (m) { m &= m - 1; c++; } return c; };
+    // Backtracking solver with fewest-candidates-first. Counts solutions up to `limit` (grid untouched), or, in rnd mode, leaves a random full solution in g.
+    function search(g, limit, rnd) {
+      const rows = new Uint16Array(9), cols = new Uint16Array(9), bxs = new Uint16Array(9);
+      for (let i = 0; i < 81; i++) if (g[i]) { const b = 1 << g[i]; rows[(i / 9) | 0] |= b; cols[i % 9] |= b; bxs[BOX[i]] |= b; }
+      let n = 0;
+      function rec() {
+        let bi = -1, bc = 10, bm = 0;
+        for (let i = 0; i < 81; i++) {
+          if (g[i]) continue;
+          const m = (~(rows[(i / 9) | 0] | cols[i % 9] | bxs[BOX[i]])) & 0x3FE, k = pc(m);
+          if (k < bc) { bc = k; bi = i; bm = m; if (k < 2) break; }
+        }
+        if (bi < 0) { n++; return n >= limit; }
+        if (bc === 0) return false;
+        const r = (bi / 9) | 0, c = bi % 9, b = BOX[bi], ds = [];
+        for (let d = 1; d <= 9; d++) if (bm & (1 << d)) ds.push(d);
+        if (rnd) shuffle(ds);
+        for (let k = 0; k < ds.length; k++) {
+          const d = ds[k], bit = 1 << d;
+          g[bi] = d; rows[r] |= bit; cols[c] |= bit; bxs[b] |= bit;
+          const stop = rec();
+          if (stop && rnd) return true;
+          g[bi] = 0; rows[r] &= ~bit; cols[c] &= ~bit; bxs[b] &= ~bit;
+          if (stop) return true;
+        }
+        return false;
+      }
+      rec();
+      return n;
+    }
+    function generate(clues) {
+      const full = new Uint8Array(81);
+      search(full, 1, true);
+      const puz = full.slice(), order = shuffle(Array.from({ length: 81 }, (_, i) => i));
+      let left = 81; const deadline = Date.now() + 900;
+      for (let k = 0; k < 81 && left > clues && Date.now() < deadline; k++) {
+        const i = order[k], v = puz[i];
+        puz[i] = 0;
+        if (search(puz, 2, false) !== 1) puz[i] = v; else left--;
+      }
+      return { sol: full, puz };
+    }
+
+    let lv = store.get('arcade.sudoku.lv', 'e'); if (!LV[lv]) lv = 'e';
+    let best = store.get('arcade.sudoku.best', {}); if (!best || typeof best !== 'object') best = {};
+    let wins = +store.get('arcade.sudoku.wins', 0) || 0;
+    let sol = new Uint8Array(81), giv = new Uint8Array(81), val = new Uint8Array(81), notes = new Uint16Array(81);
+    let sel = -1, noteMode = false, errs = 0, hints = 0, hist = [], over = false, won = false, started = false, newRec = false, msg = '';
+    let elapsed = 0, t0 = 0, timer = 0, active = false;
+    const cells = [], shown = [], padBtns = [];
+    const fmt = (ms) => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+    const now = () => elapsed + (timer ? performance.now() - t0 : 0);
+    const tick = () => setText(eTime, fmt(now()));
+    function startTimer() { if (timer || over || !started || !active) return; t0 = performance.now(); timer = setInterval(tick, 500); }
+    function stopTimer() { if (!timer) return; elapsed += performance.now() - t0; clearInterval(timer); timer = 0; tick(); }
+
+    for (let i = 0; i < 81; i++) {
+      const e = document.createElement('div'); e.dataset.i = i; e.setAttribute('role', 'button');
+      bdEl.appendChild(e); cells.push(e);
+    }
+    for (let d = 1; d <= 9; d++) {
+      const b = document.createElement('button'); b.type = 'button'; b.dataset.d = d;
+      b.addEventListener('click', () => put(d));
+      padEl.appendChild(b); padBtns.push(b);
+    }
+    function save() {
+      if (over) { store.set('arcade.sudoku.save', null); return; }
+      store.set('arcade.sudoku.save', { lv, sol: Array.from(sol).join(''), giv: Array.from(giv).join(''), val: Array.from(val).join(''), notes: Array.from(notes), errs, hints, elapsed: Math.round(now()), started });
+    }
+    function restore() {
+      const o = store.get('arcade.sudoku.save', null);
+      if (!o || typeof o !== 'object' || !LV[o.lv] || typeof o.sol !== 'string' || o.sol.length !== 81 || o.giv.length !== 81 || o.val.length !== 81 || !Array.isArray(o.notes) || o.notes.length !== 81) return false;
+      const s = Uint8Array.from(o.sol, Number);
+      if (s.some((x) => x < 1 || x > 9)) return false;
+      sol = s; giv = Uint8Array.from(o.giv, Number); val = Uint8Array.from(o.val, Number); notes = Uint16Array.from(o.notes.map((x) => (+x | 0) & 0x3FE));
+      lv = o.lv; errs = Math.min(2, Math.max(0, +o.errs | 0)); hints = Math.max(0, +o.hints | 0); elapsed = Math.max(0, +o.elapsed || 0); started = !!o.started;
+      hist = []; sel = -1; over = false; won = false; noteMode = false; msg = '';
+      return true;
+    }
+    function snapshot() { hist.push({ v: val.slice(), n: notes.slice() }); if (hist.length > 200) hist.shift(); }
+    const remaining = (d) => { let n = 0; for (let i = 0; i < 81; i++) if (val[i] === d && sol[i] === d) n++; return 9 - n; };
+    function lineDone(i, d) {
+      const r = (i / 9) | 0, c = i % 9, b = BOX[i];
+      let rr = true, cc = true, bb = true;
+      for (let k = 0; k < 81; k++) {
+        const ok = val[k] === sol[k];
+        if (((k / 9) | 0) === r && !ok) rr = false;
+        if (k % 9 === c && !ok) cc = false;
+        if (BOX[k] === b && !ok) bb = false;
+      }
+      return rr || cc || bb;
+    }
+    function clearPeerNotes(i, d) { const bit = 1 << d; PEERS[i].forEach((j) => { notes[j] &= ~bit; }); }
+    function solved() { for (let i = 0; i < 81; i++) if (val[i] !== sol[i]) return false; return true; }
+    function begin() { if (!started) { started = true; } startTimer(); }
+    function put(d) {
+      if (over || sel < 0 || giv[sel]) { if (!over && sel < 0) { msg = 'Choisis d\'abord une case.'; render(); } return; }
+      if (noteMode) {
+        if (val[sel]) return;
+        snapshot(); notes[sel] ^= (1 << d); SFX.play('tick'); begin(); render(); save(); return;
+      }
+      if (val[sel] === sol[sel] || val[sel] === d) return;
+      snapshot(); begin();
+      val[sel] = d; notes[sel] = 0; msg = '';
+      if (d !== sol[sel]) {
+        errs++; SFX.play('wrong');
+        if (errs >= 3) { lose(); return; }
+      } else {
+        clearPeerNotes(sel, d);
+        if (solved()) { win(); return; }
+        SFX.play(lineDone(sel, d) ? 'pair' : 'place');
+      }
+      render(); save();
+    }
+    function erase() {
+      if (over || sel < 0 || giv[sel] || val[sel] === sol[sel]) return;
+      if (!val[sel] && !notes[sel]) return;
+      snapshot(); val[sel] = 0; notes[sel] = 0; SFX.play('tick'); render(); save();
+    }
+    function hint() {
+      if (over) return;
+      let t = sel;
+      if (t < 0 || giv[t] || val[t] === sol[t]) {
+        const c = []; for (let i = 0; i < 81; i++) if (val[i] !== sol[i]) c.push(i);
+        if (!c.length) return;
+        t = c[Math.floor(Math.random() * c.length)];
+      }
+      snapshot(); begin(); sel = t; val[t] = sol[t]; notes[t] = 0; hints++;
+      clearPeerNotes(t, sol[t]); msg = 'Indice utilisé : ' + hints + '.';
+      if (solved()) { win(); return; }
+      SFX.play('pair'); render(); save();
+    }
+    function undo() {
+      if (over || !hist.length) return;
+      const h = hist.pop(); val = h.v; notes = h.n; SFX.play('tick'); render(); save();
+    }
+    function win() {
+      over = true; won = true; stopTimer(); wins++; store.set('arcade.sudoku.wins', wins);
+      const t = Math.round(elapsed);
+      newRec = hints === 0 && (!best[lv] || t < best[lv]);
+      if (newRec) { best[lv] = t; store.set('arcade.sudoku.best', best); }
+      SFX.play(newRec ? 'record' : 'win', 200); render(); save();
+    }
+    function lose() { over = true; won = false; stopTimer(); SFX.play('lose', 150); render(); save(); }
+    function statusText() {
+      if (over) return won ? 'Bravo ! Grille résolue en ' + fmt(elapsed) + (newRec ? ' · nouveau record !' : '.') : 'Trois erreurs : partie perdue. Lance une nouvelle grille.';
+      if (msg) return msg;
+      if (noteMode) return 'Mode notes : touche un chiffre pour l\'ajouter ou le retirer.';
+      return sel < 0 ? 'Touche une case, puis un chiffre.' : (giv[sel] ? 'Case de départ : elle ne change pas.' : 'Touche un chiffre pour remplir la case.');
+    }
+    function render() {
+      const sv = sel >= 0 ? val[sel] : 0, peers = sel >= 0 ? new Set(PEERS[sel]) : null;
+      for (let i = 0; i < 81; i++) {
+        const r = (i / 9) | 0, c = i % 9, v = val[i];
+        let cls = 'c' + (giv[i] ? ' g' : '') + (c % 3 === 2 && c < 8 ? ' br' : '') + (r % 3 === 2 && r < 8 ? ' bb' : '');
+        if (i === sel) cls += ' sel'; else if (sv && v === sv) cls += ' sm'; else if (peers && peers.has(i)) cls += ' pr';
+        if (v && !giv[i] && v !== sol[i]) cls += ' er';
+        let html = '';
+        if (v) html = String(v);
+        else if (notes[i]) { html = '<span class="nt">'; for (let d = 1; d <= 9; d++) html += '<b>' + ((notes[i] >> d) & 1 ? d : '') + '</b>'; html += '</span>'; }
+        const key = cls + '|' + html;
+        if (shown[i] !== key) { shown[i] = key; cells[i].className = cls; cells[i].innerHTML = html; }
+      }
+      padBtns.forEach((b, k) => { const n = remaining(k + 1); b.disabled = over || n === 0; b.innerHTML = (k + 1) + (n && n < 9 ? '<small>' + n + '</small>' : ''); b.setAttribute('aria-label', 'Chiffre ' + (k + 1) + (n ? ', reste ' + n : ', terminé')); });
+      padEl.classList.toggle('nm', noteMode);
+      bNotes.setAttribute('aria-pressed', String(noteMode));
+      bUndo.disabled = over || !hist.length; bErase.disabled = over; bHint.disabled = over;
+      setText(eLv, LV[lv].n); setText(eErr, errs + ' / 3'); tick();
+      setText(stEl, statusText());
+    }
+    function newGame() {
+      stopTimer(); store.set('arcade.sudoku.save', null);
+      const g = generate(LV[lv].k);
+      sol = g.sol; val = g.puz.slice(); giv = new Uint8Array(81); for (let i = 0; i < 81; i++) giv[i] = g.puz[i] ? 1 : 0;
+      notes = new Uint16Array(81); sel = -1; noteMode = false; errs = 0; hints = 0; hist = []; over = false; won = false; started = false; newRec = false; msg = ''; elapsed = 0;
+      render(); save();
+    }
+    function setLevel(l) {
+      lv = l; store.set('arcade.sudoku.lv', l);
+      Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === l)));
+      newGame();
+    }
+    bdEl.addEventListener('click', (e) => {
+      const c = e.target.closest && e.target.closest('[data-i]'); if (!c) return;
+      sel = +c.dataset.i; msg = ''; render();
+    });
+    bUndo.addEventListener('click', undo); bErase.addEventListener('click', erase); bHint.addEventListener('click', hint);
+    bNotes.addEventListener('click', () => { noteMode = !noteMode; msg = ''; render(); });
+    bNew.addEventListener('click', newGame);
+    Object.keys(lvBtn).forEach((k) => lvBtn[k].addEventListener('click', () => { if (k !== lv) setLevel(k); else newGame(); }));
+    window.addEventListener('keydown', (e) => {
+      if (panel.hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+      const k = e.key;
+      if (k >= '1' && k <= '9') { e.preventDefault(); put(+k); }
+      else if (k === 'Backspace' || k === 'Delete' || k === '0') { e.preventDefault(); erase(); }
+      else if (k === 'n' || k === 'N') { noteMode = !noteMode; msg = ''; render(); }
+      else if (k === 'h' || k === 'H') hint();
+      else if (k.indexOf('Arrow') === 0) {
+        e.preventDefault(); if (sel < 0) sel = 40;
+        else if (k === 'ArrowLeft' && sel % 9 > 0) sel--; else if (k === 'ArrowRight' && sel % 9 < 8) sel++;
+        else if (k === 'ArrowUp' && sel > 8) sel -= 9; else if (k === 'ArrowDown' && sel < 72) sel += 9;
+        render();
+      }
+    });
+    Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv)));
+    if (!restore()) newGame(); else { Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv))); render(); }
+    return {
+      activate() { active = true; if (started && !over) startTimer(); },
+      deactivate() { active = false; stopTimer(); save(); },
+      _test: { get sol() { return sol; }, get val() { return val; }, get giv() { return giv; }, get notes() { return notes; }, get errs() { return errs; }, get over() { return over; }, get won() { return won; }, get sel() { return sel; }, set sel(v) { sel = v; render(); }, put, erase, hint, undo, newGame, setLevel, search, generate, get noteMode() { return noteMode; } }
+    };
+  })();
+
+  if (window.__arcadeTest) window.__arcadeTest.games = { SL, PD, MM, MP, DT, PB, MN, SD };
 
   /* =====================  TABS & KEYS  ===================== */
   const TABS = {
@@ -4745,7 +5215,9 @@ body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-ins
     solitaire: { leave() { SL.deactivate(); }, enter() { SL.activate(); } },
     flechettes: { leave() {}, enter() {} },
     flipper: { leave() { PB.deactivate(); }, enter() { PB.activate(); } },
-    cube: { leave() { CB.deactivate(); }, enter() { CB.activate(); } }
+    cube: { leave() { CB.deactivate(); }, enter() { CB.activate(); } },
+    demineur: { leave() { MN.deactivate(); }, enter() { MN.activate(); } },
+    sudoku: { leave() { SD.deactivate(); }, enter() { SD.activate(); } }
   };
 function glyph(id, a, b, c) {
   const S = {
@@ -4763,7 +5235,9 @@ function glyph(id, a, b, c) {
     solitaire: `<rect x="5" y="9" width="22" height="30" rx="4.5" fill="${b}" opacity=".6" transform="rotate(-9 16 24)"/><rect x="19" y="9" width="22" height="31" rx="4.5" fill="${a}"/><path d="M30 33c-5-3.4-7-5.9-7-8.4a3.6 3.6 0 0 1 7-1.2 3.6 3.6 0 0 1 7 1.2c0 2.5-2 5-7 8.4z" fill="${c}"/>`,
     flechettes: `<circle cx="22" cy="26" r="17" fill="none" stroke="${a}" stroke-width="3.4"/><circle cx="22" cy="26" r="9.5" fill="none" stroke="${b}" stroke-width="3"/><circle cx="22" cy="26" r="3.2" fill="${c}"/><path d="M24 24l15-15" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/><path d="M33 7l8 1-1 8z" fill="${c}"/>`,
     flipper: `<circle cx="18" cy="15" r="7" fill="none" stroke="${a}" stroke-width="3.4"/><circle cx="33" cy="22" r="5" fill="${b}"/><path d="M8 38l13 5M40 38l-13 5" stroke="${a}" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="31" r="3.2" fill="${c}"/>`,
-    cube: `<polygon points="24,5 41,14.5 24,24 7,14.5" fill="${a}"/><polygon points="7,14.5 24,24 24,43 7,33.5" fill="${b}"/><polygon points="41,14.5 24,24 24,43 41,33.5" fill="${c}"/>`
+    cube: `<polygon points="24,5 41,14.5 24,24 7,14.5" fill="${a}"/><polygon points="7,14.5 24,24 24,43 7,33.5" fill="${b}"/><polygon points="41,14.5 24,24 24,43 41,33.5" fill="${c}"/>`,
+    demineur: `<circle cx="24" cy="26" r="11" fill="${a}"/><path d="M24 8v6M24 38v6M6 26h6M36 26h6M11 13l4 4M33 35l4 4M37 13l-4 4M15 35l-4 4" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/><circle cx="20" cy="22" r="3.2" fill="${c}"/>`,
+    sudoku: `<rect x="6" y="6" width="36" height="36" rx="7" fill="none" stroke="${a}" stroke-width="3.2"/><path d="M18 6v36M30 6v36M6 18h36M6 30h36" stroke="${a}" stroke-width="2.2" opacity=".55"/><circle cx="12" cy="12" r="2.8" fill="${c}"/><circle cx="24" cy="24" r="2.8" fill="${b}"/><circle cx="36" cy="36" r="2.8" fill="${c}"/><circle cx="36" cy="12" r="2.8" fill="${b}"/>`
   };
   return S[id];
 }
@@ -4783,7 +5257,9 @@ function glyph(id, a, b, c) {
     { id: 'solitaire', n: 'Solitaire', c: ['#6EE7B7', '#047857'], tx: '#fff' },
     { id: 'flechettes', n: 'Fléchettes', c: ['#FCA5A5', '#DC2626'], tx: '#fff' },
     { id: 'flipper', n: 'Flipper', c: ['#A78BFA', '#4C1D95'], tx: '#fff' },
-    { id: 'cube', n: 'Cube', c: ['#3EE0D0', '#0A8FBF'], tx: '#fff' }
+    { id: 'cube', n: 'Cube', c: ['#3EE0D0', '#0A8FBF'], tx: '#fff' },
+    { id: 'demineur', n: 'Démineur', c: ['#94A3B8', '#475569'], tx: '#fff' },
+    { id: 'sudoku', n: 'Sudoku', c: ['#38BDF8', '#4F46E5'], tx: '#fff' }
   ];
   const gmap = {};
   GAMES.forEach((g) => { gmap[g.id] = g; });
@@ -4817,6 +5293,13 @@ function glyph(id, a, b, c) {
     }
     if (id === 'puis4') { const w = wins('arcade.p4.wins'); return { short: w.none ? '—' : w.short, banner: w.banner }; }
     if (id === 'echecs') { const w = wins('arcade.chess.wins'); return { short: w.none ? '—' : w.short, banner: w.banner }; }
+    if (id === 'demineur' || id === 'sudoku') {
+      const bs = g(id === 'demineur' ? 'arcade.mines.best' : 'arcade.sudoku.best', {}) || {}, names = { h: 'Difficile', m: 'Moyen', e: 'Facile' };
+      const k = ['h', 'm', 'e'].find((x) => bs[x]);
+      if (!k) return { short: '—', banner: null };
+      const sec = Math.floor(bs[k] / 1000), t = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+      return { short: t, banner: 'Record · ' + names[k] + ' ' + t };
+    }
     const v = g('arcade.cube.best', null);
     return v === null ? { short: '—', banner: null } : { short: fmtTime(+v), banner: 'Meilleur temps · ' + fmtTime(+v) };
   }
@@ -4845,14 +5328,16 @@ function glyph(id, a, b, c) {
     { id: 'arcade', n: 'Arcade', e: '\u{1F579}\uFE0F', g: ['flipper', 'snake', 'briques', 'pong', 'reflexes'] },
     { id: 'plateau', n: 'Plateau', e: '\u265F\uFE0F', g: ['echecs', 'dames', 'puis4', 'morpion'] },
     { id: 'cartes', n: 'Cartes', e: '\u{1F0CF}', g: ['solitaire', 'memory', 'pendu'] },
-    { id: 'adresse', n: 'Adresse', e: '\u{1F3AF}', g: ['flechettes', 'cube', 'navale'] }
+    { id: 'adresse', n: 'Adresse', e: '\u{1F3AF}', g: ['flechettes', 'cube', 'navale'] },
+    { id: 'reflexion', n: 'Réflexion', e: '\u{1F9E0}', g: ['demineur', 'sudoku'] }
   ];
   const DESC = {
     reflexes: "Le départ de F1\u00a0: appuie dès que les feux s'éteignent.", snake: 'Mange, grandis, évite ta queue.', navale: 'Coule toute la flotte en un minimum de tirs.',
     briques: 'Casse tout le mur sans perdre la balle.', pong: 'Le duel de raquettes mythique.', dames: 'Capture tous les pions adverses.',
     echecs: 'Le roi des jeux de plateau.', puis4: 'Aligne quatre jetons avant ton adversaire.', morpion: 'Trois en ligne, simple et nerveux.',
     pendu: 'Devine le mot avant la fin du dessin.', memory: 'Retrouve toutes les paires.', solitaire: 'Range toutes les cartes par couleur.',
-    flechettes: 'Vise juste et enchaîne les volées.', flipper: '3 tables, multiball et records.', cube: 'Résous le cube le plus vite possible.'
+    flechettes: 'Vise juste et enchaîne les volées.', flipper: '3 tables, multiball et records.', cube: 'Résous le cube le plus vite possible.',
+    demineur: 'Dévoile le champ sans toucher une mine.', sudoku: 'Remplis la grille sans répéter un chiffre.'
   };
   const catOf = (id) => Math.max(0, CATS.findIndex((c) => c.g.indexOf(id) >= 0));
   let cat = Math.max(0, CATS.findIndex((c) => c.id === store.get('arcade.cat', null)));
@@ -4902,7 +5387,7 @@ function glyph(id, a, b, c) {
   const LOCK = (function () {
     const btn = $('gLock');
     let on = store.get('arcade.lock', true) !== false, active = false, sentinel = null, cur = null;
-    const FIT = ['flipper', 'snake', 'cube', 'briques', 'pong', 'reflexes', 'echecs', 'dames', 'puis4', 'morpion', 'solitaire', 'memory', 'pendu', 'flechettes', 'navale'], help = $('gHelp'), menu = $('gMenu');
+    const FIT = ['flipper', 'snake', 'cube', 'briques', 'pong', 'reflexes', 'echecs', 'dames', 'puis4', 'morpion', 'solitaire', 'memory', 'pendu', 'flechettes', 'navale', 'demineur', 'sudoku'], help = $('gHelp'), menu = $('gMenu');
     const SVG_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     const SVG_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 6.7-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     function paint() {
