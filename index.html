@@ -692,6 +692,32 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
 .updbar span { flex: 1; }
 .updbar button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 14px; font: inherit; font-weight: 700; cursor: pointer; color: #1B1530; background: var(--amber); }
 .updbar button.x { background: transparent; color: var(--muted); padding: 0 10px; font-size: 1.2rem; }
+/* Fit mode for the remaining games */
+body.locked[data-fit] .status { min-height: 0; padding: 4px 8px; font-size: .88rem; line-height: 1.25; }
+body.locked[data-fit] .actions { gap: 6px; }
+body.locked[data-fit] .actions .btn { min-height: 44px; padding-block: 6px; }
+body.locked[data-fit] .fitbox.r34 > .board { height: min(100cqh, 133.33cqw); width: calc(min(100cqh, 133.33cqw) * .75); flex: none; margin: 0; }
+body.locked[data-fit] .fitbox.r34 .arena { width: 100%; height: 100%; aspect-ratio: auto; }
+body.locked[data-fit] .fitbox.sq > .bd { display: grid; place-items: stretch; }
+body.locked[data-fit] .fitbox.sq > .bd > * { width: 100%; height: 100%; }
+body.locked[data-fit] .fitbox.sq > .mp, body.locked[data-fit] .fitbox.sq > .dtsvg { max-width: none; margin: 0; }
+body.locked[data-fit] .fitbox.p4w > .p4 { width: min(100cqw, 116cqh); max-width: none; flex: none; margin: 0; }
+body.locked[data-fit] .fitbox.pdf > svg { width: 100%; height: 100%; max-width: none; }
+body.locked[data-fit] .fitbox.mmf > .mmgrid { width: 100%; height: 100%; max-width: none; grid-auto-rows: 1fr; flex: none; }
+body.locked[data-fit] .fitbox.mmf .mmc { aspect-ratio: auto; min-height: 0; }
+body.locked[data-fit] .fitbox.nvf { flex-direction: column; gap: 6px; }
+body.locked[data-fit] .fitbox.nvf > div { flex: 1 1 0; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+body.locked[data-fit] .nv[data-phase="place"] .fitbox.nvf > .enemy,
+body.locked[data-fit] .fitbox.nvf > div[hidden], body.locked[data-fit] .fitbox.nvf > .enemy:empty { display: none; }
+body.locked[data-fit] .fitbox.nvf .bt { flex: none; font-size: .78rem; padding: 0 0 2px; }
+body.locked[data-fit] .fitbox.nvf > div { container-type: size; }
+body.locked[data-fit] .fitbox.nvf .sea { flex: none; aspect-ratio: 1; max-width: none !important; width: min(100cqw, calc(100cqh - 24px)); height: auto; }
+body.locked[data-fit] #panel-navale #nvPlace { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.locked[data-fit] #panel-navale #nvPlace .btn { padding-inline: 2px; font-size: .8rem; }
+body.locked[data-fit] #panel-reflexes #rpad { flex: 1 1 0; min-height: 0; }
+body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
+body.locked[data-fit] .pdkb { gap: 4px; }
+body.locked[data-fit="flipper"] .app { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 </style>
 
 <main class="app">
@@ -781,8 +807,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Record</div><div class="v" id="nvBest">—</div></div>
     </div>
     <p class="status" aria-live="polite"><span id="nvA"></span><span id="nvB"></span></p>
+    <div class="fitbox nvf">
     <div class="enemy"><div class="bt">Flotte ennemie</div><div class="sea" id="seaE"></div></div>
-    <div class="mine"><div class="bt">Ma flotte</div><div class="sea" id="seaM"></div></div>
+    <div class="mine"><div class="bt">Ma flotte</div><div class="sea" id="seaM"></div></div></div>
     <div class="actions" id="nvPlace">
       <button type="button" class="btn" id="nvOri">Horizontal</button>
       <button type="button" class="btn" id="nvUndo">Annuler</button>
@@ -802,6 +829,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Vies</div><div class="v" id="brLives">3</div></div>
       <div class="stat"><div class="k">Meilleur</div><div class="v" id="brBest">0</div></div>
     </div>
+    <div class="fitbox r34">
     <div class="board tall">
       <canvas class="arena" id="brCv" aria-label="Plateau de casse-briques"></canvas>
       <div class="ov" id="brOv" hidden>
@@ -811,7 +839,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
           <button type="button" class="btn primary" id="brOvB">Reprendre</button>
         </div>
       </div>
-    </div>
+    </div></div>
     <p class="hint">Glisse le doigt pour déplacer la raquette, touche pour lancer la balle. Au clavier : <b>flèches</b> ou <b>Q/D</b>, <b>Espace</b> pour lancer ou mettre en pause. Frappe la balle avec le bord de la raquette pour changer son angle. Les briques à bord blanc demandent deux coups.</p>
   </section>
 
@@ -821,6 +849,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Ordi</div><div class="v" id="pgAi">0</div></div>
       <div class="stat"><div class="k">Victoires</div><div class="v" id="pgWins">0</div></div>
     </div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="pgLab">Niveau</span>
       <div class="seg" role="group" aria-labelledby="pgLab">
@@ -828,7 +857,8 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="pgN" aria-pressed="true">Normal</button>
         <button type="button" id="pgH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
+    <div class="fitbox r34">
     <div class="board tall">
       <canvas class="arena" id="pgCv" aria-label="Plateau de pong"></canvas>
       <div class="ov" id="pgOv" hidden>
@@ -838,7 +868,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
           <button type="button" class="btn primary" id="pgOvB">Reprendre</button>
         </div>
       </div>
-    </div>
+    </div></div>
     <p class="hint">Premier à 7 points. Glisse le doigt pour déplacer ta raquette en bas, ou utilise les <b>flèches</b> / <b>Q/D</b> et <b>Espace</b> pour la pause. Plus l'échange dure, plus la balle accélère. Frappe avec le bord de la raquette pour viser.</p>
   </section>
 
@@ -849,7 +879,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Victoires</div><div class="v" id="dmWins">0</div></div>
     </div>
     <p class="status" id="dmStatus" aria-live="polite"></p>
-    <div class="bd"><div class="grid10" id="dmBd"></div></div>
+    <div class="fitbox sq">
+    <div class="bd"><div class="grid10" id="dmBd"></div></div></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="dmSideLab">Je joue</span>
       <div class="seg" role="group" aria-labelledby="dmSideLab">
@@ -862,7 +894,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="dmLN" aria-pressed="true">Normal</button>
         <button type="button" id="dmLH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn" id="dmUndo">Annuler</button>
       <button type="button" class="btn primary" id="dmNew">Nouvelle partie</button>
@@ -877,10 +909,12 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Victoires</div><div class="v" id="ecWins">0</div></div>
     </div>
     <p class="status" id="ecStatus" aria-live="polite"></p>
+    <div class="fitbox sq">
     <div class="bd">
       <div class="grid8" id="ecBd"></div>
       <div class="promo" id="ecPromo" hidden></div>
-    </div>
+    </div></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="ecSideLab">Je joue</span>
       <div class="seg" role="group" aria-labelledby="ecSideLab">
@@ -893,7 +927,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="ecLN" aria-pressed="true">Normal</button>
         <button type="button" id="ecLH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn" id="ecUndo">Annuler</button>
       <button type="button" class="btn primary" id="ecNew">Nouvelle partie</button>
@@ -907,7 +941,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Coups</div><div class="v" id="p4Moves">0</div></div>
     </div>
     <p class="status" id="p4Status" aria-live="polite"></p>
-    <div class="p4" id="p4Bd" role="group" aria-label="Plateau : 7 colonnes, 6 rangées"></div>
+    <div class="fitbox p4w">
+    <div class="p4" id="p4Bd" role="group" aria-label="Plateau : 7 colonnes, 6 rangées"></div></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="p4SideLab">Je joue</span>
       <div class="seg" role="group" aria-labelledby="p4SideLab">
@@ -920,7 +956,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="p4LN" aria-pressed="true">Normal</button>
         <button type="button" id="p4LH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn" id="p4Undo">Annuler</button>
       <button type="button" class="btn primary" id="p4New">Nouvelle partie</button>
@@ -935,7 +971,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Défaites</div><div class="v" id="mpL">0</div></div>
     </div>
     <p class="status" id="mpStatus" aria-live="polite"></p>
-    <div class="mp" id="mpBd" role="group" aria-label="Grille de morpion"></div>
+    <div class="fitbox sq">
+    <div class="mp" id="mpBd" role="group" aria-label="Grille de morpion"></div></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="mpSzLab">Grille</span>
       <div class="seg" role="group" aria-labelledby="mpSzLab">
@@ -948,7 +986,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="mpLN" aria-pressed="true">Normal</button>
         <button type="button" id="mpLH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="mpNew">Rejouer</button>
     </div>
@@ -961,14 +999,16 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Thème</div><div class="v" id="pdTheme">Animaux</div></div>
       <div class="stat"><div class="k">Trouvés</div><div class="v" id="pdWins">0</div></div>
     </div>
-    <svg class="pdsvg" id="pdSvg" viewBox="0 0 220 190" role="img" aria-label="Dessin du pendu"></svg>
+    <div class="fitbox pdf">
+    <svg class="pdsvg" id="pdSvg" viewBox="0 0 220 190" role="img" aria-label="Dessin du pendu"></svg></div>
     <div class="pdword" id="pdWord" aria-live="polite"></div>
     <p class="status" id="pdStatus" aria-live="polite"></p>
     <div class="pdkb" id="pdKb"></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="pdThLab">Thème</span>
       <div class="seg" role="group" aria-labelledby="pdThLab" id="pdThemes"></div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="pdNew">Nouveau mot</button>
     </div>
@@ -982,7 +1022,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Temps</div><div class="v" id="mmTime">0:00</div></div>
     </div>
     <p class="status" id="mmStatus" aria-live="polite"></p>
-    <div class="mmgrid" id="mmGrid" role="group" aria-label="Cartes"></div>
+    <div class="fitbox mmf">
+    <div class="mmgrid" id="mmGrid" role="group" aria-label="Cartes"></div></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="mmSzLab">Grille</span>
       <div class="seg" role="group" aria-labelledby="mmSzLab">
@@ -990,7 +1032,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="mmS4" aria-pressed="true">4×4</button>
         <button type="button" id="mmS5" aria-pressed="false">5×4</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="mmNew">Nouvelle partie</button>
     </div>
@@ -1021,7 +1063,9 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       <div class="stat"><div class="k">Volée</div><div class="v dtdots" id="dtDots">●●●</div></div>
     </div>
     <p class="status" id="dtStatus" aria-live="polite"></p>
-    <svg class="dtsvg" id="dtSvg" viewBox="0 0 340 340" role="img" aria-label="Cible de fléchettes : touche pour lancer"></svg>
+    <div class="fitbox sq">
+    <svg class="dtsvg" id="dtSvg" viewBox="0 0 340 340" role="img" aria-label="Cible de fléchettes : touche pour lancer"></svg></div>
+    <div class="fitmenu">
     <div class="row">
       <span class="k" id="dtModeLab">Partie</span>
       <div class="seg" role="group" aria-labelledby="dtModeLab">
@@ -1039,7 +1083,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
         <button type="button" id="dtLN" aria-pressed="true">Normal</button>
         <button type="button" id="dtLH" aria-pressed="false">Difficile</button>
       </div>
-    </div>
+    </div></div>
     <div class="actions">
       <button type="button" class="btn" id="dtUndo">Annuler</button>
       <button type="button" class="btn primary" id="dtNew">Nouvelle partie</button>
@@ -4632,7 +4676,7 @@ button, [role="button"], input[type="range"] { touch-action: manipulation; }
       pm.set(e.pointerId, side); syncPtrs();
       try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     });
-    function syncPtrs() { ptrs.L = 0; ptrs.R = 0; pm.forEach((v) => { ptrs[v]++; }); }
+    function syncPtrs() { ptrs.L = 0; ptrs.R = 0; pm.forEach((v) => { ptrs[v]++; }); bL.classList.toggle('on', ptrs.L > 0 || btnL); bR.classList.toggle('on', ptrs.R > 0 || btnR); }
     const cup = (e) => { if (pm.delete(e.pointerId)) syncPtrs(); };
     cv.addEventListener('pointerup', cup); cv.addEventListener('pointercancel', cup); cv.addEventListener('lostpointercapture', cup);
     window.addEventListener('pointerup', cup); window.addEventListener('pointercancel', cup);
@@ -4858,7 +4902,7 @@ function glyph(id, a, b, c) {
   const LOCK = (function () {
     const btn = $('gLock');
     let on = store.get('arcade.lock', true) !== false, active = false, sentinel = null, cur = null;
-    const FIT = ['flipper', 'snake', 'cube'], help = $('gHelp'), menu = $('gMenu');
+    const FIT = ['flipper', 'snake', 'cube', 'briques', 'pong', 'reflexes', 'echecs', 'dames', 'puis4', 'morpion', 'solitaire', 'memory', 'pendu', 'flechettes', 'navale'], help = $('gHelp'), menu = $('gMenu');
     const SVG_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     const SVG_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 6.7-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     function paint() {
