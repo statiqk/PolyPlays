@@ -48,7 +48,7 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.45;
-  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-top: calc(env(safe-area-inset-top, 0px) + clamp(14px, 2.6vh, 24px));
   padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
@@ -522,11 +522,11 @@ canvas {
 /* Screen lock while a game is open: the page itself cannot scroll or rubber-band; only .app may scroll when a game is taller than the screen. */
 html { overscroll-behavior-x: none; }
 body.locked { position: fixed; inset: 0; width: 100%; padding: 0; overflow: hidden; overscroll-behavior: none; }
-body.locked .app { box-sizing: border-box; max-width: 592px; padding: max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
+body.locked .app { box-sizing: border-box; max-width: 592px; padding: calc(env(safe-area-inset-top, 0px) + clamp(14px, 2.6vh, 24px)) max(16px, env(safe-area-inset-right, 0px)) max(32px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
 body.locked .app::-webkit-scrollbar { display: none; }
 /* Fit mode (screen locked): Flipper, Snake and Cube are sized to the screen height, so nothing scrolls while playing. */
 .fitbox { display: contents; }
-body.locked[data-fit] .app { display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); padding: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.7vh, 16px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+body.locked[data-fit] .app { display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); padding: calc(env(safe-area-inset-top, 0px) + clamp(14px, 2.6vh, 24px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
 body.locked[data-fit] #gview:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); }
 body.locked[data-fit] .ghd { flex: none; padding: 6px 8px; gap: 8px; border-radius: 22px; }
 body.locked[data-fit] .ghd h2 { font-size: 1.3rem; }
