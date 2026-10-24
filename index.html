@@ -2603,7 +2603,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
   if (typeof module !== 'undefined' && module.exports) module.exports = CH;
 
   /* =====================  MOTEUR DE DAMES (10×10)  ===================== */
-  const DR = (function () {
+  const makeDR = function () {
     const INF = 1e9, MATE = 30000;
     const DIRS = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
     const inb = (r, c) => r >= 0 && r < 10 && c >= 0 && c < 10;
@@ -2760,7 +2760,8 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       return best;
     }
     return { init, moves, apply, key, think, LEVELS };
-  })();
+  };
+  const DR = makeDR();
   if (typeof module !== 'undefined' && module.exports) module.exports = DR;
 
   /* =====================  DAMES (INTERFACE)  ===================== */
@@ -2769,7 +2770,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
     const bW = $('dmW'), bB = $('dmB'), lE = $('dmLE'), lN = $('dmLN'), lH = $('dmLH'), bUndo = $('dmUndo'), bNew = $('dmNew');
     let S, side = 1, level = 'norm', moves = [], partial = [], cand = [], last = null;
     let busy = false, over = false, hist = [], keys = [], gid = 0;
-    let wins = store.get('arcade.dames.wins', 0);
+    let wins = store.get('arcade.dames.wins', 0), counted = false;
     const cells = [];
 
     for (let d = 0; d < 100; d++) {
@@ -2837,7 +2838,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
     }
     function afterMove() {
       lastResult = evaluateState();
-      if (over && lastResult === 'nomoves' && S.turn !== side) { wins++; store.set('arcade.dames.wins', wins); }
+      if (over && lastResult === 'nomoves' && S.turn !== side && !counted) { counted = true; wins++; store.set('arcade.dames.wins', wins); }
       if (over) SFX.play(lastResult === 'nomoves' ? (S.turn !== side ? 'win' : 'lose') : 'draw', 350);
       render();
       if (!over && S.turn !== side) aiMove();
@@ -2853,17 +2854,32 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       partial = []; cand = [];
       afterMove();
     }
+    // The engine runs in a Web Worker so the page stays responsive while it thinks (falls back to the main thread if workers are unavailable).
+    let wk = null, wkOk = typeof Worker !== 'undefined' && typeof Blob !== 'undefined', wkJob = null;
+    function stopThink() { wkJob = null; if (wk) { try { wk.terminate(); } catch (e) { /* ignore */ } wk = null; } }
+    function thinkAsync(st, opt, cb) {
+      const job = { st: { b: st.b, turn: st.turn, nk: st.nk }, opt, cb };
+      if (wkOk && !wk) {
+        try {
+          const src = 'const DR=(' + makeDR.toString() + ')();onmessage=function(e){postMessage(DR.think(e.data.st,e.data.opt));};';
+          wk = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+          wk.onmessage = (e) => { const j = wkJob; wkJob = null; if (j) j.cb(e.data); };
+          wk.onerror = () => { wkOk = false; const j = wkJob; wkJob = null; wk = null; if (j) setTimeout(() => j.cb(DR.think(j.st, j.opt)), 0); };
+        } catch (e) { wkOk = false; wk = null; }
+      }
+      if (wk) { wkJob = job; try { wk.postMessage({ st: job.st, opt }); return; } catch (e) { wkOk = false; stopThink(); } }
+      setTimeout(() => cb(DR.think(job.st, opt)), 60);
+    }
     function aiMove() {
       busy = true;
       const id = gid;
       render();
-      setTimeout(() => {
+      thinkAsync(S, DR.LEVELS[level], (m) => {
         if (id !== gid) return;
-        const m = DR.think(S, DR.LEVELS[level]);
         busy = false;
         if (!m) { afterMove(); return; }
         playMove(m);
-      }, 60);
+      });
     }
     function onTap(sq) {
       if (busy || over || S.turn !== side) return;
@@ -2883,7 +2899,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
     }
     function newGame() {
       gid++;
-      S = DR.init(); keys = [DR.key(S)]; hist = []; last = null; busy = false; partial = []; cand = [];
+      S = DR.init(); keys = [DR.key(S)]; hist = []; last = null; busy = false; partial = []; cand = []; counted = false; stopThink();
       lastResult = evaluateState();
       render();
       if (S.turn !== side) aiMove();
@@ -4154,9 +4170,30 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       el.innerHTML = label ? '<span>' + label + '</span>' : '';
       return el;
     }
+    const STUCK = 'Plus aucun coup possible. Annule un coup ou lance une nouvelle partie.';
+    // Draw-1 with unlimited redeals: every card of stock + waste will surface, so only the tableau and foundations can run out of moves.
+    function hasMove() {
+      const fit = (c, d) => !d.length ? c.r === 13 : (d[d.length - 1].up && d[d.length - 1].r === c.r + 1 && isRed(d[d.length - 1]) !== isRed(c));
+      for (const c of S.stock.concat(S.waste)) {
+        if (c.r === S.found[c.s].length + 1) return true;
+        for (let k = 0; k < 7; k++) if (fit(c, S.tab[k])) return true;
+      }
+      for (let i = 0; i < 7; i++) {
+        const col = S.tab[i];
+        for (let idx = 0; idx < col.length; idx++) {
+          const c = col[idx];
+          if (!c.up) continue;
+          if (idx === col.length - 1 && c.r === S.found[c.s].length + 1) return true;
+          if (!(idx === 0 ? c.r !== 13 : !col[idx - 1].up)) continue;
+          for (let k = 0; k < 7; k++) if (k !== i && fit(c, S.tab[k])) return true;
+        }
+      }
+      return false;
+    }
     function render() {
       setText(eMoves, moves); setText(eWins, wins); tick();
       bUndo.disabled = !hist.length || over;
+      if (!over) { if (!hasMove()) status(STUCK); else if (stEl.textContent === STUCK) status('Touche une carte pour la sélectionner.'); }
       // top row
       topEl.textContent = '';
       let el;
@@ -4205,7 +4242,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
     return {
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); },
-      _test: { get S() { return S; }, set S(v) { S = v; }, render, clickCard, clickWaste, clickStock, clickFound, clickColEmpty, get sel() { return sel; }, get over() { return over; } }
+      _test: { get S() { return S; }, set S(v) { S = v; }, render, hasMove, clickCard, clickWaste, clickStock, clickFound, clickColEmpty, get sel() { return sel; }, get over() { return over; } }
     };
   })();
 
