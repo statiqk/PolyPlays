@@ -519,6 +519,8 @@ canvas {
 .pbb.ln small { color: #E9D5FF; }
 .pbb.ln.on { filter: brightness(1.25); }
 [hidden] { display: none !important; }
+.ttl { min-width: 0; }
+.pwr { display: block; margin-top: calc(2px * var(--u)); font-family: var(--font-body); font-size: .7rem; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
 .h7top { display: flex; align-items: center; justify-content: space-between; gap: calc(12px * var(--u)); }
 .spk7 { flex: none; width: calc(44px * var(--u)); height: calc(44px * var(--u)); padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .spk7 svg { width: calc(22px * var(--u)); height: calc(22px * var(--u)); display: block; }
@@ -997,7 +999,7 @@ button, input, select, textarea { font-family: inherit; }
 <main class="app">
   <section class="home" id="home">
     <header class="h7">
-      <div class="h7top"><h1>PolyPlays</h1><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
+      <div class="h7top"><div class="ttl"><h1>PolyPlays</h1><small class="pwr">Powered By PolyTabs</small></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
     <div id="dayCard"></div>
