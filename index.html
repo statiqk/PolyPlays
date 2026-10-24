@@ -1428,7 +1428,7 @@ button, input, select, textarea { font-family: inherit; }
       <button type="button" class="btn primary" id="pbNew">Nouvelle partie</button>
     </div>
     </div>
-    <p class="hint">Maintiens <b>Lancer</b> pour tirer la bille, plus longtemps = plus fort. Les boutons <b>Gauche</b> et <b>Droite</b> (ou les deux moitiés de la table) actionnent les flippers. Au clavier : <b>flèches</b> ou <b>Q/D</b>, <b>Espace</b> pour lancer, <b>Maj</b> pour secouer, <b>P</b> pour la pause. <b>Secouer</b> pousse la bille (3 secousses rapprochées = TILT, flippers coupés jusqu’à la bille suivante). Enchaîne les touches pour monter le combo (jusqu’à ×4). Allume les 3 étoiles pour monter le bonus, les 2 cibles roses pour déclencher la multibille. Chaque table a son propre record.</p>
+    <p class="hint">Maintiens <b>Lancer</b> pour tirer la bille, plus longtemps = plus fort. Les boutons <b>Gauche</b> et <b>Droite</b> (ou les deux moitiés de la table) actionnent les flippers. Au clavier : <b>flèches</b> ou <b>Q/D</b>, <b>Espace</b> pour lancer, <b>Maj</b> pour secouer, <b>P</b> pour la pause. <b>Secouer</b> pousse la bille (3 secousses rapprochées = TILT, flippers coupés jusqu’à la bille suivante). Enchaîne bumpers et cibles pour monter le combo (jusqu’à ×3, qui s’ajoute au bonus). Allume les 3 étoiles pour monter le bonus, les 2 cibles roses pour déclencher la multibille. Chaque table a son propre record.</p>
   </section>
 
   <section class="panel" id="panel-cube" aria-labelledby="gTitle" hidden>
@@ -5010,10 +5010,10 @@ button, input, select, textarea { font-family: inherit; }
     const loop = makeLoop(update, draw, ui, () => state === 'ready' || state === 'playing');
 
     const resetFlips = () => { flips.forEach((f) => { f.th = TH_REST; f.om = 0; f.on = false; }); };
-    const add = (p, raw) => { score += p * mult * (raw ? 1 : cm); };
+    const add = (p, raw) => { score += p * (raw ? mult : mult + cm - 1); };
     function hit() {
-      combo++; comboT = 100;
-      const n = Math.min(4, 1 + Math.floor(combo / 4));
+      combo++; comboT = 60;
+      const n = combo >= 14 ? 3 : combo >= 6 ? 2 : 1;
       if (n > cm) { cm = n; say('COMBO ×' + cm); SFX.play('fl_combo'); }
     }
     function resetCombo() { combo = 0; comboT = 0; cm = 1; }
@@ -5147,7 +5147,7 @@ button, input, select, textarea { font-family: inherit; }
       for (let i = 0; i < 2; i++) {
         const s = SLINGS[i];
         const h = colSeg(b, s[0], s[1], s[2], s[3], 0, 0.4);
-        if (h > 1.5) { kickOut(b, T.kick); hit(); add(100); sf[i] = 1; SFX.play('fl_sling'); }
+        if (h > 1.5) { kickOut(b, T.kick); add(100); sf[i] = 1; SFX.play('fl_sling'); }
       }
       { const fl = FLOOR + 22 * power; if (b.x > DIV + 2 && b.vy >= 0 && b.y > fl - R && b.y < fl + 6) { b.y = fl - R; b.vy = b.vy > 2 ? -b.vy * 0.2 : 0; } }
       for (let i = 0; i < T.bars.length; i++) { const s = T.bars[i]; colSeg(b, s[0], s[1], s[2], s[3], 2.5, 0.6); }
@@ -5328,7 +5328,7 @@ button, input, select, textarea { font-family: inherit; }
         c.fillStyle = '#FDE047'; c.font = "700 13px 'Geist Mono', monospace";
         c.fillText('COMBO ' + combo + (cm > 1 ? ' · ×' + cm : ''), CX, 46);
         c.fillStyle = 'rgba(253,224,71,.28)'; rrect(c, CX - 40, 52, 80, 4, 2); c.fill();
-        c.fillStyle = '#FDE047'; rrect(c, CX - 40, 52, 80 * Math.max(0, comboT) / 100, 4, 2); c.fill();
+        c.fillStyle = '#FDE047'; rrect(c, CX - 40, 52, 80 * Math.max(0, comboT) / 60, 4, 2); c.fill();
       }
       if (toastT > 0) {
         c.globalAlpha = Math.min(1, toastT / 20);
