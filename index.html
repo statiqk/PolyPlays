@@ -578,7 +578,9 @@ canvas {
 .ghd .spk7 { margin-left: 0; border: 0; background: rgba(255, 255, 255, .22); color: #fff; }
 /* Screen lock while a game is open: the page itself cannot scroll or rubber-band; only .app may scroll when a game is taller than the screen. */
 html { overscroll-behavior-x: none; }
-body.locked { position: fixed; inset: 0 0 calc(-1 * var(--sx, 0px)) 0; width: 100%; padding: 0; overflow: hidden; overscroll-behavior: none; }
+/* Verrouillé : la page garde la hauteur de la fenêtre et ne défile pas. Pas de position: fixed sur le body, car iOS raccourcit alors la fenêtre des app installées. */
+html:has(body.locked) { overflow: hidden; overscroll-behavior: none; }
+body.locked { position: relative; height: calc(100vh + var(--sx, 0px)); height: calc(100dvh + var(--sx, 0px)); width: 100%; margin: 0; padding: 0; overflow: hidden; overscroll-behavior: none; touch-action: manipulation; }
 body.locked .app { box-sizing: border-box; max-width: calc(592px * var(--u)); padding: calc(env(safe-area-inset-top, 0px) + clamp(calc(14px * var(--u)), 2.6vh, calc(24px * var(--u)))) max(calc(16px * var(--u)), env(safe-area-inset-right, 0px)) max(calc(32px * var(--u)), env(safe-area-inset-bottom, 0px)) max(calc(16px * var(--u)), env(safe-area-inset-left, 0px)); height: calc(100vh + var(--sx, 0px)); height: calc(100dvh + var(--sx, 0px)); overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
 body.locked .app::-webkit-scrollbar { display: none; }
 /* Fit mode (screen locked): Flipper, Snake and Cube are sized to the screen height, so nothing scrolls while playing. */
