@@ -523,7 +523,7 @@ canvas {
 [hidden] { display: none !important; }
 .ttl { min-width: 0; }
 .ttl h1 { margin-left: -.04em; }
-.pwr { display: block; margin-top: calc(2px * var(--u)); font-family: var(--font-body); font-size: .7rem; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
+.pwr { background: none; border: 0; padding: 0; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; display: block; margin-top: calc(2px * var(--u)); font-family: var(--font-body); font-size: .7rem; font-weight: 500; letter-spacing: .02em; color: var(--muted); }
 .h7top { display: flex; align-items: center; justify-content: space-between; gap: calc(12px * var(--u)); }
 .spk7 { flex: none; width: calc(44px * var(--u)); height: calc(44px * var(--u)); padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .spk7 svg { width: calc(22px * var(--u)); height: calc(22px * var(--u)); display: block; }
@@ -993,6 +993,44 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
 .mmw-r { gap: calc(10px * var(--u)); }
 .mmwin-card .mmw-r .btn { min-height: calc(50px * var(--u)); }
 button, input, select, textarea { font-family: inherit; }
+
+/* Pub maison PolyTabs */
+.ptl { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: calc(3px * var(--u)); width: calc(36px * var(--u)); height: calc(36px * var(--u)); padding: calc(6px * var(--u)); border-radius: calc(10px * var(--u)); background: #1d2129; border: 1px solid #2a2f38; box-sizing: border-box; flex: none; }
+.ptl b { display: block; background: #4f9dff; border-radius: 2px; }
+.ptl b:nth-child(1) { grid-row: 1 / 3; }
+.ptl b:nth-child(2) { background: #b389f9; }
+.ptl b:nth-child(3) { background: #f5b942; }
+.pta { display: flex; align-items: center; gap: calc(10px * var(--u)); box-sizing: border-box; width: 100%; padding: calc(10px * var(--u)) calc(12px * var(--u)); border-radius: calc(18px * var(--u)); background: #171a20; border: 1px solid #2a2f38; color: #e8eaed; font: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; margin-top: calc(10px * var(--u)); position: relative; }
+.pta .t { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.pta .t b { font-size: .95rem; }
+.pta .t small { color: #8b93a0; font-size: .74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pta .go { background: #4f9dff; color: #06121f; border-radius: 999px; padding: calc(7px * var(--u)) calc(14px * var(--u)); font-weight: 700; font-size: .82rem; white-space: nowrap; }
+.pta .x { flex: none; width: calc(32px * var(--u)); height: calc(32px * var(--u)); display: grid; place-items: center; color: #8b93a0; font-size: 1.2rem; border-radius: 50%; }
+.pta.card { flex-direction: column; align-items: stretch; gap: calc(8px * var(--u)); background: #0f1115; padding: calc(12px * var(--u)); }
+.pta.card .top { display: flex; justify-content: space-between; align-items: center; }
+.pta.card .top span { font: 600 .6rem var(--font-mono); letter-spacing: .12em; color: #8b93a0; }
+.pta.card .mid { display: flex; gap: calc(10px * var(--u)); align-items: flex-start; }
+.pta.card .mid b { display: block; font-size: 1rem; }
+.pta.card .mid small { color: #8b93a0; font-size: .76rem; line-height: 1.3; display: block; margin-top: 2px; }
+.pta.card .pn { display: flex; gap: calc(5px * var(--u)); }
+.pta.card .pn i { flex: 1; height: calc(30px * var(--u)); border-radius: calc(7px * var(--u)); opacity: .9; }
+.pta.card .go { text-align: center; padding: calc(10px * var(--u)); }
+.glist .pta { margin-top: 0; }
+.pta.res { margin-top: calc(2px * var(--u)); padding: calc(8px * var(--u)) calc(10px * var(--u)); font-size: .76rem; color: #8b93a0; border-radius: calc(14px * var(--u)); }
+.pta.res .ptl { width: calc(28px * var(--u)); height: calc(28px * var(--u)); padding: calc(4px * var(--u)); }
+.pta.res b { color: #e8eaed; }
+.pta.res .ch { margin-left: auto; font-size: 1.1rem; }
+.qs#qPt { z-index: 97; }
+.ptq { text-align: center; }
+.ptq .ptlg { display: flex; justify-content: center; }
+.ptq .ptlg .ptl { width: calc(58px * var(--u)); height: calc(58px * var(--u)); padding: calc(10px * var(--u)); border-radius: calc(16px * var(--u)); gap: calc(5px * var(--u)); }
+.ptq h3 { font-size: 1.5rem; }
+.ptq .pts { color: #4f9dff; font-weight: 600; font-size: .9rem; margin-top: calc(-6px * var(--u)); }
+.ptq .ptf { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: calc(6px * var(--u)); }
+.ptq .ptf div { background: #171a20; border: 1px solid #2a2f38; border-radius: calc(14px * var(--u)); padding: calc(10px * var(--u)) calc(4px * var(--u)); display: grid; justify-items: center; gap: 2px; }
+.ptq .ptf i { width: calc(24px * var(--u)); height: calc(8px * var(--u)); border-radius: 3px; margin-bottom: calc(4px * var(--u)); }
+.ptq .ptf small { color: #8b93a0; font-size: .7rem; }
+.ptq a.btn { background: #4f9dff; border-color: transparent; color: #06121f; display: grid; place-items: center; text-decoration: none; box-sizing: border-box; }
 </style>
 <script>
 /* Échelle d'affichage : 1 sur téléphone standard et plus petit, jusqu'à 1,65 sur grand écran */
@@ -1017,7 +1055,7 @@ button, input, select, textarea { font-family: inherit; }
 <main class="app">
   <section class="home" id="home">
     <header class="h7">
-      <div class="h7top"><div class="ttl"><h1>PolyPlays</h1><small class="pwr">Powered By PolyTabs</small></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
+      <div class="h7top"><div class="ttl"><h1>PolyPlays</h1><button type="button" class="pwr" id="ptLink" aria-label="À propos de PolyTabs">Powered By PolyTabs</button></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
     <div id="dayCard"></div>
@@ -1025,8 +1063,10 @@ button, input, select, textarea { font-family: inherit; }
     <div id="hero"></div>
     <div class="dfl" id="dfList"></div>
     <div class="glist" id="glist"></div>
+    <div id="ptHome"></div>
   </section>
 
+    <div class="qs" id="qPt" hidden role="dialog" aria-modal="true" aria-labelledby="qPtT"><div class="qc ptq"><div class="ptlg"><i class="ptl"><b></b><b></b><b></b></i></div><h3 id="qPtT">PolyTabs</h3><div class="pts">Tout ton travail, un seul espace.</div><div class="ptf"><div><i style="background:#4f9dff"></i><b>Sites</b><small>en panneaux</small></div><div><i style="background:#b389f9"></i><b>Fichiers</b><small>locaux</small></div><div><i style="background:#f5b942"></i><b>Widgets</b><small>utiles</small></div></div><p>Une appli Windows pour garder tout ton travail ouvert côte à côte, sur 1 à 3 écrans. Pour tous les profils.</p><a class="btn primary" id="qPtGo" href="https://polytabs.fr" target="_blank" rel="noopener">Découvrir PolyTabs.fr</a><button type="button" class="btn" id="qPtNo">Plus tard</button></div></div>
   <section id="gview" hidden>
     <header class="ghd">
       <button type="button" class="bk7" id="bBack" aria-label="Retour aux jeux"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -6072,6 +6112,7 @@ function glyph(id, a, b, c) {
       b.addEventListener('click', () => openGame(id));
       listEl.appendChild(b);
     });
+    if (typeof PT !== 'undefined') PT.paintHome(listEl);
   }
 
   /* Screen lock: freezes page scrolling and keeps the screen awake while a game is open. One toggle (padlock) controls both. */
@@ -6178,6 +6219,64 @@ function glyph(id, a, b, c) {
     return { close, _test: { open, build } };
   })();
 
+
+
+  /* Pub maison PolyTabs : bandeau ou encart sur l'accueil, ligne en fin de partie, feuille de présentation */
+  const PT = (function () {
+    const sheet = $('qPt'), slot = $('ptHome'), DAY_MS = 86400000;
+    const off = () => { const t = +store.get('arcade.pt.off', 0) || 0; return t && Date.now() - t < 7 * DAY_MS; };
+    const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+    const logo = () => { const i = mk('i', 'ptl'); i.setAttribute('aria-hidden', 'true'); i.appendChild(mk('b')); i.appendChild(mk('b')); i.appendChild(mk('b')); return i; };
+    function open() { sheet.hidden = false; $('qPtGo').focus({ preventScroll: true }); }
+    function close() { sheet.hidden = true; }
+    function dismiss() { store.set('arcade.pt.off', Date.now()); slot.textContent = ''; document.querySelectorAll('.pta.card').forEach((e) => e.remove()); }
+    function xbtn() {
+      const x = mk('span', 'x', '×'); x.setAttribute('role', 'button'); x.setAttribute('aria-label', 'Masquer');
+      x.addEventListener('click', (e) => { e.stopPropagation(); dismiss(); }); return x;
+    }
+    function banner() {
+      const b = mk('div', 'pta'); b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', 'PolyTabs : tes sites et fichiers, en panneaux. Voir');
+      b.appendChild(logo());
+      const t = mk('span', 't'); t.appendChild(mk('b', '', 'PolyTabs')); t.appendChild(mk('small', '', 'Tes sites et fichiers, en panneaux')); b.appendChild(t);
+      b.appendChild(mk('span', 'go', 'Voir')); b.appendChild(xbtn());
+      b.addEventListener('click', open); b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      return b;
+    }
+    function card() {
+      const c = mk('div', 'pta card');
+      const top = mk('div', 'top'); top.appendChild(mk('span', '', 'À PROPOS DE POLYTABS')); top.appendChild(xbtn()); c.appendChild(top);
+      const mid = mk('div', 'mid'); mid.appendChild(logo());
+      const tx = mk('div'); tx.appendChild(mk('b', '', 'Tout ton travail, un seul espace.')); tx.appendChild(mk('small', '', 'L’appli Windows qui garde sites et fichiers côte à côte.')); mid.appendChild(tx); c.appendChild(mid);
+      const pn = mk('div', 'pn'); ['#4f9dff', '#b389f9', '#f5b942'].forEach((col) => { const i = mk('i'); i.style.background = col; pn.appendChild(i); }); c.appendChild(pn);
+      const go = mk('button', 'go', 'Voir PolyTabs.fr'); go.type = 'button'; go.style.cssText = 'border:0;font:inherit;font-weight:700;cursor:pointer'; c.appendChild(go);
+      go.addEventListener('click', open);
+      return c;
+    }
+    // Accueil : un seul format par visite, en alternance d'un jour à l'autre (bandeau en bas / encart dans la liste)
+    function paintHome(list) {
+      slot.textContent = ''; document.querySelectorAll('.pta.card').forEach((e) => e.remove());
+      if (off()) return;
+      const day = Math.floor(Date.now() / DAY_MS);
+      if (day % 2 === 0) slot.appendChild(banner());
+      else { const rows = list.children; const c = card(); if (rows.length > 2) list.insertBefore(c, rows[2]); else list.appendChild(c); }
+    }
+    // Fin de partie : une ligne toutes les 3 parties
+    function resLine() {
+      if (off()) return null;
+      const n = (+store.get('arcade.pt.res', 0) || 0) + 1; store.set('arcade.pt.res', n);
+      if (n % 3 !== 0) return null;
+      const b = mk('button', 'pta res'); b.type = 'button'; b.appendChild(logo());
+      const t = mk('span', 't'); const l = mk('span'); l.appendChild(document.createTextNode('Fait avec ')); l.appendChild(mk('b', '', 'PolyTabs')); l.appendChild(document.createTextNode(' · Tout ton travail, un seul espace.')); t.appendChild(l); b.appendChild(t);
+      b.appendChild(mk('span', 'ch', '›')); b.addEventListener('click', open); return b;
+    }
+    $('ptLink').addEventListener('click', open);
+    $('qPtNo').addEventListener('click', close);
+    $('qPtGo').addEventListener('click', () => { setTimeout(close, 50); });
+    sheet.addEventListener('click', (e) => { if (e.target === sheet) close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); } }, true);
+    return { open, close, paintHome, resLine, dismiss, _test: { off } };
+  })();
+  if (window.__arcadeTest) window.__arcadeTest.PT = PT;
 
   /* Feuille « Nouvelle partie » : reprend les réglages du jeu (groupes .seg) et lance la partie */
   const NP = (function () {
@@ -6581,6 +6680,7 @@ function glyph(id, a, b, c) {
         row.appendChild(btn('Autre jeu', '', () => { close(); openSwitch(); }));
         body.appendChild(row);
       }
+      const pad = PT.resLine(); if (pad) body.appendChild(pad);
       el.hidden = false; const f = body.querySelector('button'); if (f) f.focus({ preventScroll: true });
     }
     el.addEventListener('click', (e) => { if (e.target === el) close(); });
