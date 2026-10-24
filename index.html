@@ -780,6 +780,19 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .enc .er .pl8 { width: 34px; height: 34px; background: var(--amber); color: #1a1200; }
 .enc .x { flex: none; min-width: 40px; height: 40px; padding: 0 10px; border-radius: 20px; font: inherit; font-weight: 700; font-size: .95rem; color: #cfc8ea; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .18); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .enc .x.sure { font-size: .78rem; color: #fff; background: #E11D48; border-color: transparent; }
+.qs { position: fixed; inset: 0; z-index: 95; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 3, 12, .62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+.qs[hidden] { display: none; }
+.qc { box-sizing: border-box; width: 100%; max-width: 560px; max-height: 84vh; overflow: auto; display: grid; gap: 12px; padding: 18px 16px 16px; border-radius: 28px; background: #221e30; border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 30px 60px rgba(0, 0, 0, .6); }
+.qc h3 { margin: 0; font-size: 1.2rem; text-align: center; }
+.qc p { margin: 0; text-align: center; color: var(--muted); font-size: .92rem; line-height: 1.4; }
+.qc .btn { min-height: 52px; }
+.qsec { margin: 0 0 8px; font-family: var(--font-mono); font-weight: 600; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.qtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 14px; }
+.qtile { min-width: 0; border: 0; background: none; padding: 0; font: inherit; font-size: .74rem; font-weight: 600; color: var(--ink); text-align: center; cursor: pointer; display: grid; gap: 5px; justify-items: center; -webkit-tap-highlight-color: transparent; }
+.qtile .ti { width: 100%; height: 60px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
+.qtile small { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-weight: 500; font-size: .62rem; color: var(--muted); }
+#gTitle { cursor: pointer; }
+#gTitle::after { content: " \25BE"; font-size: .7em; opacity: .8; }
 .dfl { display: grid; gap: 8px; margin: 0 0 10px; }
 .dfl:empty { display: none; }
 .dfl button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: var(--ink); padding: 10px 14px; border-radius: 22px; cursor: pointer; background: rgba(255, 194, 26, .1); border: 1px solid rgba(255, 194, 26, .5); }
@@ -938,6 +951,8 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     </header>
     <div class="gpop" id="gPop" hidden role="menu"></div>
     <div class="dfbar" id="dfBar" hidden></div>
+    <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
+    <div class="qs" id="qSw" hidden role="dialog" aria-modal="true" aria-labelledby="qSwT"><div class="qc"><h3 id="qSwT">Changer de jeu</h3><div id="qSwBody"></div><button type="button" class="btn" id="qSwAll">Tous les jeux</button></div></div>
     <div class="gbody">
 
   <section class="panel" id="panel-reflexes" aria-labelledby="gTitle">
@@ -5983,6 +5998,10 @@ function glyph(id, a, b, c) {
     pushRecent(name); LOCK.enter(name);
     window.scrollTo(0, 0);
     TABS[name].enter();
+    pushGame(name);
+  }
+  function pushGame(name) {
+    try { if (history.state && history.state.g) history.replaceState({ g: name }, '', '#' + name); else history.pushState({ g: name }, '', '#' + name); } catch (e) { /* ignore */ }
   }
   function goHome() {
     if (tab) TABS[tab].leave();
@@ -5991,10 +6010,61 @@ function glyph(id, a, b, c) {
     held.left = false; held.right = false;
     gview.hidden = true; homeEl.hidden = false; LOCK.leave();
     SAVE.syncAll();
+    try { if (location.hash && !(history.state && history.state.g)) history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
     renderHome();
     window.scrollTo(0, 0);
   }
-  $('bBack').addEventListener('click', goHome);
+  /* Navigation : le bouton retour du téléphone ramène à l'accueil, et le titre ouvre le sélecteur de jeux */
+  const qBack = $('qBack'), qSw = $('qSw');
+  let leaving = false;
+  function backHome() {
+    if (history.state && history.state.g) { leaving = true; history.back(); setTimeout(() => { if (tab) { leaving = false; goHome(); } }, 350); } else goHome();
+  }
+  $('bBack').addEventListener('click', backHome);
+  window.addEventListener('popstate', () => {
+    if (!tab) return;
+    if (leaving) { leaving = false; goHome(); return; }
+    if (!qSw.hidden) { qSw.hidden = true; pushGame(tab); return; }
+    if (!qBack.hidden) { qBack.hidden = true; pushGame(tab); return; }
+    SAVE.syncAll();
+    const sv = SAVE.list().find((x) => x.id === tab);
+    if (!sv) { goHome(); return; }
+    setText($('qBackP'), 'Ta partie de ' + gmap[tab].n + ' (' + sv.p + ') est gardée. Tu pourras la reprendre depuis l\u2019accueil.');
+    qBack.hidden = false; $('qBackStay').focus();
+  });
+  $('qBackStay').addEventListener('click', () => { qBack.hidden = true; pushGame(tab); });
+  $('qBackGo').addEventListener('click', () => { qBack.hidden = true; goHome(); });
+  const gT = $('gTitle');
+  gT.setAttribute('role', 'button'); gT.tabIndex = 0; gT.setAttribute('aria-haspopup', 'dialog');
+  function tiles(list) {
+    const d = document.createElement('div'); d.className = 'qtiles';
+    list.forEach((x) => {
+      const g = gmap[x.id], b = document.createElement('button'); b.type = 'button'; b.className = 'qtile';
+      b.style.setProperty('--c1', g.c[0]); b.style.setProperty('--c2', g.c[1]);
+      b.innerHTML = '<span class="ti">' + gsvg(x.id, 34, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span>' + g.n + '</span>' + (x.p ? '<small></small>' : '');
+      if (x.p) b.querySelector('small').textContent = x.p;
+      b.addEventListener('click', () => { qSw.hidden = true; openGame(x.id); });
+      d.appendChild(b);
+    });
+    return d;
+  }
+  function openSwitch() {
+    if (!tab) return;
+    GM.close(); SAVE.syncAll();
+    const saves = SAVE.list().filter((x) => gmap[x.id] && x.id !== tab).slice(0, 4);
+    const rec = recents().filter((id) => id !== tab && !saves.some((x) => x.id === id)).slice(0, 4).map((id) => ({ id, p: '' }));
+    const body = $('qSwBody'); body.textContent = '';
+    [['En cours', saves], ['Récents', rec]].forEach((a) => {
+      if (!a[1].length) return;
+      const h = document.createElement('div'); h.className = 'qsec'; h.textContent = a[0]; body.appendChild(h); body.appendChild(tiles(a[1]));
+    });
+    qSw.hidden = false; $('qSwAll').focus({ preventScroll: true });
+  }
+  gT.addEventListener('click', openSwitch);
+  gT.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSwitch(); } });
+  $('qSwAll').addEventListener('click', () => { qSw.hidden = true; backHome(); });
+  [qSw, qBack].forEach((el) => el.addEventListener('click', (e) => { if (e.target === el) { if (el === qBack) $('qBackStay').click(); else el.hidden = true; } }));
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!qSw.hidden) { e.preventDefault(); e.stopImmediatePropagation(); qSw.hidden = true; } else if (!qBack.hidden) { e.preventDefault(); e.stopImmediatePropagation(); $('qBackStay').click(); } } }, true);
   /* =====================  DÉFIS ENTRE AMIS  ===================== */
   const DEFI = (function () {
     const LVL = { e: 'Facile', m: 'Moyen', h: 'Difficile' };
