@@ -1106,7 +1106,7 @@ button, input, select, textarea { font-family: inherit; }
   try { if (sessionStorage.getItem('spl')) skip = true; sessionStorage.setItem('spl', '1'); } catch (e) { /* ignore */ }
   if (skip) { s.remove(); return; }
   var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
-  try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); } } catch (e) { /* ignore */ }
+  try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); if (window.innerHeight >= window.innerWidth) { s.style.bottom = 'auto'; s.style.height = h + 'px'; } } } catch (e) { /* ignore */ }
   s.style.setProperty('--k', String(Math.max(.8, Math.min(1.65, Math.min(w / 390, h / 844)))));
   var bar = s.querySelector('.b u'), lab = s.querySelector('.l'), t0 = Date.now(), p = 0, done = false, fontsOk = false, loaded = document.readyState === 'complete';
   function set(v, l) { if (v > p) { p = v; bar.style.width = p + '%'; } if (l) lab.textContent = l; }
