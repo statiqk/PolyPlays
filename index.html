@@ -817,6 +817,23 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .ttt button { border: 0; aspect-ratio: 1; border-radius: 18px; background: var(--surface-2); color: var(--ink); font: 700 clamp(2.4rem, 16vw, 4rem) var(--font-body); cursor: pointer; padding: 0; }
 .ttt button.x { color: #7DD3FC; } .ttt button.o { color: #FDA4AF; } .ttt button.w { background: rgba(255, 194, 26, .22); box-shadow: inset 0 0 0 2px var(--amber); }
 .du-msg { text-align: center; font-weight: 700; min-height: 1.6em; font-size: 1.05rem; }
+
+/* Menu du jeu : un seul bouton ⋯ dans l'en-tête, aide, options, verrou et son dedans */
+.ghd #gMenu, .ghd #gHelp, .ghd #gLock, .ghd #gSnd { display: none !important; }
+#gMore svg { width: 22px; height: 22px; }
+.gpop { position: fixed; z-index: 60; min-width: 250px; max-width: calc(100vw - 24px); padding: 6px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 20px 44px rgba(0, 0, 0, .6); display: grid; gap: 2px; }
+.gpop[hidden] { display: none; }
+.gpop button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0 12px; border: 0; border-radius: 14px; background: transparent; color: var(--ink); font: 600 .98rem var(--font-body); text-align: left; cursor: pointer; }
+.gpop button:hover, .gpop button:focus-visible { background: var(--surface-2); }
+.gpop .ic { flex: none; width: 28px; text-align: center; font-size: 1.1rem; }
+.gpop .st { margin-left: auto; font: 600 .78rem var(--font-mono); color: var(--muted); }
+.gpop .st.on { color: #6EE7B7; }
+/* Chiffres plus lisibles et message en pastille pendant une partie */
+body.locked[data-fit] .stats .k { font-size: .64rem; letter-spacing: .08em; }
+body.locked[data-fit] .stats .v { font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
+body.locked[data-fit] .stats.four .v { font-size: clamp(1.1rem, 5.4vw, 1.5rem); }
+body.locked[data-fit] .status { align-self: center; width: fit-content; max-width: 100%; box-sizing: border-box; text-align: center; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 16px; }
+body.locked[data-fit] .status:empty { display: none; }
 </style>
 
 
@@ -839,7 +856,9 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       <button type="button" class="spk7" id="gHelp" aria-label="Aide du jeu" aria-pressed="false" hidden>?</button>
       <button type="button" class="spk7 lk7" id="gLock" aria-pressed="true"></button>
       <button type="button" class="spk7" id="gSnd" aria-label="Couper le son"></button>
+      <button type="button" class="spk7" id="gMore" aria-label="Menu du jeu" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg></button>
     </header>
+    <div class="gpop" id="gPop" hidden role="menu"></div>
     <div class="dfbar" id="dfBar" hidden></div>
     <div class="gbody">
 
@@ -5559,6 +5578,38 @@ function glyph(id, a, b, c) {
     return { enter(n) { active = true; cur = n; apply(); }, leave() { active = false; cur = null; apply(); }, isOn: () => document.body.classList.contains('locked') };
   })();
   if (window.__arcadeTest) window.__arcadeTest.lock = LOCK;
+
+  /* Menu du jeu (⋯) : regroupe aide, options, verrouillage de l'écran et son */
+  const GM = (function () {
+    const more = $('gMore'), pop = $('gPop'), help = $('gHelp'), opts = $('gMenu'), lock = $('gLock'), snd = $('gSnd');
+    let busy = false;
+    const soundOn = () => /couper/i.test(snd.getAttribute('aria-label') || '');
+    const item = (ic, t, st, on, fn, keep) => {
+      const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem');
+      b.innerHTML = '<span class="ic" aria-hidden="true">' + ic + '</span><span></span>' + (st ? '<span class="st' + (on ? ' on' : '') + '">' + st + '</span>' : '');
+      b.children[1].textContent = t;
+      b.addEventListener('click', (e) => { e.stopPropagation(); busy = true; try { fn(); } finally { busy = false; } if (keep) build(); else close(); });
+      pop.appendChild(b);
+    };
+    function build() {
+      pop.textContent = '';
+      if (!help.hidden) item('?', 'Aide du jeu', '', false, () => help.click());
+      if (!opts.hidden) item('⚙', 'Options du jeu', '', false, () => opts.click());
+      const lk = lock.getAttribute('aria-pressed') === 'true';
+      item('🔒', 'Verrouiller l\u2019écran', lk ? 'activé' : 'désactivé', lk, () => lock.click(), true);
+      const so = soundOn();
+      item('🔊', 'Son', so ? 'activé' : 'coupé', so, () => snd.click(), true);
+    }
+    function place() { const r = more.getBoundingClientRect(); pop.style.top = Math.round(r.bottom + 8) + 'px'; pop.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px'; pop.style.left = 'auto'; }
+    function open() { build(); pop.hidden = false; place(); more.setAttribute('aria-expanded', 'true'); const f = pop.querySelector('button'); if (f) f.focus({ preventScroll: true }); }
+    function close() { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); }
+    more.addEventListener('click', (e) => { e.stopPropagation(); if (pop.hidden) open(); else close(); });
+    document.addEventListener('click', (e) => { if (!busy && !pop.hidden && !pop.contains(e.target) && !more.contains(e.target)) close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); more.focus(); } }, true);
+    window.addEventListener('resize', () => { if (!pop.hidden) place(); });
+    new MutationObserver(() => { if (!pop.hidden && $('gview').hidden) close(); }).observe($('gview'), { attributes: true, attributeFilter: ['hidden'] });
+    return { close, _test: { open, build } };
+  })();
 
   function refreshBanner() {
     if (!tab) return;
