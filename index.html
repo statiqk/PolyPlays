@@ -879,6 +879,10 @@ body.locked[data-fit] .status:empty { display: none; }
 .mmw-st .off { opacity: .25; filter: grayscale(1); }
 .mmw-r { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .mmwin-card .btn { min-height: 50px; }
+
+/* Memory : cartes à proportion fixe, plateau centré, symboles plus grands */
+body.locked[data-fit] .fitbox.mmf > .mmgrid { width: min(100cqw, calc(100cqh * var(--ar, .7))); height: auto; aspect-ratio: var(--ar, .7); max-height: 100cqh; }
+.mmc svg { width: 62%; }
 </style>
 
 
@@ -4234,7 +4238,7 @@ body.locked[data-fit] .status:empty { display: none; }
       shuffle(deck);
       gridEl.textContent = ''; cards = [];
       gridEl.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
-      gridEl.style.maxWidth = (cols * 92) + 'px'; gridEl.style.marginInline = 'auto'; gridEl.style.width = '100%';
+      gridEl.style.setProperty('--ar', (cols * 0.7 / rows).toFixed(4)); gridEl.style.maxWidth = (cols * 92) + 'px'; gridEl.style.marginInline = 'auto'; gridEl.style.width = '100%';
       deck.forEach((k, i) => {
         const el = document.createElement('button');
         el.type = 'button'; el.className = 'mmc'; el.setAttribute('aria-label', 'Carte face cachée');
