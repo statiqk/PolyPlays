@@ -787,6 +787,23 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qc p { margin: 0; text-align: center; color: var(--muted); font-size: .92rem; line-height: 1.4; }
 .qc .btn { min-height: 52px; }
 .qs#qRes, .qs#qAsk { z-index: 96; }
+.qs#qNew { z-index: 96; }
+.np .k { display: block; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 4px 0 4px; text-align: left; }
+.np .seg { display: flex; width: 100%; box-sizing: border-box; }
+.np .seg button { flex: 1; min-width: 0; padding: 0 6px; }
+.tour { position: fixed; inset: 0; z-index: 97; }
+.tour[hidden] { display: none; }
+.tour .hole { position: absolute; border-radius: 18px; box-shadow: 0 0 0 100vmax rgba(5, 3, 12, .76); outline: 3px solid var(--amber); pointer-events: none; transition: all .25s ease; }
+.tour .tc { position: absolute; left: 12px; right: 12px; margin: 0 auto; max-width: 420px; box-sizing: border-box; padding: 14px 16px; border-radius: 20px; background: #fff; color: #15131C; box-shadow: 0 18px 40px rgba(0, 0, 0, .5); }
+.tour .tc b { display: block; font-size: 1.02rem; margin-bottom: 4px; }
+.tour .tc p { margin: 0; font-size: .92rem; line-height: 1.4; color: #3a3550; }
+.tour .tf { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; gap: 8px; }
+.tour .tf .sk { border: 0; background: none; font: inherit; font-size: .88rem; color: #6b6580; min-height: 44px; padding: 0 6px; cursor: pointer; }
+.tour .dots { display: flex; gap: 5px; }
+.tour .dots i { width: 8px; height: 8px; border-radius: 50%; background: #15131C33; }
+.tour .dots i.on { background: #15131C; }
+.tour .tf .nx { border: 0; border-radius: 14px; background: var(--amber); color: #1a1200; font: inherit; font-weight: 700; min-height: 44px; padding: 0 18px; cursor: pointer; }
+
 .qres { text-align: center; }
 .qres .qic { font-size: 2.4rem; line-height: 1; }
 .qres .qk { font-family: var(--font-mono); font-weight: 700; font-size: .7rem; letter-spacing: .16em; color: var(--amber); }
@@ -978,6 +995,8 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     <div class="dfbar" id="dfBar" hidden></div>
     <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
     <div class="qs" id="qRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="qResBody"></div></div>
+    <div class="qs" id="qNew" hidden role="dialog" aria-modal="true" aria-labelledby="qNewT"><div class="qc np"><h3 id="qNewT">Nouvelle partie</h3><div id="qNewB"></div><p id="qNewP"></p><button type="button" class="btn primary" id="qNewGo">Commencer</button><button type="button" class="btn" id="qNewNo">Annuler</button></div></div>
+    <div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-label="Aide pas à pas"><div class="hole" id="tourHole"></div><div class="tc" id="tourCard"><b id="tourT"></b><p id="tourP"></p><div class="tf"><button type="button" class="sk" id="tourSk">Passer</button><span class="dots" id="tourDots"></span><button type="button" class="nx" id="tourNx">Suivant</button></div></div></div>
     <div class="qs" id="qAsk" hidden role="dialog" aria-modal="true" aria-labelledby="qAskT"><div class="qc"><h3 id="qAskT"></h3><p id="qAskP"></p><button type="button" class="btn primary" id="qAskOk"></button><button type="button" class="btn" id="qAskNo">Annuler</button></div></div>
     <div class="qs" id="qSw" hidden role="dialog" aria-modal="true" aria-labelledby="qSwT"><div class="qc"><h3 id="qSwT">Changer de jeu</h3><div id="qSwBody"></div><button type="button" class="btn" id="qSwAll">Tous les jeux</button></div></div>
     <div class="gbody">
@@ -6008,7 +6027,9 @@ function glyph(id, a, b, c) {
     };
     function build() {
       pop.textContent = '';
+      if (NP.has(tab)) item('▶', 'Nouvelle partie…', '', false, () => NP.open(tab));
       if (!help.hidden) item('?', 'Aide du jeu', '', false, () => help.click());
+      if (tab) item('🎓', 'Aide pas à pas', '', false, () => TOUR.replay(tab));
       if (!opts.hidden) item('⚙', 'Options du jeu', '', false, () => opts.click());
       const lk = lock.getAttribute('aria-pressed') === 'true';
       item('🔒', 'Verrouiller l\u2019écran', lk ? 'activé' : 'désactivé', lk, () => lock.click(), true);
@@ -6025,6 +6046,114 @@ function glyph(id, a, b, c) {
     new MutationObserver(() => { if (!pop.hidden && $('gview').hidden) close(); }).observe($('gview'), { attributes: true, attributeFilter: ['hidden'] });
     return { close, _test: { open, build } };
   })();
+
+
+  /* Feuille « Nouvelle partie » : reprend les réglages du jeu (groupes .seg) et lance la partie */
+  const NP = (function () {
+    const m = $('qNew'), box = $('qNewB');
+    const segs = (n) => Array.from(document.querySelectorAll('#panel-' + n + ' .seg'));
+    const newBtn = (n) => document.querySelector('#panel-' + n + ' .btn.primary[id$="New"]') || document.querySelector('#panel-' + n + ' [id$="New"]');
+    const has = (n) => !!n && segs(n).length > 0 && !!newBtn(n);
+    function open(n) {
+      if (!has(n)) return;
+      box.textContent = '';
+      segs(n).forEach((sg) => {
+        const lab = sg.previousElementSibling && sg.previousElementSibling.classList.contains('k') ? sg.previousElementSibling.textContent : (sg.getAttribute('aria-label') || '');
+        const k = document.createElement('span'); k.className = 'k'; k.textContent = lab; box.appendChild(k);
+        const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+        const mine = [];
+        Array.from(sg.querySelectorAll('button')).forEach((ob) => {
+          const b = document.createElement('button'); b.type = 'button'; b.textContent = ob.textContent;
+          b.setAttribute('aria-pressed', ob.getAttribute('aria-pressed') || 'false');
+          b.addEventListener('click', () => { ob.click(); mine.forEach((x) => x[0].setAttribute('aria-pressed', x[1].getAttribute('aria-pressed') || 'false')); });
+          mine.push([b, ob]); g.appendChild(b);
+        });
+        box.appendChild(g);
+      });
+      SAVE.syncAll();
+      const sv = SAVE.list().find((x) => x.id === n);
+      setText($('qNewP'), sv ? 'La partie en cours (' + sv.p + ') sera abandonnée.' : '');
+      $('qNewP').hidden = !sv;
+      m.hidden = false; $('qNewGo').focus({ preventScroll: true });
+      $('qNewGo').onclick = () => { m.hidden = true; const b = newBtn(n); if (b) b.click(); };
+      $('qNewNo').onclick = () => { m.hidden = true; };
+    }
+    m.addEventListener('click', (e) => { if (e.target === m) m.hidden = true; });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { e.preventDefault(); e.stopImmediatePropagation(); m.hidden = true; } }, true);
+    return { has, open, close() { m.hidden = true; } };
+  })();
+
+  /* Aide pas à pas : bulles au premier lancement d'un jeu, rejouable depuis le menu ⋯ */
+  const TOUR = (function () {
+    const root = $('tour'), hole = $('tourHole'), card = $('tourCard');
+    const T = {
+      flipper: ['Maintiens « Lancer » pour tirer la bille : plus tu appuies longtemps, plus elle part fort.', 'Touche Gauche ou Droite (ou les deux moitiés de la table) pour actionner les flippers.'],
+      snake: ['Balaie l’écran dans la direction où tu veux aller.', 'Mange les fruits pour grandir : chacun accélère le jeu. Évite les murs et ta queue.'],
+      cube: ['Glisse une face du cube pour tourner une couche.', 'Glisse à côté du cube pour changer de point de vue. Le chrono démarre à ton premier mouvement après un mélange.'],
+      briques: ['Glisse le doigt pour déplacer la raquette, touche pour lancer la balle.', 'Casse toutes les briques. Celles à bord blanc demandent deux coups.'],
+      pong: ['Glisse le doigt pour déplacer ta raquette en bas.', 'Premier à 7 points. Frappe avec le bord de la raquette pour viser.'],
+      reflexes: ['Cinq feux s’allument un par un.', 'Quand ils s’éteignent, touche le plus vite possible. Partir avant est un faux départ.'],
+      echecs: ['Touche une pièce pour voir ses coups, puis la case d’arrivée.', 'Règle ton camp et ton niveau depuis « Nouvelle partie » dans le menu ⋯.'],
+      dames: ['Touche un pion, puis sa case d’arrivée. La prise est obligatoire.', 'Règle ton camp et ton niveau depuis « Nouvelle partie » dans le menu ⋯.'],
+      puis4: ['Touche une colonne pour y faire tomber un jeton rouge.', 'Aligne quatre jetons, en ligne, colonne ou diagonale, avant l’ordinateur.'],
+      morpion: ['Touche une case pour poser ta croix. Tu commences.', 'Aligne 3 symboles en 3×3, ou 4 en 5×5.'],
+      solitaire: ['Touche une carte pour la sélectionner, puis sa destination. Une deuxième touche l’envoie toute seule.', 'Monte les 4 piles du haut de l’as au roi. Touche la pioche pour tirer une carte.'],
+      memory: ['Touche une carte pour la retourner, puis une deuxième.', 'Si elles sont identiques, la paire reste visible. Trouve toutes les paires en peu de coups.'],
+      pendu: ['Touche une lettre pour tenter ta chance.', 'Trouve le mot avant la septième erreur.'],
+      flechettes: ['Touche la cible là où tu veux planter ta fléchette : 3 fléchettes par tour.', 'Arrive pile à zéro. Le triple compte 3 fois, le double 2 fois, le centre rouge 50.'],
+      navale: ['Place d’abord tes cinq navires sur la grille.', 'Puis touche une case de la flotte ennemie pour tirer. La première flotte coulée perd.'],
+      demineur: ['Touche une case pour la dévoiler. Le premier coup est toujours sûr.', 'Appui long, ou bouton Drapeau, pour marquer une mine.'],
+      sudoku: ['Touche une case, puis un chiffre en bas.', 'Chaque ligne, colonne et bloc 3×3 contient 1 à 9 une seule fois. Trois erreurs et c’est perdu.'],
+    };
+    let steps = [], i = 0, cur = null;
+    function field(n) {
+      const sel = '.fitbox, .board, .mmgrid, .cbstage, canvas, [role="grid"]';
+      return Array.from(document.querySelectorAll('#panel-' + n + ' ' + sel)).find((el) => { const r = el.getBoundingClientRect(); return r.width > 40 && r.height > 40; }) || document.getElementById('panel-' + n);
+    }
+    function aim(el, pad) {
+      if (!el) { hole.style.cssText = 'left:50%;top:40%;width:0;height:0'; return null; }
+      const r = el.getBoundingClientRect();
+      hole.style.left = (r.left - pad) + 'px'; hole.style.top = (r.top - pad) + 'px';
+      hole.style.width = (r.width + pad * 2) + 'px'; hole.style.height = (r.height + pad * 2) + 'px';
+      return r;
+    }
+    function show() {
+      const st = steps[i], el = st.el(), r = aim(el, 6);
+      setText($('tourT'), (i + 1) + ' · ' + st.t); setText($('tourP'), st.p);
+      setText($('tourNx'), i === steps.length - 1 ? 'Compris' : 'Suivant');
+      const d = $('tourDots'); d.textContent = '';
+      steps.forEach((_, k) => { const x = document.createElement('i'); if (k === i) x.className = 'on'; d.appendChild(x); });
+      card.style.top = 'auto'; card.style.bottom = 'auto';
+      const mid = r ? r.top + r.height / 2 : window.innerHeight / 2;
+      if (mid > window.innerHeight * 0.55) card.style.top = Math.max(12, (r ? r.top : 200) - card.offsetHeight - 24) + 'px';
+      else card.style.top = Math.min(window.innerHeight - card.offsetHeight - 12, (r ? r.bottom : 200) + 24) + 'px';
+    }
+    function end(mark) { root.hidden = true; if (mark && cur) store.set('arcade.tour.' + cur, 1); }
+    function start(n) {
+      if (!T[n] || !gmap[n]) return;
+      cur = n;
+      const g = gmap[n];
+      steps = [
+        { t: 'Le plateau', p: T[n][0], el: () => field(n) },
+        { t: 'Le but', p: T[n][1], el: () => field(n) },
+        { t: 'Menu du jeu', p: 'Le bouton ⋯ en haut regroupe l’aide, les réglages, « Nouvelle partie », le son et le verrouillage. Bon jeu dans ' + g.n + ' !', el: () => { const b = $('gMore'); return b && b.getBoundingClientRect().width ? b : $('bBack'); } }
+      ];
+      i = 0; root.hidden = false; show();
+    }
+    $('tourNx').addEventListener('click', () => { if (i < steps.length - 1) { i++; show(); } else end(true); });
+    $('tourSk').addEventListener('click', () => end(true));
+    window.addEventListener('resize', () => { if (!root.hidden) show(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !root.hidden) { e.preventDefault(); e.stopImmediatePropagation(); end(true); } }, true);
+    return {
+      maybe(n) {
+        if (window.__arcadeTest && !window.__arcadeTest.tour) return;
+        if (!T[n] || store.get('arcade.tour.' + n, 0)) return;
+        setTimeout(() => { if (tab === n && !store.get('arcade.tour.' + n, 0)) start(n); }, 450);
+      },
+      replay(n) { start(n); }, isOpen: () => !root.hidden, close() { root.hidden = true; }
+    };
+  })();
+  if (window.__arcadeTest) { window.__arcadeTest.NP = NP; window.__arcadeTest.TOUR = TOUR; }
 
   function refreshBanner() {
     if (!tab) return;
@@ -6046,6 +6175,7 @@ function glyph(id, a, b, c) {
     window.scrollTo(0, 0);
     TABS[name].enter();
     pushGame(name);
+    TOUR.maybe(name);
   }
   function pushGame(name) {
     try { if (history.state && history.state.g) history.replaceState({ g: name }, '', '#' + name); else history.pushState({ g: name }, '', '#' + name); } catch (e) { /* ignore */ }
@@ -6055,6 +6185,7 @@ function glyph(id, a, b, c) {
     tab = null;
     Object.keys(TABS).forEach((n) => { panels[n].hidden = true; });
     held.left = false; held.right = false;
+    TOUR.close(); NP.close();
     gview.hidden = true; homeEl.hidden = false; LOCK.leave();
     SAVE.syncAll();
     try { if (location.hash && !(history.state && history.state.g)) history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
