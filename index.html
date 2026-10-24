@@ -752,19 +752,19 @@ body.locked[data-fit] .fitbox.rc > .mnb { width: min(100cqw, calc(100cqh * var(-
 body.locked[data-fit] .sdpad button { height: 46px; }
 body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 /* ---- Défis entre amis ---- */
-.dfsnack { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 70; display: flex; align-items: center; gap: 8px; max-width: calc(100vw - 24px); padding: 8px 8px 8px 14px; border-radius: 999px; background: #2a2540; border: 1px solid rgba(255, 255, 255, .25); box-shadow: 0 14px 30px rgba(0, 0, 0, .55); font-size: .9rem; }
+.dfsnack { position: fixed; left: 50%; top: calc(64px + env(safe-area-inset-top)); transform: translateX(-50%); z-index: 70; display: flex; align-items: center; gap: 8px; width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; padding: 8px 8px 8px 16px; border-radius: 999px; background: #2a2540; border: 1px solid rgba(255, 255, 255, .25); box-shadow: 0 14px 30px rgba(0, 0, 0, .55); font-size: .9rem; white-space: nowrap; }
 .dfsnack[hidden] { display: none; }
 .dfsnack b { font-weight: 700; white-space: nowrap; }
 .dfsnack .go { flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--amber); color: #1a1200; font: 700 .88rem var(--font-body); cursor: pointer; }
 .dfsnack .x { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .1); color: var(--ink); cursor: pointer; font-size: 1rem; }
 .dfs { position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 3, 12, .62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
 .dfs[hidden] { display: none; }
-.dfs-card { width: min(440px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 26px; padding: 20px 18px 16px; box-shadow: 0 30px 60px rgba(0, 0, 0, .6); display: grid; gap: 10px; text-align: center; }
+.dfs-card { width: min(440px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 26px; padding: 20px 18px 16px; box-shadow: 0 30px 60px rgba(0, 0, 0, .6); display: grid; box-sizing: border-box; min-width: 0; gap: 10px; text-align: center; }
 .dfs-card small { color: var(--muted); font: 600 .72rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
 .dfs-card h3 { margin: 0; font-size: 1.25rem; }
 .dfs-card .big { font-size: 2.6rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }
 .dfs-card .sub { color: var(--muted); font-size: .92rem; }
-.dfs-card input { width: 100%; min-height: 48px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 600 1rem var(--font-body); padding: 0 14px; text-align: center; }
+.dfs-card input { width: 100%; box-sizing: border-box; min-width: 0; min-height: 48px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 600 1rem var(--font-body); padding: 0 14px; text-align: center; }
 .dfs-card .row { display: grid; gap: 8px; margin-top: 4px; }
 .dfs-card .b { min-height: 50px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: 600 1rem var(--font-body); cursor: pointer; }
 .dfs-card .b.pr { background: var(--amber); color: #1a1200; border-color: var(--amber); }
@@ -5332,6 +5332,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
   })();
 
   if (window.__arcadeTest) window.__arcadeTest.games = { SL, PD, MM, MP, DT, PB, MN, SD };
+  if (window.__arcadeTest) { window.__arcadeTest.ARC = ARC; }
 
   /* =====================  TABS & KEYS  ===================== */
   const TABS = {
