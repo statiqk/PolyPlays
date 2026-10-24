@@ -6396,6 +6396,16 @@ function glyph(id, a, b, c) {
       demineur: ['Touche une case pour la dévoiler. Le premier coup est toujours sûr.', 'Appui long, ou bouton Drapeau, pour marquer une mine.'],
       sudoku: ['Touche une case, puis un chiffre en bas.', 'Chaque ligne, colonne et bloc 3×3 contient 1 à 9 une seule fois. Trois erreurs et c’est perdu.'],
     };
+    function safeArea() {
+      if (window.__arcadeTest && window.__arcadeTest.sat) return window.__arcadeTest.sat;
+      const m = (side) => { const p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;width:1px;visibility:hidden;pointer-events:none;padding-' + side + ':env(safe-area-inset-' + side + ',0px)'; document.body.appendChild(p); const v = p.getBoundingClientRect().height; p.remove(); return v; };
+      return { top: m('top'), bot: m('bottom') };
+    }
+    /* cibles précises quand le texte parle d'autre chose que du plateau */
+    const TG = {
+      flipper: [['Les commandes', () => document.querySelector('#panel-flipper .pbctl')], ['Les flippers', () => document.querySelector('#panel-flipper .pbctl')]],
+      reflexes: [['Les feux', () => $('gantry')], ['Ta réaction', () => $('rpad')]]
+    };
     let steps = [], i = 0, cur = null;
     function field(n) {
       const sel = '.fitbox, .board, .mmgrid, .cbstage, canvas, [role="grid"]';
@@ -6415,9 +6425,18 @@ function glyph(id, a, b, c) {
       const d = $('tourDots'); d.textContent = '';
       steps.forEach((_, k) => { const x = document.createElement('i'); if (k === i) x.className = 'on'; d.appendChild(x); });
       card.style.top = 'auto'; card.style.bottom = 'auto';
-      const mid = r ? r.top + r.height / 2 : window.innerHeight / 2;
-      if (mid > window.innerHeight * 0.55) card.style.top = Math.max(12, (r ? r.top : 200) - card.offsetHeight - 24) + 'px';
-      else card.style.top = Math.min(window.innerHeight - card.offsetHeight - 12, (r ? r.bottom : 200) + 24) + 'px';
+      /* la bulle reste hors des barres système (heure, encoche, barre d'accueil) et va là où il y a de la place */
+      const sa = safeArea(), minTop = sa.top + 12, maxBot = window.innerHeight - sa.bot - 12, h = card.offsetHeight, gap = 14;
+      let top;
+      if (!r) top = (window.innerHeight - h) / 2;
+      else {
+        /* on essaie au-dessus puis en dessous du cadre, et on garde la place qui masque le moins le cadre */
+        const hb = r.bottom + 6, ht = r.top - 6, clamp = (y) => Math.max(minTop, Math.min(y, maxBot - h));
+        const ov = (y) => Math.max(0, Math.min(y + h, hb) - Math.max(y, ht));
+        const up = clamp(ht - gap - h), dn = clamp(hb + gap);
+        top = ov(up) <= ov(dn) ? up : dn;
+      }
+      card.style.top = Math.round(Math.max(minTop, Math.min(top, maxBot - h))) + 'px';
     }
     function end(mark) { root.hidden = true; if (mark && cur) store.set('arcade.tour.' + cur, 1); }
     function start(n) {
@@ -6425,8 +6444,8 @@ function glyph(id, a, b, c) {
       cur = n;
       const g = gmap[n];
       steps = [
-        { t: 'Le plateau', p: T[n][0], el: () => field(n) },
-        { t: 'Le but', p: T[n][1], el: () => field(n) },
+        { t: TG[n] ? TG[n][0][0] : 'Le plateau', p: T[n][0], el: () => (TG[n] && TG[n][0][1]()) || field(n) },
+        { t: TG[n] ? TG[n][1][0] : 'Le but', p: T[n][1], el: () => (TG[n] && TG[n][1][1]()) || field(n) },
         { t: 'Menu du jeu', p: 'Le bouton ⋯ en haut regroupe l’aide, les réglages, « Nouvelle partie », le son et le verrouillage. Bon jeu dans ' + g.n + ' !', el: () => { const b = $('gMore'); return b && b.getBoundingClientRect().width ? b : $('bBack'); } }
       ];
       i = 0; root.hidden = false; show();
