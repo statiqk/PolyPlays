@@ -19,6 +19,8 @@
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/instrument-sans-latin-600-normal.woff2) format('woff2')}
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/instrument-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/bricolage-grotesque-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/bricolage-grotesque-latin-700-normal.woff2) format('woff2')}
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
@@ -43,8 +45,8 @@
   --gc2: #4338CA;
   --gct: #fff;
   --font-title: 'Bricolage Grotesque', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Bricolage Grotesque', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 body {
@@ -970,6 +972,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
 .mmwin-card .btn.primary { min-height: calc(56px * var(--u)); }
 .mmw-r { gap: calc(10px * var(--u)); }
 .mmwin-card .mmw-r .btn { min-height: calc(50px * var(--u)); }
+button, input, select, textarea { font-family: inherit; }
 </style>
 <script>
 /* Échelle d'affichage : 1 sur téléphone standard et plus petit, jusqu'à 1,65 sur grand écran */
