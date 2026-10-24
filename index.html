@@ -6273,10 +6273,27 @@ function glyph(id, a, b, c) {
     }
     const b64 = (o) => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     function unb64(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return JSON.parse(decodeURIComponent(escape(atob(s)))); }
-    function makeUrl(id, v, k, name) { return baseUrl() + '#d=' + b64({ i: id, v, k: k || '', n: name }); }
+    const GORD = ['snake', 'briques', 'flipper', 'reflexes', 'navale', 'memory', 'demineur', 'sudoku'];
+    function makeUrl(id, v, k, name) {
+      const gi = GORD.indexOf(id);
+      if (gi < 0) return baseUrl() + '#d=' + b64({ i: id, v, k: k || '', n: name });
+      const ks = CFG[id].k ? Object.keys(CFG[id].k) : [], ki = k ? ks.indexOf(String(k)) : -1;
+      const nm = (name && name !== 'Un joueur') ? '-' + encodeURIComponent(name).replace(/-/g, '%2D') : '';
+      return baseUrl() + '#d=' + gi.toString(36) + '-' + Math.round(v).toString(36) + '-' + (ki < 0 ? 'x' : ki.toString(36)) + nm;
+    }
+    function unpack(t) {
+      if (t.slice(0, 3) === 'eyJ') return unb64(t);
+      const m = /^([0-9a-z])-([0-9a-z]+)-([0-9a-zx])(?:-(.*))?$/.exec(t);
+      if (!m) return null;
+      const id = GORD[parseInt(m[1], 36)]; if (!id) return null;
+      const ks = CFG[id].k ? Object.keys(CFG[id].k) : [];
+      const k = m[3] === 'x' ? '' : ks[parseInt(m[3], 36)];
+      if (k === undefined) return null;
+      return { i: id, v: parseInt(m[2], 36), k, n: m[4] ? decodeURIComponent(m[4]) : '' };
+    }
     function parse(hash) {
       try {
-        const o = unb64(hash.slice(3));
+        const o = unpack(hash.slice(3));
         if (!o || !CFG[o.i] || typeof o.v !== 'number' || !isFinite(o.v) || o.v < 0 || o.v > 1e9) return null;
         const k = String(o.k || '').slice(0, 12);
         if (k && !(CFG[o.i].k && CFG[o.i].k[k])) return null;
@@ -6375,8 +6392,10 @@ function glyph(id, a, b, c) {
     $('dfSnackX').addEventListener('click', hideSnack);
     window.addEventListener('hashchange', fromHash);
     setInterval(updateBar, 500);
-    return { paintList, fromHash, has: (id) => !!CFG[id], fmt: (id, v) => (CFG[id] ? CFG[id].f(v) : null), lab: (id, k) => label(id, k), hi: (id) => !!CFG[id].hi, send(id, v, k) { sendSheet({ id, v: Math.round(v), k: String(k || '') }); }, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
+    return { paintList, fromHash, url: makeUrl, has: (id) => !!CFG[id], fmt: (id, v) => (CFG[id] ? CFG[id].f(v) : null), lab: (id, k) => label(id, k), hi: (id) => !!CFG[id].hi, send(id, v, k) { sendSheet({ id, v: Math.round(v), k: String(k || '') }); }, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
   })();
+
+  if (window.__arcadeTest) window.__arcadeTest.DEFI = DEFI;
 
   /* =====================  RÉSULTAT DE PARTIE (écran commun)  ===================== */
   const RES = (function () {
