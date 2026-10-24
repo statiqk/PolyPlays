@@ -883,6 +883,25 @@ body.locked[data-fit] .status:empty { display: none; }
 /* Memory : cartes à proportion fixe, plateau centré, symboles plus grands */
 body.locked[data-fit] .fitbox.mmf > .mmgrid { width: min(100cqw, calc(100cqh * var(--ar, .7))); height: auto; aspect-ratio: var(--ar, .7); max-height: 100cqh; }
 .mmc svg { width: 62%; }
+
+/* Boutons et zones plus espacés dans tous les jeux */
+.panel { gap: 16px; }
+.row { gap: 12px; }
+.actions { gap: 10px; }
+.btn { min-height: 52px; }
+.actions .btn { min-height: 54px; }
+.seg { padding: 3px; gap: 4px; overflow: visible; }
+.seg button { min-height: 46px; padding: 0 16px; border-radius: 999px; }
+body.locked[data-fit] #gview:not([hidden]) { gap: 10px; }
+body.locked[data-fit] .panel:not([hidden]) { gap: 12px; }
+body.locked[data-fit] .actions { gap: 10px; }
+body.locked[data-fit] .actions .btn { min-height: 54px; padding: 6px 10px; font-size: .95rem; }
+body.locked[data-fit] .actions .btn { min-width: 0; white-space: nowrap; }
+body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font-size: .84rem; padding-inline: 4px; }
+.mmwin-card { gap: 12px; }
+.mmwin-card .btn.primary { min-height: 56px; }
+.mmw-r { gap: 10px; }
+.mmwin-card .mmw-r .btn { min-height: 50px; }
 </style>
 
 
