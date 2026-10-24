@@ -897,13 +897,29 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .ghd h2, .ghd p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ghd #gMenu, .ghd #gHelp, .ghd #gLock, .ghd #gSnd { display: none !important; }
 #gMore svg { width: calc(22px * var(--u)); height: calc(22px * var(--u)); }
-.gpop { position: fixed; z-index: 60; min-width: calc(250px * var(--u)); max-width: calc(100vw - calc(24px * var(--u))); padding: calc(6px * var(--u)); border-radius: calc(20px * var(--u)); background: var(--surface); border: 1px solid var(--line); box-shadow: 0 calc(20px * var(--u)) calc(44px * var(--u)) rgba(0, 0, 0, .6); display: grid; gap: 2px; }
+.gpb { position: fixed; inset: 0; z-index: 59; background: rgba(5, 3, 12, .55); animation: gfade .18s ease both; }
+.gpb[hidden] { display: none; }
+.gpop { position: fixed; z-index: 60; left: 50%; bottom: 0; box-sizing: border-box; width: min(100%, calc(560px * var(--u))); max-height: 86vh; overflow-y: auto; transform: translateX(-50%); padding: calc(8px * var(--u)) calc(14px * var(--u)) max(calc(16px * var(--u)), env(safe-area-inset-bottom, 0px)); border-radius: calc(26px * var(--u)) calc(26px * var(--u)) 0 0; background: var(--surface); border: 1px solid var(--line); border-bottom: 0; box-shadow: 0 calc(-20px * var(--u)) calc(44px * var(--u)) rgba(0, 0, 0, .6); display: grid; gap: calc(2px * var(--u)); animation: gup .22s ease both; overscroll-behavior: contain; }
 .gpop[hidden] { display: none; }
-.gpop button { display: flex; align-items: center; gap: calc(12px * var(--u)); width: 100%; min-height: calc(48px * var(--u)); padding: 0 calc(12px * var(--u)); border: 0; border-radius: calc(14px * var(--u)); background: transparent; color: var(--ink); font: 600 .98rem var(--font-body); text-align: left; cursor: pointer; }
+@keyframes gup { from { transform: translate(-50%, 24px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+@keyframes gfade { from { opacity: 0; } to { opacity: 1; } }
+.gpop .grab { width: calc(40px * var(--u)); height: calc(4px * var(--u)); border-radius: 3px; background: var(--line); margin: 0 auto calc(8px * var(--u)); }
+.gpop .grec { display: flex; gap: calc(18px * var(--u)); padding: calc(10px * var(--u)) calc(14px * var(--u)); border-radius: calc(16px * var(--u)); background: var(--bg); margin-bottom: calc(8px * var(--u)); }
+.gpop .grec div { display: grid; gap: 2px; }
+.gpop .grec small { font: 600 .6rem var(--font-mono); letter-spacing: .12em; color: var(--muted); }
+.gpop .grec b { font-size: 1.15rem; font-weight: 800; }
+.gpop .gpills { display: flex; gap: calc(8px * var(--u)); margin-bottom: calc(4px * var(--u)); }
+.gpop .gpills button { flex: 1; width: auto; flex-direction: column; justify-content: center; gap: calc(2px * var(--u)); min-height: calc(62px * var(--u)); padding: calc(6px * var(--u)) 0; border-radius: calc(16px * var(--u)); background: var(--surface-2); font-size: .78rem; font-weight: 600; }
+.gpop .gpills button .ic { width: auto; font-size: 1.25rem; }
+.gpop .gpills button[aria-pressed="true"] { background: #1f4d3a; color: #D1FAE5; }
+.gpop .gsec { margin: calc(10px * var(--u)) calc(4px * var(--u)) calc(2px * var(--u)); font: 600 .62rem var(--font-mono); letter-spacing: .14em; color: var(--muted); }
+.gpop button { display: flex; align-items: center; gap: calc(12px * var(--u)); width: 100%; min-height: calc(48px * var(--u)); padding: 0 calc(10px * var(--u)); border: 0; border-radius: calc(14px * var(--u)); background: transparent; color: var(--ink); font: inherit; font-weight: 600; font-size: .98rem; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .gpop button:hover, .gpop button:focus-visible { background: var(--surface-2); }
-.gpop .ic { flex: none; width: calc(28px * var(--u)); text-align: center; font-size: 1.1rem; }
-.gpop .st { margin-left: auto; font: 600 .78rem var(--font-mono); color: var(--muted); }
-.gpop .st.on { color: #6EE7B7; }
+.gpop button .ic { flex: none; width: calc(28px * var(--u)); text-align: center; font-size: 1.1rem; }
+.gpop button .tx { display: grid; gap: 1px; }
+.gpop button .tx small { font: 500 .74rem var(--font-body); color: var(--muted); }
+.gpop button.sub { padding-left: calc(48px * var(--u)); min-height: calc(42px * var(--u)); font-weight: 500; }
+.gpop button .chev { margin-left: auto; color: var(--muted); font-size: 1.1rem; }
 /* Chiffres plus lisibles et message en pastille pendant une partie */
 body.locked[data-fit] .stats .k { font-size: .64rem; letter-spacing: .08em; }
 body.locked[data-fit] .stats .v { font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
@@ -1021,7 +1037,8 @@ button, input, select, textarea { font-family: inherit; }
       <button type="button" class="spk7" id="gSnd" aria-label="Couper le son"></button>
       <button type="button" class="spk7" id="gMore" aria-label="Menu du jeu" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg></button>
     </header>
-    <div class="gpop" id="gPop" hidden role="menu"></div>
+    <div class="gpb" id="gPopB" hidden></div>
+    <div class="gpop" id="gPop" hidden role="menu" aria-label="Menu du jeu"></div>
     <div class="dfbar" id="dfBar" hidden></div>
     <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
     <div class="qs" id="qRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="qResBody"></div></div>
@@ -6100,34 +6117,63 @@ function glyph(id, a, b, c) {
 
   /* Menu du jeu (⋯) : regroupe aide, options, verrouillage de l'écran et son */
   const GM = (function () {
-    const more = $('gMore'), pop = $('gPop'), help = $('gHelp'), opts = $('gMenu'), lock = $('gLock'), snd = $('gSnd');
-    let busy = false;
+    const more = $('gMore'), pop = $('gPop'), back = $('gPopB'), help = $('gHelp'), opts = $('gMenu'), lock = $('gLock'), snd = $('gSnd');
+    let busy = false, helpOpen = false;
     const soundOn = () => /couper/i.test(snd.getAttribute('aria-label') || '');
-    const item = (ic, t, st, on, fn, keep) => {
-      const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem');
-      b.innerHTML = '<span class="ic" aria-hidden="true">' + ic + '</span><span></span>' + (st ? '<span class="st' + (on ? ' on' : '') + '">' + st + '</span>' : '');
-      b.children[1].textContent = t;
-      b.addEventListener('click', (e) => { e.stopPropagation(); busy = true; try { fn(); } finally { busy = false; } if (keep) build(); else close(); });
-      pop.appendChild(b);
+    const vibOk = () => typeof navigator.vibrate === 'function';
+    const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+    const run = (fn, keep) => { busy = true; try { fn(); } finally { busy = false; } if (keep) build(); else close(); };
+    const item = (ic, t, sub, fn, o) => {
+      o = o || {};
+      const b = mk('button', o.sub ? 'sub' : ''); b.type = 'button'; b.setAttribute('role', 'menuitem');
+      b.appendChild(mk('span', 'ic', ic)); b.lastChild.setAttribute('aria-hidden', 'true');
+      const tx = mk('span', 'tx'); tx.appendChild(mk('span', '', t)); if (sub) tx.appendChild(mk('small', '', sub)); b.appendChild(tx);
+      if (o.chev) b.appendChild(mk('span', 'chev', o.chev));
+      b.addEventListener('click', (e) => { e.stopPropagation(); run(fn, o.keep); });
+      pop.appendChild(b); return b;
     };
-    function build() {
-      pop.textContent = '';
-      if (NP.has(tab)) item('▶', 'Nouvelle partie…', '', false, () => NP.open(tab));
-      if (!help.hidden) item('?', 'Aide du jeu', '', false, () => help.click());
-      if (tab) item('🎓', 'Aide pas à pas', '', false, () => TOUR.replay(tab));
-      if (!opts.hidden) item('⚙', 'Options du jeu', '', false, () => opts.click());
-      const lk = lock.getAttribute('aria-pressed') === 'true';
-      item('🔒', 'Verrouiller l\u2019écran', lk ? 'activé' : 'désactivé', lk, () => lock.click(), true);
-      const so = soundOn();
-      item('🔊', 'Son', so ? 'activé' : 'coupé', so, () => snd.click(), true);
+    const pill = (ic, t, on, fn) => {
+      const b = mk('button', ''); b.type = 'button'; b.setAttribute('aria-pressed', String(!!on));
+      b.appendChild(mk('span', 'ic', ic)); b.lastChild.setAttribute('aria-hidden', 'true'); b.appendChild(mk('span', '', t));
+      b.addEventListener('click', (e) => { e.stopPropagation(); busy = true; try { fn(); } finally { busy = false; } build(true); });
+      return b;
+    };
+    const pauseBtn = () => Array.from(document.querySelectorAll('#panel-' + tab + ' button')).find((b) => /^(Pause|Reprendre)$/.test(b.textContent.trim()) && !b.hidden && !b.disabled);
+    function build(keepScroll) {
+      const top = pop.scrollTop; pop.textContent = '';
+      pop.appendChild(mk('div', 'grab'));
+      const r = tab ? rec(tab) : { short: '—' }, st = tab ? RES.stats(tab) : { n: 0 };
+      const rc = mk('div', 'grec');
+      const c1 = mk('div'); c1.appendChild(mk('small', '', 'TON RECORD')); c1.appendChild(mk('b', '', r.short || '—')); rc.appendChild(c1);
+      if (st.n > 0) { const c2 = mk('div'); c2.appendChild(mk('small', '', 'PARTIES')); c2.appendChild(mk('b', '', String(st.n))); rc.appendChild(c2); }
+      pop.appendChild(rc);
+      const pl = mk('div', 'gpills'), lk = lock.getAttribute('aria-pressed') === 'true';
+      pl.appendChild(pill('🔊', 'Son', soundOn(), () => snd.click()));
+      if (vibOk()) pl.appendChild(pill('📳', 'Vibrations', !!(SFX.cfg && SFX.cfg.vib), () => $('sndVib').click()));
+      pl.appendChild(pill('🔒', 'Verrou', lk, () => lock.click()));
+      pop.appendChild(pl);
+      pop.appendChild(mk('div', 'gsec', 'PARTIE'));
+      if (NP.has(tab)) item('▶', 'Nouvelle partie…', '', () => NP.open(tab));
+      const pb = pauseBtn(); if (pb) item('⏸', pb.textContent.trim() === 'Reprendre' ? 'Reprendre' : 'Pause', '', () => pb.click());
+      if (tab && DEFI.has(tab)) { const bo = st.best; if (bo) item('⚔', 'Défier un ami', 'Avec ton record', () => DEFI.send(tab, Math.round(bo.v), bo.k)); }
+      pop.appendChild(mk('div', 'gsec', 'AIDE'));
+      if (!help.hidden && tab) {
+        item('?', 'Aide', 'Règles ou pas à pas', () => { helpOpen = !helpOpen; }, { keep: true, chev: helpOpen ? '⌃' : '⌄' });
+        if (helpOpen) { item('📖', 'Règles du jeu', '', () => help.click(), { sub: true }); item('🎓', 'Aide pas à pas', '', () => TOUR.replay(tab), { sub: true }); }
+      } else if (tab) item('🎓', 'Aide pas à pas', '', () => TOUR.replay(tab));
+      pop.appendChild(mk('div', 'gsec', 'AUTRE'));
+      if (!opts.hidden) item('⚙', 'Options du jeu', '', () => opts.click());
+      item('🕹', 'Changer de jeu', '', () => openSwitch());
+      item('⌂', 'Retour à l’accueil', '', () => backHome());
+      Array.from(pop.querySelectorAll('.gsec')).forEach((h) => { const n = h.nextElementSibling; if (!n || n.classList.contains('gsec')) h.remove(); });
+      if (keepScroll) pop.scrollTop = top;
     }
-    function place() { const r = more.getBoundingClientRect(); pop.style.top = Math.round(r.bottom + 8) + 'px'; pop.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px'; pop.style.left = 'auto'; }
-    function open() { build(); pop.hidden = false; place(); more.setAttribute('aria-expanded', 'true'); const f = pop.querySelector('button'); if (f) f.focus({ preventScroll: true }); }
-    function close() { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); }
+    function open() { helpOpen = false; build(); pop.hidden = false; back.hidden = false; more.setAttribute('aria-expanded', 'true'); const f = pop.querySelector('.gpills button'); if (f) f.focus({ preventScroll: true }); }
+    function close() { pop.hidden = true; back.hidden = true; more.setAttribute('aria-expanded', 'false'); }
+    back.addEventListener('click', close);
     more.addEventListener('click', (e) => { e.stopPropagation(); if (pop.hidden) open(); else close(); });
     document.addEventListener('click', (e) => { if (!busy && !pop.hidden && !pop.contains(e.target) && !more.contains(e.target)) close(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); more.focus(); } }, true);
-    window.addEventListener('resize', () => { if (!pop.hidden) place(); });
     new MutationObserver(() => { if (!pop.hidden && $('gview').hidden) close(); }).observe($('gview'), { attributes: true, attributeFilter: ['hidden'] });
     return { close, _test: { open, build } };
   })();
@@ -6539,7 +6585,16 @@ function glyph(id, a, b, c) {
     }
     el.addEventListener('click', (e) => { if (e.target === el) close(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !el.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); } }, true);
-    return { show(o) { setTimeout(() => open(o), 700); }, close, _test: { open } };
+    function stats(id) {
+      const hi = DEFI.has(id) ? DEFI.hi(id) : true; let n = 0, best = null;
+      Object.keys(log).forEach((key) => {
+        if (key.indexOf(id + '|') !== 0 || !Array.isArray(log[key])) return;
+        const k = key.slice(id.length + 1);
+        log[key].forEach((x) => { if (typeof x !== 'number') return; n++; if (!best || (hi ? x > best.v : x < best.v)) best = { v: x, k }; });
+      });
+      return { n, best };
+    }
+    return { show(o) { setTimeout(() => open(o), 700); }, close, stats, _test: { open } };
   })();
 
   /* =====================  DÉFI DU JOUR  ===================== */
