@@ -771,6 +771,15 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .dfs-card .ok { color: #6EE7B7; } .dfs-card .ko { color: #FB7185; }
 .dfbar { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 6px; padding: 5px 12px; border-radius: 999px; background: rgba(255, 194, 26, .14); border: 1px solid rgba(255, 194, 26, .45); color: #FFE08A; font-size: .8rem; font-weight: 600; text-align: center; }
 .dfbar[hidden] { display: none; }
+.enc { margin: 0 0 14px; width: 0; min-width: 100%; }
+.enc:empty { display: none; }
+.enc h3 { margin: 0 0 8px; font-family: var(--font-mono); font-weight: 600; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.enc .er { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; }
+.enc .er .grow { flex: 1; width: auto; min-width: 0; padding: 9px 12px; border-color: rgba(255, 194, 26, .45); }
+.enc .er .ti { width: 42px; height: 42px; border-radius: 14px; }
+.enc .er .pl8 { width: 34px; height: 34px; background: var(--amber); color: #1a1200; }
+.enc .x { flex: none; min-width: 40px; height: 40px; padding: 0 10px; border-radius: 20px; font: inherit; font-weight: 700; font-size: .95rem; color: #cfc8ea; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .18); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.enc .x.sure { font-size: .78rem; color: #fff; background: #E11D48; border-color: transparent; }
 .dfl { display: grid; gap: 8px; margin: 0 0 10px; }
 .dfl:empty { display: none; }
 .dfl button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: var(--ink); padding: 10px 14px; border-radius: 22px; cursor: pointer; background: rgba(255, 194, 26, .1); border: 1px solid rgba(255, 194, 26, .5); }
@@ -911,6 +920,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       <div class="h7top"><h1>PolyPlays</h1><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
+    <div class="enc" id="encList"></div>
     <div id="hero"></div>
     <div class="dfl" id="dfList"></div>
     <div class="glist" id="glist"></div>
@@ -1632,7 +1642,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
           if (!o || o.app !== 'PolyPlays' || !o.data || typeof o.data !== 'object') throw new Error('format');
           let n = 0;
           Object.keys(o.data).forEach((k) => { const v = o.data[k]; if (k.indexOf('arcade.') === 0 && typeof v === 'string' && v.length < 100000) { try { JSON.parse(v); localStorage.setItem(k, v); n++; } catch (e) { /* skip invalid value */ } } });
-          say(n + ' éléments restaurés. Rechargement…'); setTimeout(() => location.reload(), 900);
+          window.__noSave = true; say(n + ' éléments restaurés. Rechargement…'); setTimeout(() => location.reload(), 900);
         } catch (e) { say('Ce fichier n’est pas une sauvegarde PolyPlays.'); }
       };
       r.onerror = () => say('Lecture du fichier impossible.');
@@ -1641,7 +1651,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     del.addEventListener('click', () => {
       if (!sure) { sure = 1; del.classList.add('sure'); del.textContent = 'Confirmer : tout effacer'; say('Les records, victoires et parties en cours seront supprimés. Le son et le prénom sont gardés.'); setTimeout(() => { sure = 0; del.classList.remove('sure'); del.textContent = 'Effacer mes records'; }, 6000); return; }
       keys().filter((k) => KEEP.indexOf(k) < 0).forEach((k) => { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } });
-      say('Records effacés. Rechargement…'); setTimeout(() => location.reload(), 700);
+      window.__noSave = true; say('Records effacés. Rechargement…'); setTimeout(() => location.reload(), 700);
     });
   })();
 
@@ -2011,6 +2021,48 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     };
   }
 
+  /* =====================  PARTIES EN COURS (sauvegarde automatique)  ===================== */
+  const pl = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+  const SAVE = (function () {
+    const KEY = (id) => 'arcade.save.' + id, regs = {}, last = {};
+    function reg(id, o) {
+      regs[id] = o;
+      const s = store.get(KEY(id), null);
+      if (s && typeof s === 'object' && s.d) {
+        try { o.load(s.d); last[id] = JSON.stringify(s.d); } catch (e) { store.set(KEY(id), null); try { o.reset(); } catch (e2) { /* ignore */ } }
+      }
+    }
+    function sync(id) {
+      const o = regs[id]; if (!o || window.__noSave) return;
+      let d = null; try { d = o.snap(); } catch (e) { d = null; }
+      if (!d) { if (last[id] !== undefined) { delete last[id]; store.set(KEY(id), null); } return; }
+      const j = JSON.stringify(d);
+      if (j === last[id]) return;
+      last[id] = j; store.set(KEY(id), { t: Date.now(), p: o.prog ? o.prog(d) : '', d });
+    }
+    const syncAll = () => Object.keys(regs).forEach(sync);
+    function list() {
+      const out = [];
+      Object.keys(regs).forEach((id) => { const s = store.get(KEY(id), null); if (s && typeof s === 'object' && s.d) out.push({ id, t: +s.t || 0, p: s.p || '' }); });
+      const sd = store.get('arcade.sudoku.save', null);
+      if (sd && typeof sd === 'object' && sd.started && typeof sd.val === 'string') {
+        const left = (sd.val.match(/0/g) || []).length;
+        out.push({ id: 'sudoku', t: +sd.t || 0, p: pl(left, 'case') + ' restante' + (left > 1 ? 's' : '') });
+      }
+      return out.sort((a, b) => b.t - a.t);
+    }
+    function abandon(id) {
+      if (id === 'sudoku') { SD.reset(); return; }
+      const o = regs[id]; store.set(KEY(id), null); delete last[id];
+      if (o) { try { o.reset(); } catch (e) { /* ignore */ } }
+    }
+    setInterval(() => { if (!document.hidden) syncAll(); }, 2500);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) syncAll(); });
+    window.addEventListener('pagehide', syncAll);
+    document.addEventListener('click', () => setTimeout(syncAll, 150));
+    return { reg, sync, syncAll, list, abandon };
+  })();
+
   /* =====================  BATAILLE NAVALE  ===================== */
   const NV = (function () {
     const SZ = 10, LET = 'ABCDEFGHIJ';
@@ -2220,6 +2272,19 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bGo.addEventListener('click', startBattle);
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('navale', {
+      snap() { return phase === 'battle' ? { mine, foe, shots, turn } : null; },
+      load(d) {
+        const ok = (b) => b && Array.isArray(b.ships) && b.ships.length === FLEET.length && Array.isArray(b.at) && b.at.length === SZ * SZ && Array.isArray(b.shot) && b.shot.length === SZ * SZ;
+        if (!ok(d.mine) || !ok(d.foe)) throw new Error('bad');
+        clearTimeout(timer); mine = d.mine; foe = d.foe; shots = +d.shots || 0; turn = d.turn === 'ai' ? 'ai' : 'me'; busy = turn === 'ai';
+        phase = 'battle'; root.dataset.phase = 'battle'; placeBtns.hidden = true; battleBtns.hidden = false;
+        say('Partie reprise. À toi de tirer.', ''); render();
+        if (busy) timer = setTimeout(aiTurn, 600);
+      },
+      prog: (d) => pl(d.shots, 'tir'),
+      reset: newGame
+    });
   })();
 
   /* =====================  CASSE-BRIQUES  ===================== */
@@ -3159,6 +3224,23 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bUndo.addEventListener('click', undo);
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('dames', {
+      snap() { return (over || !hist.length) ? null : { side, level, b: Array.from(S.b), turn: S.turn, nk: S.nk, last, keys, hist: hist.map((h) => ({ b: Array.from(h.b), turn: h.turn, nk: h.nk, last: h.last })) }; },
+      load(d) {
+        if (!Array.isArray(d.b) || d.b.length !== 100 || !Array.isArray(d.hist) || !Array.isArray(d.keys)) throw new Error('bad');
+        gid++; stopThink();
+        side = d.side === -1 ? -1 : 1; level = ['easy', 'norm', 'hard'].indexOf(d.level) >= 0 ? d.level : 'norm';
+        bW.setAttribute('aria-pressed', String(side === 1)); bB.setAttribute('aria-pressed', String(side === -1));
+        lE.setAttribute('aria-pressed', String(level === 'easy')); lN.setAttribute('aria-pressed', String(level === 'norm')); lH.setAttribute('aria-pressed', String(level === 'hard'));
+        S = { b: Int8Array.from(d.b), turn: d.turn === -1 ? -1 : 1, nk: +d.nk || 0 };
+        hist = d.hist.map((h) => ({ b: Int8Array.from(h.b), turn: h.turn, nk: h.nk, last: h.last }));
+        keys = d.keys.slice(); last = d.last || null; busy = false; partial = []; cand = []; counted = false;
+        lastResult = evaluateState(); render();
+        if (!over && S.turn !== side) aiMove();
+      },
+      prog: (d) => 'coup ' + (Math.floor(d.hist.length / 2) + 1),
+      reset: newGame
+    });
   })();
 
   /* =====================  ÉCHECS (INTERFACE)  ===================== */
@@ -3349,6 +3431,24 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bUndo.addEventListener('click', undo);
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('echecs', {
+      snap() { return (over || !S.st.length) ? null : { side, level, hist: S.st.map((u) => u.m) }; },
+      load(d) {
+        if (!Array.isArray(d.hist) || !d.hist.length) throw new Error('bad');
+        gid++; stopThink();
+        side = d.side === -1 ? -1 : 1; level = ['easy', 'norm', 'hard'].indexOf(d.level) >= 0 ? d.level : 'norm';
+        bW.setAttribute('aria-pressed', String(side === 1)); bB.setAttribute('aria-pressed', String(side === -1));
+        lE.setAttribute('aria-pressed', String(level === 'easy')); lN.setAttribute('aria-pressed', String(level === 'norm')); lH.setAttribute('aria-pressed', String(level === 'hard'));
+        S = CH.init(); keys = [CH.key(S)];
+        d.hist.forEach((m) => { CH.make(S, m); keys.push(CH.key(S)); });
+        last = d.hist[d.hist.length - 1]; hasLast = true; sel = -1; targets = []; busy = false; promoEl.hidden = true;
+        info = CH.status(S); over = info.over;
+        render();
+        if (!over && S.turn !== side) aiMove();
+      },
+      prog: (d) => 'coup ' + (Math.floor(d.hist.length / 2) + 1),
+      reset: newGame
+    });
   })();
 
   /* =====================  CUBE 3×3  ===================== */
@@ -3938,6 +4038,28 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bUndo.addEventListener('click', undo);
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('puis4', {
+      snap() { return (over || !hist.length) ? null : { hf: humanFirst, level, hist }; },
+      load(d) {
+        if (!Array.isArray(d.hist) || !d.hist.length) throw new Error('bad');
+        gid++; humanFirst = !!d.hf;
+        bFirst.setAttribute('aria-pressed', String(humanFirst)); bSecond.setAttribute('aria-pressed', String(!humanFirst));
+        setLevel(['easy', 'norm', 'hard'].indexOf(d.level) >= 0 ? d.level : 'norm');
+        b = new Int8Array(W * H); top = Array(W).fill(H - 1); hist = []; over = false; busy = false;
+        holes.forEach((h) => { h.textContent = ''; h.classList.remove('win'); });
+        d.hist.forEach((m) => {
+          const r = m.r, c = m.c, color = m.color === 1 ? 1 : -1;
+          if (top[c] !== r) throw new Error('bad');
+          b[r * W + c] = color; top[c]--; hist.push({ r, c, color });
+          const el = document.createElement('span'); el.className = 'p4d ' + (color === 1 ? 'r' : 'y'); el.style.setProperty('--n', r + 1);
+          holes[r * W + c].appendChild(el);
+        });
+        status('À toi de jouer.'); refresh();
+        if (hist[hist.length - 1].color === 1) aiMove();
+      },
+      prog: (d) => pl(d.hist.length, 'jeton'),
+      reset: newGame
+    });
     return { col: onCol };
   })();
 
@@ -4089,6 +4211,20 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     s5.addEventListener('click', () => setSize(5));
     bNew.addEventListener('click', newGame);
     build();
+    SAVE.reg('morpion', {
+      snap() { return (over || !b.some((v) => v)) ? null : { n: bSize, level, b: Array.from(b) }; },
+      load(d) {
+        const n = d.n === 5 ? 5 : 3;
+        if (!Array.isArray(d.b) || d.b.length !== n * n) throw new Error('bad');
+        setLevel(['easy', 'norm', 'hard'].indexOf(d.level) >= 0 ? d.level : 'norm');
+        setSize(n);
+        b = Int8Array.from(d.b); draw(); stats();
+        const x = b.filter((v) => v === 1).length, o = b.filter((v) => v === -1).length;
+        if (x > o) { b[choose()] = -1; if (!end()) status('À toi de jouer.'); } else status('À toi de jouer.');
+      },
+      prog: (d) => pl(d.b.filter((v) => v).length, 'coup'),
+      reset: newGame
+    });
     return { winner, _test: { get b() { return b; } } };
   })();
 
@@ -4169,6 +4305,17 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     }
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('pendu', {
+      snap() { return (over || (!got.size && !bad.size)) ? null : { theme, word, got: Array.from(got), bad: Array.from(bad) }; },
+      load(d) {
+        if (!WORDS[d.theme] || typeof d.word !== 'string' || !d.word || !Array.isArray(d.got) || !Array.isArray(d.bad)) throw new Error('bad');
+        theme = d.theme; Object.keys(themeBtns).forEach((n) => themeBtns[n].setAttribute('aria-pressed', String(n === theme)));
+        word = d.word; lastWord = word; got = new Set(d.got); bad = new Set(d.bad); over = false;
+        status('Partie reprise. Choisis une lettre.'); draw();
+      },
+      prog: (d) => d.bad.length + ' / ' + MAX + ' erreurs',
+      reset: newGame
+    });
     return { guess, _test: { get word() { return word; } } };
   })();
 
@@ -4249,12 +4396,12 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     $('mmWinChal').addEventListener('click', () => { closeWin(); DEFI.send('memory', moves, String(size)); });
     winEl.addEventListener('click', (e) => { if (e.target === winEl) closeWin(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !winEl.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closeWin(); } }, true);
-    function build() {
+    function build(deckIn) {
       const [cols, rows] = SIZES[size], n = cols * rows;
       closeWin(); stopTimer(); elapsed = 0; started = false; over = false; lock = false; open = []; moves = 0; found = 0;
-      const deck = [];
+      let deck = [];
       for (let k = 0; k < n / 2; k++) deck.push(k, k);
-      shuffle(deck);
+      if (Array.isArray(deckIn) && deckIn.length === n) deck = deckIn.slice(); else shuffle(deck);
       gridEl.textContent = ''; cards = [];
       gridEl.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
       gridEl.style.setProperty('--ar', (cols * 0.7 / rows).toFixed(4)); gridEl.style.maxWidth = (cols * 92) + 'px'; gridEl.style.marginInline = 'auto'; gridEl.style.width = '100%';
@@ -4276,8 +4423,22 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       build();
     }
     Object.keys(sBtn).forEach((k) => sBtn[k].addEventListener('click', () => setSize(+k)));
-    bNew.addEventListener('click', build);
+    bNew.addEventListener('click', () => build());
     build();
+    SAVE.reg('memory', {
+      snap() { return (over || !started || !moves) ? null : { size, deck: cards.map((c) => c.k), ok: cards.map((c) => (c.state === 'ok' ? 1 : 0)), moves, found, el: Math.round(now()) }; },
+      load(d) {
+        if (!SIZES[d.size] || !Array.isArray(d.deck) || !Array.isArray(d.ok) || d.deck.length !== SIZES[d.size][0] * SIZES[d.size][1] || d.ok.length !== d.deck.length) throw new Error('bad');
+        size = d.size; Object.keys(sBtn).forEach((k) => sBtn[k].setAttribute('aria-pressed', String(+k === size)));
+        build(d.deck);
+        d.ok.forEach((v, i) => { if (v) { cards[i].state = 'ok'; cards[i].el.className = 'mmc ok'; cards[i].el.setAttribute('aria-label', cards[i].name); } });
+        moves = +d.moves || 0; found = +d.found || 0; started = true; elapsed = Math.max(0, +d.el || 0);
+        setText(eMoves, moves); setText(ePairs, found + ' / ' + pairsTotal()); tick();
+        status('Partie reprise. Retourne une carte.');
+      },
+      prog: (d) => pl(d.moves, 'coup') + ' · ' + d.found + '/' + (d.deck.length / 2) + ' paires',
+      reset: () => build()
+    });
     return {
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); },
@@ -4495,6 +4656,19 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bUndo.addEventListener('click', undo);
     bNew.addEventListener('click', newGame);
     newGame();
+    SAVE.reg('solitaire', {
+      snap() { return (over || !started) ? null : { S, moves, el: Math.round(now()), hist: hist.slice(-15) }; },
+      load(d) {
+        const s = d.S;
+        if (!s || !Array.isArray(s.tab) || s.tab.length !== 7 || !Array.isArray(s.found) || s.found.length !== 4 || !Array.isArray(s.stock) || !Array.isArray(s.waste)) throw new Error('bad');
+        if (s.tab.concat(s.found).reduce((n, c) => n + c.length, s.stock.length + s.waste.length) !== 52) throw new Error('bad');
+        stopTimer(); S = s; moves = +d.moves || 0; elapsed = Math.max(0, +d.el || 0); started = true; over = false;
+        hist = Array.isArray(d.hist) ? d.hist.filter((h) => typeof h === 'string') : []; sel = null;
+        status('Partie reprise. Touche une carte pour la sélectionner.'); render();
+      },
+      prog: (d) => pl(d.moves, 'coup'),
+      reset: newGame
+    });
     return {
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); },
@@ -5254,6 +5428,21 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     bNew.addEventListener('click', newGame);
     Object.keys(lvBtn).forEach((k) => lvBtn[k].addEventListener('click', () => setLevel(k)));
     setLevel(lv);
+    SAVE.reg('demineur', {
+      snap() { return (!started || over) ? null : { lv, mine: Array.from(mine).join(''), st: Array.from(st).join(''), el: Math.round(now()) }; },
+      load(d) {
+        if (!LV[d.lv] || typeof d.mine !== 'string' || typeof d.st !== 'string') throw new Error('bad');
+        setLevel(d.lv);
+        if (d.mine.length !== C * R || d.st.length !== C * R) throw new Error('bad');
+        mine = Uint8Array.from(d.mine, Number); st = Uint8Array.from(d.st, Number);
+        for (let i = 0; i < C * R; i++) { let n = 0; nb(i).forEach((j) => { n += mine[j]; }); num[i] = n; }
+        flags = 0; opened = 0; for (let i = 0; i < C * R; i++) { if (st[i] === 2) flags++; else if (st[i] === 1) opened++; }
+        started = true; over = false; won = false; elapsed = Math.max(0, +d.el || 0); shown = [];
+        render();
+      },
+      prog: (d) => { const L = LV[d.lv], o = (d.st.match(/1/g) || []).length; return L.n + ' · ' + (L.c * L.r - L.m - o) + ' cases à ouvrir'; },
+      reset: newGame
+    });
     return {
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); },
@@ -5344,7 +5533,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     }
     function save() {
       if (over) { store.set('arcade.sudoku.save', null); return; }
-      store.set('arcade.sudoku.save', { lv, sol: Array.from(sol).join(''), giv: Array.from(giv).join(''), val: Array.from(val).join(''), notes: Array.from(notes), errs, hints, elapsed: Math.round(now()), started });
+      store.set('arcade.sudoku.save', { lv, sol: Array.from(sol).join(''), giv: Array.from(giv).join(''), val: Array.from(val).join(''), notes: Array.from(notes), errs, hints, elapsed: Math.round(now()), started, t: Date.now() });
     }
     function restore() {
       const o = store.get('arcade.sudoku.save', null);
@@ -5484,6 +5673,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv)));
     if (!restore()) newGame(); else { Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv))); render(); }
     return {
+      reset: newGame,
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); save(); },
       _test: { get sol() { return sol; }, get val() { return val; }, get giv() { return giv; }, get notes() { return notes; }, get errs() { return errs; }, get over() { return over; }, get won() { return won; }, get sel() { return sel; }, set sel(v) { sel = v; render(); }, put, erase, hint, undo, newGame, setLevel, search, generate, get noteMode() { return noteMode; } }
@@ -5641,8 +5831,31 @@ function glyph(id, a, b, c) {
     store.set('arcade.cat', CATS[cat].id);
     renderHome();
   }
+  function paintEnc() {
+    const el = $('encList'); el.textContent = '';
+    const l = SAVE.list().filter((x) => gmap[x.id]);
+    if (!l.length) return;
+    const h = document.createElement('h3'); h.textContent = 'En cours \u00b7 ' + l.length + (l.length > 1 ? ' parties' : ' partie'); el.appendChild(h);
+    l.forEach((x) => {
+      const g = gmap[x.id], row = document.createElement('div'); row.className = 'er';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'grow';
+      b.style.setProperty('--c1', g.c[0]); b.style.setProperty('--c2', g.c[1]);
+      b.setAttribute('aria-label', 'Reprendre ' + g.n + ', ' + x.p);
+      b.innerHTML = '<span class="ti">' + gsvg(x.id, 28, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span class="nm">' + g.n + '<small>' + x.p + (x.t ? ' \u00b7 ' + ago(x.t).replace('il y a ', '').replace("à l'instant", 'maintenant') : '') + '</small></span><span class="pl8">' + PLAY + '</span>';
+      b.addEventListener('click', () => openGame(x.id));
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'x'; c.textContent = '\u2715'; c.setAttribute('aria-label', 'Abandonner la partie de ' + g.n);
+      let tm = 0;
+      c.addEventListener('click', () => {
+        if (c.classList.contains('sure')) { clearTimeout(tm); SAVE.abandon(x.id); renderHome(); return; }
+        c.classList.add('sure'); c.textContent = 'Abandonner ?';
+        tm = setTimeout(() => { c.classList.remove('sure'); c.textContent = '\u2715'; }, 3000);
+      });
+      row.appendChild(b); row.appendChild(c); el.appendChild(row);
+    });
+  }
   function renderHome() {
     document.body.classList.add('onhome');
+    paintEnc();
     if (typeof DEFI !== 'undefined') DEFI.paintList();
     catsEl.textContent = '';
     CATS.forEach((c, i) => {
@@ -5777,6 +5990,7 @@ function glyph(id, a, b, c) {
     Object.keys(TABS).forEach((n) => { panels[n].hidden = true; });
     held.left = false; held.right = false;
     gview.hidden = true; homeEl.hidden = false; LOCK.leave();
+    SAVE.syncAll();
     renderHome();
     window.scrollTo(0, 0);
   }
