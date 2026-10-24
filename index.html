@@ -526,8 +526,8 @@ body.locked .app { box-sizing: border-box; max-width: 592px; padding: max(20px, 
 body.locked .app::-webkit-scrollbar { display: none; }
 /* Fit mode (screen locked): Flipper, Snake and Cube are sized to the screen height, so nothing scrolls while playing. */
 .fitbox { display: contents; }
-body.locked[data-fit] .app { display: flex; flex-direction: column; gap: 8px; padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
-body.locked[data-fit] #gview:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+body.locked[data-fit] .app { display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); padding: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.7vh, 16px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+body.locked[data-fit] #gview:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); }
 body.locked[data-fit] .ghd { flex: none; padding: 6px 8px; gap: 8px; border-radius: 22px; }
 body.locked[data-fit] .ghd h2 { font-size: 1.3rem; }
 body.locked[data-fit] .ghd p { display: none; }
@@ -535,7 +535,7 @@ body.locked[data-fit] .ghd .bk7, body.locked[data-fit] .ghd .spk7 { width: 38px;
 body.locked[data-fit] .ghd .bk7 svg, body.locked[data-fit] .ghd .spk7 svg { width: 20px; height: 20px; }
 #gMenu { font: inherit; font-weight: 700; font-size: 1.4rem; line-height: 1; padding-bottom: 5px; }
 body.locked[data-fit] .gbody { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-top: 0; gap: 0; }
-body.locked[data-fit] .panel:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+body.locked[data-fit] .panel:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 12px); }
 body.locked[data-fit] .panel:not([hidden]) > * { flex: none; }
 body.locked[data-fit] .panel:not([hidden]) > .fitbox, body.locked[data-fit] .panel:not([hidden]) > .pbcol { flex: 1 1 0; min-height: 0; max-width: none; }
 body.locked[data-fit] .panel:not([hidden]) .fitbox { display: flex; flex: 1 1 0; min-height: 0; container-type: size; align-items: center; justify-content: center; }
