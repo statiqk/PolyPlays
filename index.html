@@ -819,6 +819,8 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .du-msg { text-align: center; font-weight: 700; min-height: 1.6em; font-size: 1.05rem; }
 
 /* Menu du jeu : un seul bouton ⋯ dans l'en-tête, aide, options, verrou et son dedans */
+.ghd > div { text-align: center; }
+.ghd h2, .ghd p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ghd #gMenu, .ghd #gHelp, .ghd #gLock, .ghd #gSnd { display: none !important; }
 #gMore svg { width: 22px; height: 22px; }
 .gpop { position: fixed; z-index: 60; min-width: 250px; max-width: calc(100vw - 24px); padding: 6px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 20px 44px rgba(0, 0, 0, .6); display: grid; gap: 2px; }
