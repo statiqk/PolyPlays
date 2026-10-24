@@ -1707,7 +1707,7 @@ button, input, select, textarea { font-family: inherit; }
     const DEF = {
       click: () => tone(700, 0.04, { type: 'sine', v: 0.2 }),
       tick: () => tone(520, 0.03, { type: 'sine', v: 0.14 }),
-      beep: () => tone(520, 0.12, { type: 'square', v: 0.14 }),
+      beep: () => { tone(330, 0.2, { type: 'sine', v: 0.4 }); tone(660, 0.12, { type: 'sine', v: 0.1 }); },
       go: () => tone(880, 0.35, { type: 'square', v: 0.16 }),
       win: () => seq([N.C5, N.E5, N.G5, N.C6, N.G5, N.C6], 0.09, { type: 'triangle', d: 0.2, v: 0.3 }),
       lose: () => seq([N.G4, N.E4, N.C4], 0.16, { type: 'triangle', d: 0.3, v: 0.3 }),
