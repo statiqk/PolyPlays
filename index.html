@@ -2270,7 +2270,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
   })();
 
   /* =====================  MOTEUR D'ÉCHECS  ===================== */
-  const CH = (function () {
+  const makeCH = function () {
     const P = 1, N = 2, B = 3, R = 4, Q = 5, K = 6, INF = 1e9, MATE = 30000;
     const VAL = [0, 100, 320, 330, 500, 900, 0];
     const KN = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
@@ -2599,7 +2599,8 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       return best;
     }
     return { init, fromFEN, legal, make, unmake, inCheck, status, key, think, perft, VAL, LEVELS };
-  })();
+  };
+  const CH = makeCH();
   if (typeof module !== 'undefined' && module.exports) module.exports = CH;
 
   /* =====================  MOTEUR DE DAMES (10×10)  ===================== */
@@ -3025,17 +3026,34 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
       promoEl.hidden = true;
       afterMove();
     }
+    // The engine runs in a Web Worker (the position is rebuilt there by replaying the moves); falls back to the main thread if workers are unavailable.
+    let wk = null, wkOk = typeof Worker !== 'undefined' && typeof Blob !== 'undefined', wkJob = null;
+    function stopThink() { wkJob = null; if (wk) { try { wk.terminate(); } catch (e) { /* ignore */ } wk = null; } }
+    function thinkAsync(opt, cb) {
+      const hist = S.st.map((u) => u.m);
+      const job = { hist, opt, cb };
+      const local = () => setTimeout(() => cb(CH.think(S, opt)), 60);
+      if (wkOk && !wk) {
+        try {
+          const src = 'const CH=(' + makeCH.toString() + ')();onmessage=function(e){var S=CH.init();e.data.hist.forEach(function(m){CH.make(S,m);});postMessage({m:CH.think(S,e.data.opt)});};';
+          wk = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+          wk.onmessage = (e) => { const j = wkJob; wkJob = null; if (j) j.cb(e.data.m); };
+          wk.onerror = () => { wkOk = false; const j = wkJob; wkJob = null; wk = null; if (j) local(); };
+        } catch (e) { wkOk = false; wk = null; }
+      }
+      if (wk) { wkJob = job; try { wk.postMessage({ hist, opt }); return; } catch (e) { wkOk = false; stopThink(); } }
+      local();
+    }
     function aiMove() {
       busy = true;
       const id = gid;
       render();
-      setTimeout(() => {
+      thinkAsync(CH.LEVELS[level], (m) => {
         if (id !== gid) return;
-        const m = CH.think(S, CH.LEVELS[level]);
         busy = false;
         if (m === null || m === undefined) { afterMove(); return; }
         play(m);
-      }, 60);
+      });
     }
     function askPromo(list) {
       promoEl.hidden = false;
@@ -3072,7 +3090,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
     }
     function newGame() {
       gid++;
-      S = CH.init(); keys = [CH.key(S)]; sel = -1; targets = []; hasLast = false; busy = false;
+      S = CH.init(); keys = [CH.key(S)]; sel = -1; targets = []; hasLast = false; busy = false; stopThink();
       promoEl.hidden = true;
       info = CH.status(S); over = false;
       render();
