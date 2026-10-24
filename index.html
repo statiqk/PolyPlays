@@ -213,9 +213,33 @@ button:focus-visible, .pad:focus-visible { outline: 2px solid var(--amber); outl
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
-.pad[data-state="go"] { border-color: var(--amber); box-shadow: 0 0 0 calc(4px * var(--u)) var(--amber-soft); }
-.pad[data-state="false"] { border-color: var(--red); box-shadow: 0 0 0 calc(4px * var(--u)) var(--red-soft); }
+.pad { transition: background .12s, border-color .12s; }
+.pad[data-state="go"] { border-color: #9BF5C8; background: linear-gradient(#5CEBA6, #1FB872); }
+.pad[data-state="false"] { border-color: #FF9AA5; background: linear-gradient(#FF5D6E, #C4122D); }
+.pad[data-state="go"] .big { color: #06240F; font-size: clamp(3.4rem, 20vw, 5.4rem); }
+.pad[data-state="go"] .sub { color: #0B3D1C; }
+.pad[data-state="go"] .gantry, .pad[data-state="false"] .gantry { opacity: .55; }
+.pad[data-state="false"] .big, .pad[data-state="false"] .sub { color: #fff; }
+.pad[data-state="result"] .big { color: #4ADE9C; }
+.road { position: relative; height: calc(64px * var(--u)); border-radius: calc(14px * var(--u)); overflow: hidden; background: linear-gradient(#0F0D16, var(--surface-2)); }
+.road i { position: absolute; left: 50%; top: 0; bottom: 0; width: calc(6px * var(--u)); margin-left: calc(-3px * var(--u)); background: repeating-linear-gradient(#F4F2FA 0 14px, transparent 14px 28px); opacity: .32; }
+.pad[data-state="go"] .road, .pad[data-state="false"] .road { background: rgba(0, 0, 0, .2); }
+@media (max-height: 700px) { .road { display: none; } }
+.rtag { justify-self: center; padding: calc(3px * var(--u)) calc(14px * var(--u)); border-radius: 999px; font-weight: 700; font-size: .95rem; background: rgba(74, 222, 156, .16); color: #4ADE9C; }
+.rscale { position: relative; padding-top: calc(26px * var(--u)); margin-top: calc(6px * var(--u)); text-align: left; }
+.rscale[hidden], .rtag[hidden] { display: none; }
+.rbar { display: flex; gap: 2px; height: calc(12px * var(--u)); border-radius: 6px; overflow: hidden; }
+.rbar s { display: block; }
+.rbar s:nth-child(1) { flex: 50; background: #4ADE9C; } .rbar s:nth-child(2) { flex: 50; background: #9BE15D; } .rbar s:nth-child(3) { flex: 50; background: #FFC21A; } .rbar s:nth-child(4) { flex: 100; background: #FF9F43; } .rbar s:nth-child(5) { flex: 100; background: #FF4D5E; }
+.rmk { position: absolute; top: calc(4px * var(--u)); width: 0; transition: left .35s ease; }
+.rmk::before { content: attr(data-v); position: absolute; left: -26px; top: 0; width: 52px; text-align: center; font: 600 .85rem var(--font-mono); background: var(--ink); color: var(--bg); border-radius: 8px; padding: 1px 0; }
+.rmk::after { content: ''; position: absolute; left: -2px; top: calc(20px * var(--u)); width: 4px; height: calc(20px * var(--u)); background: var(--ink); border-radius: 2px; }
+.rtk { display: flex; margin-top: calc(6px * var(--u)); font: 500 .68rem var(--font-mono); color: var(--muted); }
+@media (max-width: 380px) { .rtk span:nth-child(2), .rtk span:nth-child(3) { visibility: hidden; } }
+.rtk span:nth-child(1), .rtk span:nth-child(2), .rtk span:nth-child(3) { flex: 50; } .rtk span:nth-child(4), .rtk span:nth-child(5) { flex: 100; } .rtk span:last-child { text-align: right; }
 .gantry {
+  position: relative;
+  margin-top: calc(10px * var(--u));
   display: flex;
   justify-content: center;
   gap: clamp(calc(6px * var(--u)), 2.6vw, calc(14px * var(--u)));
@@ -224,6 +248,7 @@ button:focus-visible, .pad:focus-visible { outline: 2px solid var(--amber); outl
   background: #0A0C10;
   border: 1px solid var(--line);
 }
+.gantry::before { content: ''; position: absolute; left: 14%; right: 14%; top: calc(-10px * var(--u)); height: calc(10px * var(--u)); border-radius: calc(5px * var(--u)) calc(5px * var(--u)) 0 0; background: #0A0C10; }
 .unit {
   flex: 1;
   max-width: calc(84px * var(--u));
@@ -243,7 +268,7 @@ button:focus-visible, .pad:focus-visible { outline: 2px solid var(--amber); outl
 }
 .unit.on .lamp {
   background: radial-gradient(circle at 35% 30%, #FF9A9A, #FF2D2D 55%, #B30F0F);
-  box-shadow: 0 0 calc(18px * var(--u)) calc(4px * var(--u)) rgba(255, 45, 45, .55), inset 0 0 0 2px #2A0000;
+  box-shadow: 0 0 calc(24px * var(--u)) calc(6px * var(--u)) rgba(255, 45, 45, .6), inset 0 0 0 2px #2A0000;
 }
 .readout { text-align: center; display: grid; gap: calc(6px * var(--u)); min-height: 7.2em; align-content: start; }
 .big {
@@ -253,11 +278,12 @@ button:focus-visible, .pad:focus-visible { outline: 2px solid var(--amber); outl
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
-.pad[data-state="go"] .big { color: var(--amber); }
-.pad[data-state="false"] .big { color: var(--red); }
 .sub { margin: 0 auto; max-width: 34ch; color: var(--muted); }
-.chips { display: flex; flex-wrap: wrap; gap: calc(6px * var(--u)); min-height: calc(30px * var(--u)); align-items: center; }
-.chips .k { margin-right: calc(4px * var(--u)); }
+.chips { display: flex; gap: calc(10px * var(--u)); min-height: calc(78px * var(--u)); align-items: flex-end; justify-content: center; }
+.chips .k { display: none; }
+.hc { display: flex; flex-direction: column; align-items: center; gap: calc(3px * var(--u)); font: 500 .7rem var(--font-mono); color: var(--muted); }
+.hb { width: calc(34px * var(--u)); border-radius: 7px 7px 3px 3px; background: #3A3550; }
+.hc.best .hb { background: var(--amber); } .hc.best { color: var(--amber); }
 .chip {
   font-family: var(--font-mono);
   font-size: .9rem;
@@ -1161,8 +1187,15 @@ button, input, select, textarea { font-family: inherit; }
       </div>
       <div class="readout">
         <div class="big" id="rBig">Prêt ?</div>
+        <span class="rtag" id="rTag" hidden></span>
         <p class="sub" id="rSub" aria-live="polite"></p>
+        <div class="rscale" id="rScale" hidden aria-hidden="true">
+          <div class="rbar"><s></s><s></s><s></s><s></s><s></s></div>
+          <div class="rmk" id="rMk"></div>
+          <div class="rtk"><span>Pilote</span><span>Rapide</span><span>Moyen</span><span>Juste</span><span>Lent</span></div>
+        </div>
       </div>
+      <div class="road" aria-hidden="true"><i></i></div>
     </div>
     <div class="stats">
       <div class="stat"><div class="k">Meilleur</div><div class="v" id="rBest">—</div></div>
@@ -1748,7 +1781,7 @@ button, input, select, textarea { font-family: inherit; }
       boom: () => { tone(120, 0.3, { type: 'sine', to: 40, v: 0.6 }); noise(0.25, { f: 900, to: 200, v: 0.35, ft: 'lowpass' }); },
       sunk: () => { tone(110, 0.6, { type: 'sine', to: 35, v: 0.6 }); noise(0.5, { f: 700, to: 120, v: 0.35, ft: 'lowpass' }); tone(N.C4, 0.4, { type: 'triangle', to: 130, v: 0.15, at: 0.25 }); }
     };
-    const VIB = { fl_sling: 8, fl_star: 6, fl_nudge: 18, fl_tilt: [40, 30, 40, 30, 60], fl_combo: 10, fl_bump: 8, fl_flip: 6, fl_launch: 20, fl_multi: [20, 30, 20], fl_lost: 60, win: [30, 50, 30], lose: 80, record: [30, 40, 30, 40, 60], capture: 15, check: [20, 30, 20], brick: 8, snake_over: 60, dart: 12, bull: [15, 30, 25], one80: [20, 30, 20, 30, 40], boom: 25, sunk: [30, 40, 40], life: 50 };
+    const VIB = { fl_sling: 8, fl_star: 6, fl_nudge: 18, fl_tilt: [40, 30, 40, 30, 60], fl_combo: 10, fl_bump: 8, fl_flip: 6, fl_launch: 20, fl_multi: [20, 30, 20], fl_lost: 60, win: [30, 50, 30], go: 35, lose: 80, record: [30, 40, 30, 40, 60], capture: 15, check: [20, 30, 20], brick: 8, snake_over: 60, dart: 12, bull: [15, 30, 25], one80: [20, 30, 20, 30, 40], boom: 25, sunk: [30, 40, 40], life: 50 };
     const last = {};
     function run(name) {
       const now = performance.now();
@@ -1890,7 +1923,7 @@ button, input, select, textarea { font-family: inherit; }
 
   /* =====================  RÉFLEXES  ===================== */
   const RF = (function () {
-    const pad = $('rpad'), big = $('rBig'), sub = $('rSub');
+    const pad = $('rpad'), big = $('rBig'), sub = $('rSub'), tag = $('rTag'), scale = $('rScale'), mk = $('rMk');
     const units = Array.prototype.slice.call(document.querySelectorAll('#gantry .unit'));
     const elBest = $('rBest'), elAvg = $('rAvg'), elTries = $('rTries'), elChips = $('rChips');
     let state = 'idle', timers = [], t0 = 0, armed = false, guard = 0, tries = 0;
@@ -1900,7 +1933,7 @@ button, input, select, textarea { font-family: inherit; }
 
     function lights(n) { units.forEach((u, i) => u.classList.toggle('on', i < n)); }
     function clear() { timers.forEach(clearTimeout); timers = []; }
-    function show(b, s, st) { big.textContent = b; sub.textContent = s; pad.dataset.state = st; }
+    function show(b, s, st) { big.textContent = b; sub.textContent = s; pad.dataset.state = st; if (st !== 'result') { tag.hidden = true; scale.hidden = true; } }
     function tier(ms) {
       if (ms < 200) return 'Niveau pilote';
       if (ms < 250) return 'Très rapide';
@@ -1914,14 +1947,11 @@ button, input, select, textarea { font-family: inherit; }
       elTries.textContent = tries;
       elChips.textContent = '';
       if (hist.length) {
-        const lab = document.createElement('span');
-        lab.className = 'k'; lab.textContent = 'Derniers';
-        elChips.appendChild(lab);
-        hist.slice().reverse().forEach((v) => {
-          const c = document.createElement('span');
-          c.className = 'chip' + (v === best ? ' best' : '');
-          c.textContent = v + ' ms';
-          elChips.appendChild(c);
+        const mx = Math.max.apply(null, hist);
+        hist.forEach((v) => {
+          const c = document.createElement('div'), b = document.createElement('div'), t = document.createElement('span');
+          c.className = 'hc' + (v === best ? ' best' : ''); b.className = 'hb'; b.style.height = Math.round(v / mx * 54) + 'px'; t.textContent = v;
+          c.appendChild(b); c.appendChild(t); elChips.appendChild(c);
         });
       }
     }
@@ -1944,7 +1974,7 @@ button, input, select, textarea { font-family: inherit; }
     }
     function go() {
       lights(0); state = 'go'; SFX.play('go');
-      show('Appuie !', '', 'go');
+      show('GO !', 'Touche maintenant', 'go');
       requestAnimationFrame(() => { t0 = performance.now(); armed = true; });
     }
     function falseStart(msg) {
@@ -1957,13 +1987,15 @@ button, input, select, textarea { font-family: inherit; }
       clear(); state = 'result'; tries++;
       guard = performance.now() + 600;
       rt = Math.round(rt);
-      let isBest = false;
+      let isBest = false; const prev = best;
       if (best === null || rt < best) { best = rt; store.set('arcade.f1.best', best); isBest = true; }
       hist.push(rt);
       if (hist.length > 5) hist = hist.slice(-5);
       store.set('arcade.f1.hist', hist);
       SFX.play(isBest ? 'record' : 'win'); ARC.done('reflexes', rt);
-      show(rt + ' ms', tier(rt) + (isBest ? ' · Nouveau record' : '') + '. Touche pour rejouer.', 'result');
+      show(rt + ' ms', (isBest ? (prev === null ? 'Premier temps enregistré.' : 'Nouveau record, ' + (prev - rt) + ' ms de mieux.') : '+' + (rt - prev) + ' ms par rapport à ton record.') + ' Touche pour rejouer.', 'result');
+      tag.textContent = tier(rt); tag.hidden = false; scale.hidden = false;
+      mk.dataset.v = rt; mk.style.left = (Math.max(0, Math.min(1, (rt - 150) / 350)) * 100) + '%';
       renderStats();
     }
     function press(ts) {
