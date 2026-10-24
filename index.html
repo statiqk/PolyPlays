@@ -786,6 +786,30 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qc h3 { margin: 0; font-size: 1.2rem; text-align: center; }
 .qc p { margin: 0; text-align: center; color: var(--muted); font-size: .92rem; line-height: 1.4; }
 .qc .btn { min-height: 52px; }
+.qs#qRes, .qs#qAsk { z-index: 96; }
+.qres { text-align: center; }
+.qres .qic { font-size: 2.4rem; line-height: 1; }
+.qres .qk { font-family: var(--font-mono); font-weight: 700; font-size: .7rem; letter-spacing: .16em; color: var(--amber); }
+.qres .qbig { font-size: 2.2rem; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.qres .qsub { color: var(--muted); font-size: .88rem; line-height: 1.35; }
+.qchips { display: flex; gap: 8px; }
+.qchip { flex: 1; min-width: 0; padding: 9px 4px; border-radius: 16px; background: rgba(255, 255, 255, .07); display: grid; gap: 2px; }
+.qchip b { font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qchip span { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .1em; color: var(--muted); }
+.qrow { display: flex; gap: 8px; }
+.qrow .btn { flex: 1; min-width: 0; }
+.day { margin: 0 0 14px; padding: 14px 16px; border-radius: 26px; color: #fff; background: linear-gradient(135deg, #F59E0B, #EA580C); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 28px -16px rgba(0, 0, 0, .7); }
+.day .top { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-weight: 700; font-size: .66rem; letter-spacing: .14em; }
+.day .fl { background: rgba(0, 0, 0, .28); padding: 4px 10px; border-radius: 12px; font-size: .78rem; letter-spacing: 0; font-family: inherit; }
+.day h2 { margin: 8px 0 2px; font-size: 1.55rem; letter-spacing: -.03em; line-height: 1.1; }
+.day p { margin: 0; font-size: .86rem; line-height: 1.35; opacity: .94; }
+.day .go { display: block; width: 100%; margin-top: 12px; min-height: 50px; border: 0; border-radius: 18px; background: #fff; color: #7c2d12; font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.day .wk { display: flex; gap: 4px; margin-top: 12px; }
+.day .wk span { flex: 1; text-align: center; font-family: var(--font-mono); font-size: .62rem; }
+.day .wk i { display: flex; align-items: center; justify-content: center; margin: 4px auto 0; width: 26px; height: 26px; border-radius: 50%; font-style: normal; font-size: .8rem; background: rgba(0, 0, 0, .22); color: #7c2d12; }
+.day .wk i.ok { background: #fff; }
+.day .wk i.now { box-shadow: inset 0 0 0 2px #fff; }
+.day .dbd { margin-top: 10px; font-size: .78rem; opacity: .95; }
 .qsec { margin: 0 0 8px; font-family: var(--font-mono); font-weight: 600; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
 .qtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 14px; }
 .qtile { min-width: 0; border: 0; background: none; padding: 0; font: inherit; font-size: .74rem; font-weight: 600; color: var(--ink); text-align: center; cursor: pointer; display: grid; gap: 5px; justify-items: center; -webkit-tap-highlight-color: transparent; }
@@ -933,6 +957,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       <div class="h7top"><h1>PolyPlays</h1><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
+    <div id="dayCard"></div>
     <div class="enc" id="encList"></div>
     <div id="hero"></div>
     <div class="dfl" id="dfList"></div>
@@ -952,6 +977,8 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     <div class="gpop" id="gPop" hidden role="menu"></div>
     <div class="dfbar" id="dfBar" hidden></div>
     <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
+    <div class="qs" id="qRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="qResBody"></div></div>
+    <div class="qs" id="qAsk" hidden role="dialog" aria-modal="true" aria-labelledby="qAskT"><div class="qc"><h3 id="qAskT"></h3><p id="qAskP"></p><button type="button" class="btn primary" id="qAskOk"></button><button type="button" class="btn" id="qAskNo">Annuler</button></div></div>
     <div class="qs" id="qSw" hidden role="dialog" aria-modal="true" aria-labelledby="qSwT"><div class="qc"><h3 id="qSwT">Changer de jeu</h3><div id="qSwBody"></div><button type="button" class="btn" id="qSwAll">Tous les jeux</button></div></div>
     <div class="gbody">
 
@@ -1671,7 +1698,24 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
   })();
 
   /* Finished runs are announced here (used by friend challenges). Games call ARC.done(id, value, key) once a run is complete. */
-  const ARC = { done(id, v, k) { try { if (ARC.onDone) ARC.onDone(id, v, k === undefined ? '' : String(k)); } catch (e) { /* never break a game */ } } };
+  const ARC = {
+    done(id, v, k) {
+      const kk = k === undefined ? '' : String(k); let dy = false;
+      try { if (ARC.onDay) dy = ARC.onDay(id, v, kk); } catch (e) { /* never break a game */ }
+      try { if (ARC.onDone) ARC.onDone(id, v, kk, dy); } catch (e) { /* never break a game */ }
+    },
+    daily(id, v, k) {
+      const kk = k === undefined ? '' : String(k);
+      try { const dy = ARC.onDay && ARC.onDay(id, v, kk); if (dy && ARC.onDone) ARC.onDone(id, v, kk, dy); } catch (e) { /* never break a game */ }
+    }
+  };
+  /* Tirage reproductible : la même graine donne la même partie sur tous les appareils (défi du jour) */
+  function seeded(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return function () { h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+  }
+  function withSeed(seed, fn) { const r = Math.random; Math.random = seeded(seed); try { fn(); } finally { Math.random = r; } }
 
   /* =====================  RÉFLEXES  ===================== */
   const RF = (function () {
@@ -2300,6 +2344,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       prog: (d) => pl(d.shots, 'tir'),
       reset: newGame
     });
+    return { daily(seed) { withSeed(seed, newGame); }, _test: { get foe() { return foe; } } };
   })();
 
   /* =====================  CASSE-BRIQUES  ===================== */
@@ -4305,7 +4350,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       if (over || !keys[ch] || got.has(ch) || bad.has(ch)) return;
       if (word.indexOf(ch) >= 0) { got.add(ch); SFX.play('pair'); } else { bad.add(ch); SFX.play('wrong'); }
       const solved = [...word].every((c) => got.has(c));
-      if (solved) { over = true; wins++; store.set('arcade.pendu.wins', wins); status('Bravo, tu as trouvé !'); SFX.play('win', 250); }
+      if (solved) { over = true; wins++; store.set('arcade.pendu.wins', wins); status('Bravo, tu as trouvé !'); SFX.play('win', 250); ARC.daily('pendu', bad.size, theme); }
       else if (bad.size >= MAX) { over = true; status('Perdu ! Le mot était ' + word + '.'); SFX.play('lose', 250); }
       else status(word.indexOf(ch) >= 0 ? 'Bien vu.' : 'Raté.');
       draw();
@@ -4331,7 +4376,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       prog: (d) => d.bad.length + ' / ' + MAX + ' erreurs',
       reset: newGame
     });
-    return { guess, _test: { get word() { return word; } } };
+    return { guess, daily(seed) { theme = 'Mix'; lastWord = ''; Object.keys(themeBtns).forEach((n) => themeBtns[n].setAttribute('aria-pressed', String(n === theme))); withSeed(seed, newGame); }, _test: { get word() { return word; } } };
   })();
 
   /* =====================  MEMORY  ===================== */
@@ -4455,6 +4500,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
       reset: () => build()
     });
     return {
+      daily(seed) { size = 4; Object.keys(sBtn).forEach((k) => sBtn[k].setAttribute('aria-pressed', String(+k === 4))); withSeed(seed, () => build()); },
       activate() { active = true; if (started && !over) startTimer(); },
       deactivate() { active = false; stopTimer(); },
       _test: { get cards() { return cards; } }
@@ -5695,7 +5741,7 @@ body.locked[data-fit] #nvPlace .btn, body.locked[data-fit] #nvBattle .btn { font
     };
   })();
 
-  if (window.__arcadeTest) window.__arcadeTest.games = { SL, PD, MM, MP, DT, PB, MN, SD };
+  if (window.__arcadeTest) window.__arcadeTest.games = { SL, PD, MM, MP, DT, PB, MN, SD, NV };
   if (window.__arcadeTest) { window.__arcadeTest.ARC = ARC; }
 
   /* =====================  TABS & KEYS  ===================== */
@@ -5870,6 +5916,7 @@ function glyph(id, a, b, c) {
   }
   function renderHome() {
     document.body.classList.add('onhome');
+    DAY.paint();
     paintEnc();
     if (typeof DEFI !== 'undefined') DEFI.paintList();
     catsEl.textContent = '';
@@ -6164,12 +6211,14 @@ function glyph(id, a, b, c) {
       $('dfAgain').addEventListener('click', () => { cur = e; e.s = 'open'; save(); close(); updateBar(); });
       $('dfX').addEventListener('click', () => { close(); paintList(); });
     }
-    ARC.onDone = (id, v, k) => {
-      if (!CFG[id] || typeof v !== 'number' || !isFinite(v)) return;
+    ARC.onDone = (id, v, k, dy) => {
+      if (typeof v !== 'number' || !isFinite(v)) return;
+      if (dy && !(cur && cur.id === id)) { RES.show({ id, v: Math.round(v), k: String(k || ''), daily: dy }); return; }
+      if (!CFG[id]) return;
       if (cur && cur.id === id && String(cur.k || '') === String(k || '')) { finishChallenge(cur, v); return; }
       if (CFG[id].k && !CFG[id].k[k]) return;
       if (id === 'memory') return;
-      showSnack({ id, v: Math.round(v), k: String(k || '') });
+      RES.show({ id, v: Math.round(v), k: String(k || '') });
     };
     function paintList() {
       listEl.textContent = '';
@@ -6195,7 +6244,144 @@ function glyph(id, a, b, c) {
     $('dfSnackX').addEventListener('click', hideSnack);
     window.addEventListener('hashchange', fromHash);
     setInterval(updateBar, 500);
-    return { paintList, fromHash, send(id, v, k) { sendSheet({ id, v: Math.round(v), k: String(k || '') }); }, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
+    return { paintList, fromHash, has: (id) => !!CFG[id], fmt: (id, v) => (CFG[id] ? CFG[id].f(v) : null), lab: (id, k) => label(id, k), hi: (id) => !!CFG[id].hi, send(id, v, k) { sendSheet({ id, v: Math.round(v), k: String(k || '') }); }, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
+  })();
+
+  /* =====================  RÉSULTAT DE PARTIE (écran commun)  ===================== */
+  const RES = (function () {
+    const el = $('qRes'), body = $('qResBody');
+    const REPLAY = { snake: 'ovB', briques: 'brOvB', flipper: 'pbNew', navale: 'nvNew', demineur: 'mnNew', sudoku: 'sdNew' };
+    const GB = {
+      reflexes: () => store.get('arcade.f1.best', null), navale: () => store.get('arcade.nv.best', null), briques: () => store.get('arcade.br.best', null),
+      snake: (k) => store.get('arcade.snake.best.' + k, null), flipper: (k) => store.get('arcade.flipper.best.' + k, null),
+      demineur: (k) => (store.get('arcade.mines.best', {}) || {})[k], sudoku: (k) => (store.get('arcade.sudoku.best', {}) || {})[k]
+    };
+    let log = store.get('arcade.res', {}); if (!log || typeof log !== 'object' || Array.isArray(log)) log = {};
+    const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+    function close() { el.hidden = true; }
+    function btn(label, cls, fn) { const b = mk('button', 'btn' + (cls ? ' ' + cls : ''), label); b.type = 'button'; b.addEventListener('click', fn); return b; }
+    function chips(list) {
+      const r = mk('div', 'qchips');
+      list.forEach((c) => { const d = mk('div', 'qchip'); d.appendChild(mk('b', '', c[1])); d.appendChild(mk('span', '', c[0])); r.appendChild(d); });
+      return r;
+    }
+    function open(o) {
+      if (tab !== o.id) return;
+      const id = o.id, k = o.k || '', v = o.v, dy = o.daily;
+      body.textContent = '';
+      const fm = (x) => { const t = DEFI.fmt(id, x); return t === null ? DAY.fmt(id, x) : t; };
+      if (dy) {
+        $('mmWin').hidden = true;
+        body.appendChild(mk('div', 'qic', '🔥'));
+        body.appendChild(mk('div', 'qk', 'DÉFI DU JOUR RELEVÉ'));
+        body.appendChild(mk('div', 'qbig', fm(v)));
+        body.appendChild(mk('div', 'qsub', dy.n + ' · même partie pour tout le monde'));
+        const nt = DAY.nextTier(dy.streak);
+        body.appendChild(chips([['SÉRIE', pl(dy.streak, 'jour')], ['MEILLEURE', pl(dy.best, 'jour')], ['BADGE', nt ? nt + ' j' : '★']]));
+        body.appendChild(mk('div', 'qsub', nt ? 'Encore ' + pl(nt - dy.streak, 'jour') + ' pour le badge de ' + nt + ' jours. Reviens demain.' : 'Tous les badges sont obtenus. Bravo !'));
+        if (DEFI.has(id)) body.appendChild(btn('⚔ Défier un ami', 'primary', () => { close(); DEFI.send(id, v, k); }));
+        body.appendChild(btn('Retour à l’accueil', DEFI.has(id) ? '' : 'primary', () => { close(); backHome(); }));
+      } else {
+        const hi = DEFI.hi(id), better = (a, b) => (hi ? a > b : a < b);
+        const key = id + '|' + k, arr = Array.isArray(log[key]) ? log[key].filter((x) => typeof x === 'number') : [];
+        const pb = arr.length ? arr.reduce((m, x) => (better(x, m) ? x : m)) : undefined;
+        const gbv = GB[id] ? GB[id](k) : null, gb = (typeof gbv === 'number') ? gbv : null;
+        const rec = pb === undefined ? (gb !== null && v === gb) : (better(v, pb) && (gb === null || v === gb));
+        arr.push(v); while (arr.length > 40) arr.shift(); log[key] = arr; store.set('arcade.res', log);
+        const rank = arr.filter((x) => better(x, v)).length + 1, shown = rec ? v : (gb !== null ? gb : pb);
+        body.appendChild(mk('div', 'qic', rec ? '🏆' : '🎉'));
+        body.appendChild(mk('div', 'qk', rec ? 'NOUVEAU RECORD' : 'PARTIE TERMINÉE'));
+        body.appendChild(mk('div', 'qbig', fm(v)));
+        body.appendChild(mk('div', 'qsub', DEFI.lab(id, k) + (rec ? (pb !== undefined ? ' · ancien record ' + fm(pb) : '') : (shown !== undefined ? ' · ton record : ' + fm(shown) : ''))));
+        body.appendChild(chips([['PARTIES', arr.length], ['MEILLEUR', shown !== undefined ? fm(shown) : '—'], ['RANG', '#' + rank]]));
+        body.appendChild(btn('Rejouer', 'primary', () => { close(); const b = $(REPLAY[id] || ''); if (b && !b.disabled && !b.hidden) b.click(); }));
+        const row = mk('div', 'qrow');
+        row.appendChild(btn('⚔ Défier', '', () => { close(); DEFI.send(id, v, k); }));
+        row.appendChild(btn('Autre jeu', '', () => { close(); openSwitch(); }));
+        body.appendChild(row);
+      }
+      el.hidden = false; const f = body.querySelector('button'); if (f) f.focus({ preventScroll: true });
+    }
+    el.addEventListener('click', (e) => { if (e.target === el) close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !el.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); } }, true);
+    return { show(o) { setTimeout(() => open(o), 700); }, close, _test: { open } };
+  })();
+
+  /* =====================  DÉFI DU JOUR  ===================== */
+  const DAY = (function () {
+    const CF = {
+      memory: { n: 'Memory · 4×4', d: 'Retrouve toutes les paires en un minimum de coups.', f: (v) => pl(v, 'coup'), k: '4', m: () => MM },
+      navale: { n: 'Bataille navale', d: 'Coule toute la flotte en un minimum de tirs.', f: (v) => pl(v, 'tir'), k: '', m: () => NV },
+      pendu: { n: 'Pendu', d: 'Trouve le mot du jour avec le moins d’erreurs.', f: (v) => pl(v, 'erreur'), k: 'Mix', m: () => PD }
+    };
+    const ORDER = ['memory', 'navale', 'pendu'], TIERS = [3, 7, 14, 30, 60, 100];
+    const pad = (n) => String(n).padStart(2, '0');
+    const key = (dt) => dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate());
+    const today = () => key(new Date());
+    const dayNum = (k) => { const a = k.split('-').map(Number); return Math.floor(Date.UTC(a[0], a[1] - 1, a[2]) / 864e5); };
+    const pickId = (k) => ORDER[dayNum(k) % ORDER.length];
+    let S = store.get('arcade.daily', null); if (!S || typeof S !== 'object' || Array.isArray(S)) S = {};
+    if (!S.log || typeof S.log !== 'object') S.log = {};
+    function save() { const ks = Object.keys(S.log).sort(); while (ks.length > 150) delete S.log[ks.shift()]; store.set('arcade.daily', S); }
+    function streak() {
+      const d = new Date(); if (!S.log[key(d)]) d.setDate(d.getDate() - 1);
+      let n = 0; while (S.log[key(d)]) { n++; d.setDate(d.getDate() - 1); }
+      return n;
+    }
+    function bestStreak() {
+      const ks = Object.keys(S.log).sort(); let best = 0, run = 0, prev = null;
+      ks.forEach((k) => { const n = dayNum(k); run = (prev !== null && n === prev + 1) ? run + 1 : 1; prev = n; if (run > best) best = run; });
+      return best;
+    }
+    const nextTier = (n) => TIERS.find((t) => t > n) || null;
+    const cur = () => (S.cur && S.cur.d === today() ? S.cur : null);
+    ARC.onDay = (id, v, k) => {
+      const t = today(), c = cur(), cf = CF[id];
+      if (!cf || !c || c.id !== id || !c.started || S.log[t] || String(k || '') !== cf.k) return false;
+      S.log[t] = { id, v: Math.round(v) }; save();
+      return { streak: streak(), best: bestStreak(), n: cf.n };
+    };
+    function ask(title, text, ok, fn) {
+      const m = $('qAsk'); setText($('qAskT'), title); setText($('qAskP'), text); setText($('qAskOk'), ok); m.hidden = false; $('qAskOk').focus();
+      $('qAskOk').onclick = () => { m.hidden = true; fn(); }; $('qAskNo').onclick = () => { m.hidden = true; };
+      m.onclick = (e) => { if (e.target === m) m.hidden = true; };
+    }
+    function start() {
+      const t = today(), id = pickId(t);
+      if (S.log[t]) return;
+      const hasSave = SAVE.list().some((x) => x.id === id), c = cur();
+      if (c && c.started && hasSave) { openGame(id); return; }
+      const go = () => { S.cur = { d: t, id, started: true }; save(); CF[id].m().daily(t + '|' + id); openGame(id); };
+      if (hasSave) ask('Partie en cours', 'Ta partie de ' + gmap[id].n + ' sera remplacée par le défi du jour.', 'Lancer le défi', go); else go();
+    }
+    function paint() {
+      const box = $('dayCard'); box.textContent = '';
+      const t = today(), id = pickId(t), cf = CF[id], done = S.log[t], c = cur(), n = streak();
+      const card = document.createElement('div'); card.className = 'day';
+      const top = document.createElement('div'); top.className = 'top';
+      const a = document.createElement('span'); a.textContent = 'DÉFI DU JOUR'; top.appendChild(a);
+      if (n > 0) { const f = document.createElement('span'); f.className = 'fl'; f.textContent = '🔥 ' + pl(n, 'jour'); top.appendChild(f); }
+      card.appendChild(top);
+      const h = document.createElement('h2'); h.textContent = cf.n; card.appendChild(h);
+      const p = document.createElement('p'); p.textContent = done ? 'Relevé aujourd’hui : ' + cf.f(done.v) + '. Reviens demain.' : cf.d + ' Même partie pour tout le monde.'; card.appendChild(p);
+      const mkb = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'go'; b.textContent = label; b.addEventListener('click', fn); card.appendChild(b); };
+      if (!done) mkb(c && c.started ? '▶ Reprendre le défi' : '▶ Relever le défi', start);
+      else if (DEFI.has(id)) mkb('⚔ Défier un ami', () => DEFI.send(id, done.v, cf.k));
+      const wk = document.createElement('div'); wk.className = 'wk';
+      const now = new Date(), wd = (now.getDay() + 6) % 7;
+      ['L', 'M', 'M', 'J', 'V', 'S', 'D'].forEach((l, i) => {
+        const dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() - wd + i), k = key(dt);
+        const s = document.createElement('span'); s.textContent = l;
+        const b = document.createElement('i'); b.textContent = S.log[k] ? '✓' : ''; if (S.log[k]) b.className = 'ok'; else if (k === t) b.className = 'now';
+        s.appendChild(b); wk.appendChild(s);
+      });
+      card.appendChild(wk);
+      const nt = nextTier(n), bd = document.createElement('div'); bd.className = 'dbd';
+      bd.textContent = n > 0 ? 'Série de ' + pl(n, 'jour') + (nt ? ' · encore ' + pl(nt - n, 'jour') + ' pour le badge ' + nt + ' j' : ' · tous les badges obtenus') : 'Relève le défi chaque jour pour lancer ta série.';
+      card.appendChild(bd);
+      box.appendChild(card);
+    }
+    return { paint, start, fmt: (id, v) => (CF[id] ? CF[id].f(v) : String(v)), nextTier, _test: { get S() { return S; }, pickId, today, streak } };
   })();
 
   /* =====================  DUEL À DEUX  ===================== */
