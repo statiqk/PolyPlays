@@ -19,6 +19,9 @@
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/instrument-sans-latin-600-normal.woff2) format('woff2')}
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/instrument-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/bricolage-grotesque-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
 @font-face{font-family:'Geist Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/geist-mono-latin-400-normal.woff2) format('woff2')}
 @font-face{font-family:'Geist Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/geist-mono-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'Geist Mono';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/geist-mono-latin-600-normal.woff2) format('woff2')}
@@ -39,6 +42,7 @@
   --gc1: #8C9BFF;
   --gc2: #4338CA;
   --gct: #fff;
+  --font-title: 'Bricolage Grotesque', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-display: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -60,8 +64,8 @@ body {
 .h7 { display: grid; gap: calc(12px * var(--u)); padding: calc(4px * var(--u)) calc(4px * var(--u)) calc(14px * var(--u)); }
 h1 {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-weight: 800;
   font-size: clamp(2rem, 8.6vw, 2.6rem);
   line-height: 1.05;
   letter-spacing: -.035em;
@@ -77,7 +81,7 @@ body.onhome::before { content: ""; position: fixed; inset: 0; z-index: -1; point
 .hero { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: calc(18px * var(--u)); width: 100%; min-height: calc(236px * var(--u)); padding: calc(20px * var(--u)) calc(18px * var(--u)); text-align: left; font: inherit; color: var(--ink); cursor: pointer; border-radius: calc(30px * var(--u)); background: rgba(255, 255, 255, .1); background: linear-gradient(150deg, color-mix(in srgb, var(--c1) 40%, transparent), rgba(255, 255, 255, .06)); border: 1px solid rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(calc(14px * var(--u))); backdrop-filter: blur(calc(14px * var(--u))); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 calc(18px * var(--u)) calc(30px * var(--u)) calc(-16px * var(--u)) rgba(0, 0, 0, .7); -webkit-tap-highlight-color: transparent; }
 .hero .art { position: absolute; right: calc(-6px * var(--u)); top: calc(6px * var(--u)); pointer-events: none; filter: drop-shadow(0 0 calc(28px * var(--u)) var(--c1)); }
 .hero small { position: relative; font-family: var(--font-mono); font-weight: 600; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: #dcd6f0; }
-.hero h2 { position: relative; margin: calc(4px * var(--u)) 0 calc(6px * var(--u)); font-size: 2.2rem; font-weight: 700; letter-spacing: -.04em; line-height: 1.05; }
+.hero h2 { font-family: var(--font-title); position: relative; margin: calc(4px * var(--u)) 0 calc(6px * var(--u)); font-size: 2.2rem; font-weight: 800; letter-spacing: -.04em; line-height: 1.05; }
 .hero p { position: relative; margin: 0; max-width: 60%; color: #dcd6f0; font-size: .88rem; line-height: 1.35; }
 .hero .rc { position: relative; font-family: var(--font-mono); font-size: .78rem; color: #fff; opacity: .9; margin-top: calc(8px * var(--u)); display: block; }
 .go8 { position: relative; display: inline-flex; align-items: center; gap: calc(6px * var(--u)); background: #fff; color: var(--bg); font-weight: 700; font-size: 1rem; padding: calc(11px * var(--u)) calc(20px * var(--u)) calc(11px * var(--u)) calc(14px * var(--u)); border-radius: calc(999px * var(--u)); box-shadow: 0 calc(10px * var(--u)) calc(20px * var(--u)) rgba(0, 0, 0, .3); }
@@ -85,7 +89,7 @@ body.onhome::before { content: ""; position: fixed; inset: 0; z-index: -1; point
 .glist { display: grid; gap: calc(10px * var(--u)); margin-top: calc(14px * var(--u)); }
 .grow { display: flex; align-items: center; gap: calc(12px * var(--u)); width: 100%; font: inherit; color: var(--ink); text-align: left; padding: calc(11px * var(--u)) calc(14px * var(--u)); cursor: pointer; border-radius: calc(24px * var(--u)); background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(calc(14px * var(--u))); backdrop-filter: blur(calc(14px * var(--u))); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); -webkit-tap-highlight-color: transparent; }
 .grow .ti { flex: none; width: calc(50px * var(--u)); height: calc(50px * var(--u)); border-radius: calc(16px * var(--u)); display: grid; place-items: center; background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5); }
-.grow .nm { flex: 1; min-width: 0; font-weight: 700; font-size: 1.02rem; }
+.grow .nm { font-family: var(--font-title); flex: 1; min-width: 0; font-weight: 700; font-size: 1.02rem; }
 .grow .nm small { display: block; font-family: var(--font-mono); font-weight: 500; font-size: .72rem; color: #cfc8ea; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .grow .pl8 { flex: none; width: calc(36px * var(--u)); height: calc(36px * var(--u)); border-radius: 50%; background: #fff; color: var(--bg); display: grid; place-items: center; }
 .grow .pl8 svg { width: calc(16px * var(--u)); height: calc(16px * var(--u)); }
@@ -284,8 +288,8 @@ canvas {
 .ov-in { display: grid; gap: calc(10px * var(--u)); justify-items: center; }
 .ov h2 {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-weight: 800;
   font-size: clamp(2rem, 9vw, 2.8rem);
   line-height: 1;
   letter-spacing: -.03em;
