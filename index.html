@@ -578,8 +578,8 @@ canvas {
 .ghd .spk7 { margin-left: 0; border: 0; background: rgba(255, 255, 255, .22); color: #fff; }
 /* Screen lock while a game is open: the page itself cannot scroll or rubber-band; only .app may scroll when a game is taller than the screen. */
 html { overscroll-behavior-x: none; }
-body.locked { position: fixed; inset: 0; width: 100%; padding: 0; overflow: hidden; overscroll-behavior: none; }
-body.locked .app { box-sizing: border-box; max-width: calc(592px * var(--u)); padding: calc(env(safe-area-inset-top, 0px) + clamp(calc(14px * var(--u)), 2.6vh, calc(24px * var(--u)))) max(calc(16px * var(--u)), env(safe-area-inset-right, 0px)) max(calc(32px * var(--u)), env(safe-area-inset-bottom, 0px)) max(calc(16px * var(--u)), env(safe-area-inset-left, 0px)); height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
+body.locked { position: fixed; inset: 0 0 calc(-1 * var(--sx, 0px)) 0; width: 100%; padding: 0; overflow: hidden; overscroll-behavior: none; }
+body.locked .app { box-sizing: border-box; max-width: calc(592px * var(--u)); padding: calc(env(safe-area-inset-top, 0px) + clamp(calc(14px * var(--u)), 2.6vh, calc(24px * var(--u)))) max(calc(16px * var(--u)), env(safe-area-inset-right, 0px)) max(calc(32px * var(--u)), env(safe-area-inset-bottom, 0px)) max(calc(16px * var(--u)), env(safe-area-inset-left, 0px)); height: calc(100vh + var(--sx, 0px)); height: calc(100dvh + var(--sx, 0px)); overflow-y: auto; overscroll-behavior: contain; align-content: start; scrollbar-width: none; }
 body.locked .app::-webkit-scrollbar { display: none; }
 /* Fit mode (screen locked): Flipper, Snake and Cube are sized to the screen height, so nothing scrolls while playing. */
 .fitbox { display: contents; }
@@ -1130,7 +1130,7 @@ button, input, select, textarea { font-family: inherit; }
 (function () {
   var cur = 0;
   function fit() {
-    (function () {
+    window.__measureSx = function () {
       var g = 0;
       try {
         var st = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
@@ -1141,7 +1141,8 @@ button, input, select, textarea { font-family: inherit; }
         }
       } catch (e) { g = 0; }
       document.documentElement.style.setProperty('--sx', g + 'px');
-    })();
+    };
+    window.__measureSx();
     var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
     var u = Math.max(1, Math.min(1.65, Math.min(w / 390, h / 844)));
     u = Math.round(u * 100) / 100;
@@ -6249,7 +6250,7 @@ function glyph(id, a, b, c) {
     function unwake() { if (sentinel) { const s = sentinel; sentinel = null; s.release().catch(() => {}); } }
     function apply() {
       const locked = active && on, fit = locked && FIT.indexOf(cur) >= 0, b = document.body;
-      b.classList.toggle('locked', locked);
+      b.classList.toggle('locked', locked); if (window.__measureSx) window.__measureSx();
       if (fit) b.dataset.fit = cur; else delete b.dataset.fit;
       help.hidden = !fit; b.classList.remove('showhint'); help.setAttribute('aria-pressed', 'false');
       menu.hidden = !(fit && document.querySelector('#panel-' + cur + ' .fitmenu')); b.classList.remove('showmenu'); menu.setAttribute('aria-expanded', 'false');
