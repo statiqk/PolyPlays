@@ -5928,7 +5928,7 @@ function glyph(id, a, b, c) {
   function setCat(i) {
     const n = CATS.length; cat = ((i % n) + n) % n;
     store.set('arcade.cat', CATS[cat].id);
-    renderHome();
+    homeRise = true; renderHome();
   }
   function paintEnc() {
     const el = $('encList'); el.textContent = '';
@@ -5952,7 +5952,9 @@ function glyph(id, a, b, c) {
       row.appendChild(b); row.appendChild(c); el.appendChild(row);
     });
   }
+  let homeRise = true;
   function renderHome() {
+    const riseCls = homeRise ? ' rise' : ''; homeRise = false;
     document.body.classList.add('onhome');
     DAY.paint();
     paintEnc();
@@ -5969,7 +5971,7 @@ function glyph(id, a, b, c) {
     const g = gmap[heroId], r = rec(heroId);
     heroEl.textContent = '';
     const h = document.createElement('button');
-    h.type = 'button'; h.className = 'hero rise';
+    h.type = 'button'; h.className = 'hero' + riseCls;
     h.style.setProperty('--c1', g.c[0]); h.style.setProperty('--c2', g.c[1]);
     h.setAttribute('aria-label', 'Jouer à ' + g.n + (r.banner ? ', ' + r.banner : ''));
     h.innerHTML = '<span class="art">' + gsvg(heroId, 150, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span>'
@@ -5980,7 +5982,7 @@ function glyph(id, a, b, c) {
     listEl.textContent = '';
     c.g.filter((id) => id !== heroId).forEach((id) => {
       const gg = gmap[id], rr = rec(id), b = document.createElement('button');
-      b.type = 'button'; b.className = 'grow rise';
+      b.type = 'button'; b.className = 'grow' + riseCls;
       b.style.setProperty('--c1', gg.c[0]); b.style.setProperty('--c2', gg.c[1]);
       let detail = rr.banner || 'Pas encore de record';
       if (id === 'snake') detail = 'Murs ' + (+store.get('arcade.snake.best.walls', 0) || 0) + ' \u00b7 Traversables ' + (+store.get('arcade.snake.best.wrap', 0) || 0);
