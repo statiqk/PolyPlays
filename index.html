@@ -860,6 +860,25 @@ body.locked[data-fit] .status:empty { display: none; }
 @keyframes mmflip { from { transform: perspective(500px) rotateY(90deg); } to { transform: perspective(500px) rotateY(0); } }
 @keyframes mmpop { 0% { transform: scale(1); } 45% { transform: scale(1.07); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .mmc.up, .mmc.ok { animation: none; } }
+
+/* Memory : sélecteur de grille visible, panneau de fin, erreur visible */
+.mmbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mmbar .seg { flex: none; }
+.mmbest { font: 600 .8rem var(--font-mono); color: var(--amber); text-align: right; min-width: 0; }
+.mmc.bad { animation: mmshake .42s ease-in-out; box-shadow: 0 0 0 3px #F43F5E, 0 0 16px rgba(244, 63, 94, .55), inset 0 -3px 0 rgba(0, 0, 0, .12); }
+@keyframes mmshake { 0%, 100% { transform: translateX(0) rotate(0); } 20% { transform: translateX(-4px) rotate(-3deg); } 40% { transform: translateX(4px) rotate(3deg); } 60% { transform: translateX(-3px) rotate(-2deg); } 80% { transform: translateX(3px) rotate(2deg); } }
+.status.bad { color: #FDA4AF; border-color: #F43F5E !important; background: #3a1620 !important; }
+.mmwin { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5, 3, 12, .62); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+.mmwin[hidden] { display: none; }
+.mmwin-card { width: min(380px, 100%); box-sizing: border-box; background: var(--surface); border: 1px solid var(--line); border-radius: 30px; padding: 22px 18px 18px; box-shadow: 0 30px 60px rgba(0, 0, 0, .6); display: grid; gap: 10px; text-align: center; animation: mmpop .4s ease-out; }
+.mmw-ic { font-size: 2.8rem; line-height: 1; }
+.mmw-k { font: 600 .72rem var(--font-mono); letter-spacing: .14em; color: var(--amber); }
+.mmwin-card h3 { margin: 0; font-size: 2.6rem; letter-spacing: -.02em; line-height: 1.05; }
+.mmw-s { color: var(--muted); font-size: .92rem; }
+.mmw-st { font-size: 1.7rem; letter-spacing: .1em; min-height: 1.3em; }
+.mmw-st .off { opacity: .25; filter: grayscale(1); }
+.mmw-r { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mmwin-card .btn { min-height: 50px; }
 </style>
 
 
@@ -1168,21 +1187,29 @@ body.locked[data-fit] .status:empty { display: none; }
       <div class="stat"><div class="k">Paires</div><div class="v" id="mmPairs">0 / 8</div></div>
       <div class="stat"><div class="k">Temps</div><div class="v" id="mmTime">0:00</div></div>
     </div>
-    <p class="status" id="mmStatus" aria-live="polite"></p>
-    <div class="fitbox mmf">
-    <div class="mmgrid" id="mmGrid" role="group" aria-label="Cartes"></div></div>
-    <div class="fitmenu">
-    <div class="row">
-      <span class="k" id="mmSzLab">Grille</span>
-      <div class="seg" role="group" aria-labelledby="mmSzLab">
+    <div class="mmbar">
+      <div class="seg" role="group" aria-label="Grille">
         <button type="button" id="mmS3" aria-pressed="false">3×4</button>
         <button type="button" id="mmS4" aria-pressed="true">4×4</button>
         <button type="button" id="mmS5" aria-pressed="false">5×4</button>
       </div>
-    </div></div>
+      <span class="mmbest" id="mmBest"></span>
+    </div>
+    <p class="status" id="mmStatus" aria-live="polite"></p>
+    <div class="fitbox mmf">
+    <div class="mmgrid" id="mmGrid" role="group" aria-label="Cartes"></div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="mmNew">Nouvelle partie</button>
     </div>
+    <div class="mmwin" id="mmWin" hidden><div class="mmwin-card" role="dialog" aria-modal="true" aria-labelledby="mmWinT">
+      <div class="mmw-ic" id="mmWinIc" aria-hidden="true">🏆</div>
+      <div class="mmw-k" id="mmWinK">NOUVEAU RECORD</div>
+      <h3 id="mmWinT">16 coups</h3>
+      <div class="mmw-s" id="mmWinS"></div>
+      <div class="mmw-st" id="mmWinStars" aria-label="Étoiles"></div>
+      <button type="button" class="btn primary" id="mmWinAgain">▶ Rejouer</button>
+      <div class="mmw-r"><button type="button" class="btn" id="mmWinChal">↗ Défier</button><button type="button" class="btn" id="mmWinGrid">Grille 5×4</button></div>
+    </div></div>
     <p class="hint">Retourne deux cartes à la fois et retrouve toutes les paires identiques avec le moins de coups possible.</p>
   </section>
 
@@ -4137,7 +4164,7 @@ body.locked[data-fit] .status:empty { display: none; }
       ['<path d="M12 2l8.7 5v10L12 22l-8.7-5V7z"/>', '#14B8A6']
     ];
     const SIZES = { 3: [3, 4], 4: [4, 4], 5: [5, 4] };
-    const gridEl = $('mmGrid'), stEl = $('mmStatus'), eMoves = $('mmMoves'), ePairs = $('mmPairs'), eTime = $('mmTime'), bNew = $('mmNew');
+    const gridEl = $('mmGrid'), stEl = $('mmStatus'), eBest = $('mmBest'), winEl = $('mmWin'), eMoves = $('mmMoves'), ePairs = $('mmPairs'), eTime = $('mmTime'), bNew = $('mmNew');
     const sBtn = { 3: $('mmS3'), 4: $('mmS4'), 5: $('mmS5') };
     let size = 4, cards = [], open = [], lock = false, moves = 0, found = 0, started = false, over = false, elapsed = 0, t0 = 0, timer = 0, active = false;
     let bests = store.get('arcade.memory.best', {}); if (!bests || typeof bests !== 'object') bests = {};
@@ -4147,7 +4174,8 @@ body.locked[data-fit] .status:empty { display: none; }
     function startTimer() { if (timer || over || !started) return; t0 = performance.now(); timer = setInterval(tick, 250); }
     function stopTimer() { if (!timer) return; elapsed += performance.now() - t0; clearInterval(timer); timer = 0; tick(); }
     function pairsTotal() { return SIZES[size][0] * SIZES[size][1] / 2; }
-    function status(t) { setText(stEl, t); }
+    function status(t, bad) { setText(stEl, t); stEl.classList.toggle('bad', !!bad); }
+    function showBest() { const b = bests[String(size)]; setText(eBest, b === undefined ? 'Pas encore de record' : '🏆 Record ' + b); }
     function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
     function flip(i) {
       if (lock || over) return;
@@ -4166,25 +4194,41 @@ body.locked[data-fit] .status:empty { display: none; }
           setText(ePairs, found + ' / ' + pairsTotal());
           if (found === pairsTotal()) win(); else status('Une paire !');
         } else {
-          lock = true; status('Pas la même.'); SFX.play('wrong', 250);
+          lock = true; status('Pas la même. Réessaie !', true); SFX.play('wrong', 250);
+          cards[a].el.classList.add('bad'); cards[b].el.classList.add('bad');
           setTimeout(() => {
             [a, b].forEach((x) => { cards[x].state = 'down'; cards[x].el.className = 'mmc'; cards[x].el.setAttribute('aria-label', 'Carte face cachée'); });
-            open = []; lock = false;
+            open = []; lock = false; status('Retourne une carte.');
           }, 700);
         }
       }
     }
+    function stars(m) { const p = pairsTotal(); return m <= p * 1.6 ? 3 : m <= p * 2.4 ? 2 : 1; }
     function win() {
       over = true; stopTimer();
-      const key = String(size), prev = bests[key];
-      let msg = 'Bravo ! ' + moves + ' coups en ' + fmt(elapsed) + '.';
-      if (prev === undefined || moves < prev) { bests[key] = moves; store.set('arcade.memory.best', bests); msg += ' Nouveau record !'; }
-      SFX.play(msg.indexOf('record') >= 0 ? 'record' : 'win', 500); ARC.done('memory', moves, key);
-      status(msg);
+      const key = String(size), prev = bests[key], rec = prev === undefined || moves < prev;
+      if (rec) { bests[key] = moves; store.set('arcade.memory.best', bests); }
+      SFX.play(rec ? 'record' : 'win', 500); ARC.done('memory', moves, key);
+      status('Bravo ! ' + moves + ' coups en ' + fmt(elapsed) + '.'); showBest();
+      if (!$('dfSheet').hidden) return;
+      const n = stars(moves), next = size === 3 ? 4 : size === 4 ? 5 : 3;
+      setText($('mmWinIc'), rec ? '🏆' : '🎉'); setText($('mmWinK'), rec ? 'NOUVEAU RECORD' : 'BRAVO');
+      setText($('mmWinT'), moves + ' coups');
+      setText($('mmWinS'), 'en ' + fmt(elapsed) + (rec ? (prev === undefined ? ' · premier record sur cette grille' : ' · l\u2019ancien record était ' + prev + ' coups') : ' · ton record : ' + prev + ' coups'));
+      const st = $('mmWinStars'); st.textContent = '';
+      for (let i = 0; i < 3; i++) { const e = document.createElement('span'); e.textContent = '\u2B50'; if (i >= n) e.className = 'off'; st.appendChild(e); }
+      $('mmWinGrid').textContent = 'Grille ' + SIZES[next][0] + '\u00d7' + SIZES[next][1]; $('mmWinGrid').dataset.next = next;
+      winEl.hidden = false; $('mmWinAgain').focus();
     }
+    function closeWin() { winEl.hidden = true; }
+    $('mmWinAgain').addEventListener('click', () => { closeWin(); build(); });
+    $('mmWinGrid').addEventListener('click', () => { const n = +$('mmWinGrid').dataset.next || 4; closeWin(); setSize(n); });
+    $('mmWinChal').addEventListener('click', () => { closeWin(); DEFI.send('memory', moves, String(size)); });
+    winEl.addEventListener('click', (e) => { if (e.target === winEl) closeWin(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !winEl.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closeWin(); } }, true);
     function build() {
       const [cols, rows] = SIZES[size], n = cols * rows;
-      stopTimer(); elapsed = 0; started = false; over = false; lock = false; open = []; moves = 0; found = 0;
+      closeWin(); stopTimer(); elapsed = 0; started = false; over = false; lock = false; open = []; moves = 0; found = 0;
       const deck = [];
       for (let k = 0; k < n / 2; k++) deck.push(k, k);
       shuffle(deck);
@@ -4201,7 +4245,7 @@ body.locked[data-fit] .status:empty { display: none; }
         cards.push({ k, el, state: 'down', name: 'Symbole ' + (k + 1) });
       });
       setText(eMoves, 0); setText(ePairs, '0 / ' + pairsTotal()); setText(eTime, '0:00');
-      status('Retourne une carte.');
+      status('Retourne une carte.'); showBest();
     }
     function setSize(n) {
       size = n;
@@ -5817,6 +5861,7 @@ function glyph(id, a, b, c) {
       if (!CFG[id] || typeof v !== 'number' || !isFinite(v)) return;
       if (cur && cur.id === id && String(cur.k || '') === String(k || '')) { finishChallenge(cur, v); return; }
       if (CFG[id].k && !CFG[id].k[k]) return;
+      if (id === 'memory') return;
       showSnack({ id, v: Math.round(v), k: String(k || '') });
     };
     function paintList() {
@@ -5843,7 +5888,7 @@ function glyph(id, a, b, c) {
     $('dfSnackX').addEventListener('click', hideSnack);
     window.addEventListener('hashchange', fromHash);
     setInterval(updateBar, 500);
-    return { paintList, fromHash, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
+    return { paintList, fromHash, send(id, v, k) { sendSheet({ id, v: Math.round(v), k: String(k || '') }); }, _test: { parse, makeUrl, get cur() { return cur; }, get list() { return list; }, accept, CFG } };
   })();
 
   /* =====================  DUEL À DEUX  ===================== */
