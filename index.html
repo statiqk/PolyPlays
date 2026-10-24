@@ -7090,7 +7090,8 @@ function glyph(id, a, b, c) {
         $('updGo').onclick = () => { w.postMessage('SKIP_WAITING'); };
         $('updX').onclick = () => { bar.hidden = true; };
       };
-      navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading) return; reloading = true; location.reload(); });
+      const hadCtl = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading || !hadCtl) return; reloading = true; location.reload(); });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
         reg.addEventListener('updatefound', () => {
