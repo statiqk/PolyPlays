@@ -1103,25 +1103,28 @@ button, input, select, textarea { font-family: inherit; }
 (function () {
   var s = document.getElementById('spl'); if (!s) return;
   var skip = !!window.__arcadeTest;
-  try { if (sessionStorage.getItem('spl')) skip = true; sessionStorage.setItem('spl', '1'); } catch (e) { /* ignore */ }
+  var upd = false;
+  try { if (sessionStorage.getItem('splUpd')) { upd = true; sessionStorage.removeItem('splUpd'); } if (sessionStorage.getItem('spl') && !upd) skip = true; sessionStorage.setItem('spl', '1'); } catch (e) { /* ignore */ }
   if (skip) { s.remove(); return; }
   var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
   try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); if (window.innerHeight >= window.innerWidth) { s.style.bottom = 'auto'; s.style.height = h + 'px'; } } } catch (e) { /* ignore */ }
   s.style.setProperty('--k', String(Math.max(.8, Math.min(1.65, Math.min(w / 390, h / 844)))));
-  var bar = s.querySelector('.b u'), lab = s.querySelector('.l'), t0 = Date.now(), p = 0, done = false, fontsOk = false, loaded = document.readyState === 'complete';
+  var bar = s.querySelector('.b u'), lab = s.querySelector('.l'), t0 = Date.now(), p = 0, done = false, fontsOk = false, loaded = document.readyState === 'complete', hold = false, updRes = upd || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller;
   function set(v, l) { if (v > p) { p = v; bar.style.width = p + '%'; } if (l) lab.textContent = l; }
   set(12, 'Chargement…');
   document.addEventListener('DOMContentLoaded', function () { set(40); });
   window.addEventListener('load', function () { loaded = true; set(90); });
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { fontsOk = true; s.classList.add('fr'); set(70); });
   setTimeout(function () { s.classList.add('fr'); }, 700);
+  window.__splUpd = function (st) { if (done) return; updRes = true; if (st === 'found') { hold = true; set(55, 'Mise à jour…'); } else if (st === 'fail') hold = false; };
   function fin() {
-    if (done) return; done = true; set(100, 'C’est parti !');
+    if (done) return; done = true; hold = false; set(100, upd ? 'Mise à jour installée' : 'C’est parti !');
     setTimeout(function () { s.style.opacity = '0'; setTimeout(function () { s.remove(); }, 500); }, 280);
   }
   (function tick() {
     var el = Date.now() - t0;
-    if (el > 4500 || (loaded && fontsOk && el >= 900)) { fin(); return; }
+    if (el > 2200) updRes = true;
+    if (el > (hold ? 9000 : 4500) || (loaded && fontsOk && el >= 900 && updRes && !hold)) { fin(); return; }
     set(Math.min(85, 12 + Math.round(el / 12)));
     setTimeout(tick, 80);
   })();
@@ -7164,12 +7167,22 @@ function glyph(id, a, b, c) {
         $('updX').onclick = () => { bar.hidden = true; };
       };
       const hadCtl = !!navigator.serviceWorker.controller;
+      const splUp = (st) => { try { if (window.__splUpd) window.__splUpd(st); } catch (e) {} };
+      const auto = (w) => {
+        if (document.getElementById('spl')) {
+          try { sessionStorage.setItem('splUpd', '1'); setTimeout(() => { try { sessionStorage.removeItem('splUpd'); } catch (e) {} }, 9500); } catch (e) {}
+          w.postMessage('SKIP_WAITING');
+        } else offer(w);
+      };
       navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloading || !hadCtl) return; reloading = true; location.reload(); });
       navigator.serviceWorker.register('sw.js').then((reg) => {
-        if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
+        if (reg.waiting && navigator.serviceWorker.controller) { splUp('found'); auto(reg.waiting); }
+        else if (hadCtl) reg.update().then(() => { if (!reg.installing && !reg.waiting) splUp('none'); }).catch(() => splUp('fail'));
+        else splUp('none');
         reg.addEventListener('updatefound', () => {
           const w = reg.installing;
-          if (w) w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) offer(w); });
+          if (w && navigator.serviceWorker.controller) splUp('found');
+          if (w) w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) auto(w); else if (w.state === 'redundant') splUp('fail'); });
         });
         const check = () => reg.update().catch(() => {});
         document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
