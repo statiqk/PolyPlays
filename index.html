@@ -819,7 +819,7 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blact .su[disabled] { opacity: .35; }
 .blact.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .blact.four .btn.wide { grid-column: span 4; }
-.blhw { container-type: inline-size; width: 100%; }
+.blhw { container-type: inline-size; width: 100%; max-width: 420px; margin-inline: auto; }
 .blhand { display: flex; justify-content: center; align-items: flex-end; height: 33cqw; padding-top: 4cqw; box-sizing: border-box; }
 .blc { position: relative; flex: none; width: 20cqw; aspect-ratio: 3 / 4.2; margin-left: -8.6cqw; padding: 0; border: 0; border-radius: 2.4cqw; background: #F4F2FA; box-shadow: 0 .3cqw 1cqw rgba(0, 0, 0, .55); cursor: pointer; container-type: inline-size; font-family: var(--font-body); transition: transform .14s ease, filter .14s ease; -webkit-tap-highlight-color: transparent; }
 .blc:first-child { margin-left: 0; }
@@ -6204,9 +6204,8 @@ button, input, select, textarea { font-family: inherit; }
     }
     const val = (c) => (su(c) === trump ? 100 + OT[rk(c)] : ON[rk(c)]);
     const sorted = (h) => {
-      const order = trump ? [trump].concat(['S', 'H', 'C', 'D'].filter((s) => s !== trump)) : ['S', 'H', 'C', 'D'];
-      // alterne noir / rouge quand c'est possible
-      const o = order.slice(); if (!trump) { /* S H C D alterne déjà */ }
+      // atout en tête, puis couleurs en alternant noir / rouge
+      const o = !trump ? ['S', 'H', 'C', 'D'] : [trump].concat({ S: ['H', 'C', 'D'], C: ['H', 'S', 'D'], H: ['S', 'D', 'C'], D: ['S', 'H', 'C'] }[trump]);
       return h.slice().sort((a, b) => { const sa = o.indexOf(su(a)), sb = o.indexOf(su(b)); return sa !== sb ? sa - sb : (su(a) === trump ? OT[rk(b)] - OT[rk(a)] : ON[rk(b)] - ON[rk(a)]); });
     };
 
@@ -6353,18 +6352,18 @@ button, input, select, textarea { font-family: inherit; }
     function showRes() {
       const d = lastDelta, r = d.rows; resBody.textContent = '';
       const box = mk('div', 'blres'); resBody.appendChild(box);
-      const mine = d.T === 0, who = taker === 0 ? 'Tu' : NAMES[taker];
+      const mine = d.T === 0;
       const ok = d.made;
       box.appendChild(mk('div', 'qic', ok === mine ? '\u{1F389}' : '\u{1F62C}'));
       const hd = mk('h3', '', ok ? (taker === 0 ? 'Contrat rempli !' : mine ? 'Contrat de ' + NAMES[taker] + ' rempli' : 'Ils ont réussi leur contrat') : (taker === 0 ? 'Contrat chuté' : mine ? 'Contrat de ' + NAMES[taker] + ' chuté' : 'Ils ont chuté !'));
       box.appendChild(hd);
       box.appendChild(mk('p', '', (taker === 0 ? 'Tu avais pris à ' : NAMES[taker] + ' avait pris à ') + SY[trump] + ' · il fallait 82 points, ' + (taker === 0 ? 'tu en as fait ' : mine ? 'vous en avez fait ' : 'ils en ont fait ') + d.got + '.'));
       const tb = mk('table'); const th = mk('tr'); ['MANCHE ' + mn, 'NOUS', 'EUX'].forEach((x) => th.appendChild(mk('th', '', x))); tb.appendChild(th);
-      const row = (lab, a, b, cls) => { const tr = mk('tr', cls); tr.appendChild(mk('td', '', lab)); tr.appendChild(mk('td', '', a || '—')); tr.appendChild(mk('td', '', b || '—')); tb.appendChild(tr); };
+      const row = (lab, a, b, cls) => { const tr = mk('tr', cls); tr.appendChild(mk('td', '', lab)); tr.appendChild(mk('td', '', a || (cls === 'tot' ? '0' : '—'))); tr.appendChild(mk('td', '', b || (cls === 'tot' ? '0' : '—'))); tb.appendChild(tr); };
       row('Cartes', r.cards[0], r.cards[1]); row('Dix de der', r.der[0], r.der[1]);
       if (r.bel[0] || r.bel[1]) row('Belote-rebelote', r.bel[0], r.bel[1]);
       if (r.cap[0] || r.cap[1]) row('Capot', r.cap[0], r.cap[1]);
-      if (!d.made) row('Contrat chuté', d.T === 0 ? '−' : '', d.T === 1 ? '−' : '');
+      if (!d.made) { const p0 = r.cards[0] + r.der[0] + r.bel[0] + r.cap[0], p1 = r.cards[1] + r.der[1] + r.bel[1] + r.cap[1], f = (v) => (v > 0 ? '+' + v : v < 0 ? '−' + (-v) : ''); row('Contrat chuté', f(d.res[0] - p0), f(d.res[1] - p1)); }
       row('Total', d.res[0], d.res[1], 'tot'); box.appendChild(tb);
       const bar = mk('div', 'blbar'), a = mk('u'), b = mk('s'), tot = Math.max(G.t === 1 ? Math.max(sc[0] + sc[1], 1) : G.t, 1);
       a.style.width = Math.min(100, sc[0] / tot * 100) + '%'; b.style.width = Math.min(100, sc[1] / tot * 100) + '%'; bar.appendChild(a); bar.appendChild(b);
@@ -6377,7 +6376,6 @@ button, input, select, textarea { font-family: inherit; }
       const go = mk('button', 'btn primary', over ? 'Voir le résultat' : 'Manche suivante'); go.type = 'button'; go.addEventListener('click', nextManche); box.appendChild(go);
       resEl.hidden = false; try { go.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
     }
-    resEl.addEventListener('click', (e) => { if (e.target === resEl && !over) nextManche(); });
 
     /* ---------- cadence ---------- */
     function later(fn, ms) { clearTimeout(timer); timer = setTimeout(() => { timer = 0; if (active || fast) fn(); }, fast ? 0 : ms); }
@@ -6419,6 +6417,7 @@ button, input, select, textarea { font-family: inherit; }
       if (has) return lead === trump ? 'Fournis à l’atout' + (legal(hands[0], trick, trump, 0).length < hands[0].filter((c) => su(c) === lead).length ? ', et monte' : '') + '.' : 'Fournis à ' + SY[lead] + '.';
       const L = legal(hands[0], trick, trump, 0);
       if (L.length < hands[0].length && L.every((c) => su(c) === trump)) return 'Coupe à l’atout' + (trick.some((x) => su(x.c) === trump) ? ' (surcoupe)' : '') + '.';
+      if (L.length === hands[0].length && trick.length && team(winner(trick, trump).p) === 0 && su(trick[0].c) !== trump) return 'Ton partenaire est maître : joue ce que tu veux.';
       return 'Défausse-toi.';
     }
     function render() {
@@ -6532,8 +6531,8 @@ button, input, select, textarea { font-family: inherit; }
     if (ph === 'idle') { render(); }
     return {
       newGame,
-      activate() { active = true; if (ph === 'idle') newGame(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
-      deactivate() { active = false; clearTimeout(timer); timer = 0; },
+      activate() { active = true; if (ph === 'idle') newGame(); else if (ph === 'mend' && lastDelta) showRes(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
+      deactivate() { active = false; clearTimeout(timer); timer = 0; resEl.hidden = true; },
       _test: {
         get st() { return { ph, turn, trump, taker, sc: sc.slice(), mn, trick: trick.slice(), hands: hands.map((h) => h.slice()), done, tp: tp.slice(), cnt: cnt.slice(), bt, over, round, dealer, lastDelta, played: played.slice() }; },
         setAuto(v) { auto = !!v; schedule(); }, setThr(o) { Object.assign(THR, o); }, setOpt(o) { Object.assign(opt, o); G = { t: opt.t, lv: opt.lv }; }, setLv(a) { lvS = a; }, newGame, legal, winner, pick, strength, step() { if (ph === 'redeal') { clearTimeout(timer); deal(); } else if (ph === 'wait') { clearTimeout(timer); endTrick(); } else aiAct(); }, nextManche
