@@ -6402,7 +6402,7 @@ button, input, select, textarea { font-family: inherit; }
         if (turn === 0) return round === 1 ? 'Prends-tu à ' + SY[su(turned)] + ' ?' : 'Quelle couleur prends-tu ?';
         return NAMES[turn] + ' réfléchit…';
       }
-      if (ph === 'wait') return NAMES[winner(trick, trump).p] + (winner(trick, trump).p === 0 ? ' remportes' : ' remporte') + ' le pli.'.replace('Toi remportes', 'Tu remportes');
+      if (ph === 'wait') { const wp = winner(trick, trump).p; return wp === 0 ? 'Tu remportes le pli.' : NAMES[wp] + ' remporte le pli.'; }
       if (turn !== 0) return NAMES[turn] + ' joue…';
       if (!trick.length) return 'À toi d’entamer.';
       const lead = su(trick[0].c), has = hands[0].some((c) => su(c) === lead);
@@ -6424,7 +6424,7 @@ button, input, select, textarea { font-family: inherit; }
       if (trump && ph !== 'idle') {
         eAt.hidden = false; eAt.textContent = '';
         eAt.appendChild(document.createTextNode('ATOUT ')); const b = mk('b', red(trump) ? 'red' : '', SY[trump]); eAt.appendChild(b);
-        eAt.appendChild(mk('br')); eAt.appendChild(document.createTextNode('pris par ' + NAMES[taker].toLowerCase().replace('toi', 'toi')));
+        eAt.appendChild(mk('br')); eAt.appendChild(document.createTextNode('pris par ' + (taker === 0 ? 'toi' : NAMES[taker])));
       } else eAt.hidden = true;
       // centre
       eMid.textContent = '';
@@ -6497,7 +6497,7 @@ button, input, select, textarea { font-family: inherit; }
     bNew.addEventListener('click', newGame);
     SAVE.reg('belote', {
       snap() {
-        if (ph === 'idle' || ph === 'over' || (ph === 'mend' && over)) return null;
+        if (ph === 'idle' || ph === 'over' || ph === 'redeal' || (ph === 'mend' && over)) return null;
         return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: opt.t };
       },
       load(d) {
@@ -6517,7 +6517,7 @@ button, input, select, textarea { font-family: inherit; }
     if (ph === 'idle') { render(); }
     return {
       newGame,
-      activate() { active = true; if (ph === 'idle') newGame(); else if (ph === 'wait') later(endTrick, 400); else schedule(); },
+      activate() { active = true; if (ph === 'idle') newGame(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
       deactivate() { active = false; clearTimeout(timer); timer = 0; },
       _test: {
         get st() { return { ph, turn, trump, taker, sc: sc.slice(), mn, trick: trick.slice(), hands: hands.map((h) => h.slice()), done, tp: tp.slice(), cnt: cnt.slice(), bt, over, round, dealer, lastDelta, played: played.slice() }; },
