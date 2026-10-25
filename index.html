@@ -841,6 +841,19 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blres td { padding: calc(6px * var(--u)) 0; border-top: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
 .blres tr.tot td { font-weight: 800; border-top: 1px solid var(--muted); }
 .blbar { height: calc(9px * var(--u)); border-radius: 5px; background: var(--line); display: flex; gap: 2px; overflow: hidden; }
+.blnet { margin: 0; text-align: center; font: 600 .74rem var(--font-mono); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+.blnet.ok { color: #4ADE9C; } .blnet.ko { color: #FF7B8E; }
+.qs#blOn { z-index: 96; }
+.blon .blfld { display: grid; gap: 6px; text-align: left; font: 500 .7rem var(--font-mono); letter-spacing: .08em; color: var(--muted); }
+.blon input { box-sizing: border-box; width: 100%; min-height: calc(48px * var(--u)); padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: inherit; font: 600 1rem var(--font-ui, inherit); }
+.blon input.blcode { text-align: center; font: 800 1.6rem var(--font-mono); letter-spacing: .3em; text-transform: uppercase; }
+.blon .btn[disabled] { opacity: .4; }
+.blcodebig { text-align: center; font: 800 2.6rem var(--font-mono); letter-spacing: .3em; padding-left: .3em; color: var(--amber); }
+.blrow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.blseats { display: grid; gap: 4px; }
+.blseats div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; border-radius: 12px; background: var(--surface-2); font-size: .92rem; }
+.blseats div span { color: var(--muted); font-size: .8rem; }
+.blseats .ok span { color: #4ADE9C; } .blseats .wait b { color: var(--muted); font-weight: 500; }
 .blbar u { background: #4ADE9C; } .blbar s { background: #FF7B8E; }
 body.locked[data-fit] #panel-belote .blact { min-height: 0; }
 body.locked[data-fit] #panel-belote .blact .btn { min-height: calc(44px * var(--u)); }
@@ -1297,6 +1310,7 @@ button, input, select, textarea { font-family: inherit; }
     <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
     <div class="qs" id="qRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="qResBody"></div></div>
     <div class="qs" id="blRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="blResBody"></div></div>
+    <div class="qs" id="blOn" hidden role="dialog" aria-modal="true" aria-label="Belote en ligne"><div class="qc blon" id="blOnBody"></div></div>
     <div class="qs" id="qNew" hidden role="dialog" aria-modal="true" aria-labelledby="qNewT"><div class="qc np"><h3 id="qNewT">Nouvelle partie</h3><div id="qNewB"></div><p id="qNewP"></p><button type="button" class="btn primary" id="qNewGo">Commencer</button><button type="button" class="btn" id="qNewNo">Annuler</button></div></div>
     <div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-label="Aide pas à pas"><div class="hole" id="tourHole"></div><div class="tc" id="tourCard"><b id="tourT"></b><p id="tourP"></p><div class="tf"><button type="button" class="sk" id="tourSk">Passer</button><span class="dots" id="tourDots"></span><button type="button" class="nx" id="tourNx">Suivant</button></div></div></div>
     <div class="qs" id="qAsk" hidden role="dialog" aria-modal="true" aria-labelledby="qAskT"><div class="qc"><h3 id="qAskT"></h3><p id="qAskP"></p><button type="button" class="btn primary" id="qAskOk"></button><button type="button" class="btn" id="qAskNo">Annuler</button></div></div>
@@ -1600,6 +1614,7 @@ button, input, select, textarea { font-family: inherit; }
         <div class="bllast" id="blLast" hidden></div>
       </div>
     </div>
+    <p class="blnet" id="blNet" hidden></p>
     <p class="status" id="blStatus" aria-live="polite"></p>
     <div class="blact" id="blAct"></div>
     <div class="blhw"><div class="blhand" id="blHand" role="group" aria-label="Ta main"></div></div>
@@ -1622,8 +1637,9 @@ button, input, select, textarea { font-family: inherit; }
     </div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="blNew">Nouvelle partie</button>
+      <button type="button" class="btn" id="blOnB">👥 Avec un ami</button>
     </div>
-    <p class="hint">Belote à quatre : toi et Camille contre Hugo et Léa. Après la donne, prends à la couleur retournée ou passe, puis choisis une autre couleur au second tour. Il faut fournir, couper ou surcouper. Le valet d'atout vaut 20 points et le neuf 14. Le contrat est rempli à 82 points sur 162. Roi et dame d'atout : belote-rebelote, 20 points. Touche une carte pour la lever, touche-la encore pour la jouer.</p>
+    <p class="hint">Belote à quatre : toi et Camille contre Hugo et Léa. Après la donne, prends à la couleur retournée ou passe, puis choisis une autre couleur au second tour. Il faut fournir, couper ou surcouper. Le valet d'atout vaut 20 points et le neuf 14. Le contrat est rempli à 82 points sur 162. Roi et dame d'atout : belote-rebelote, 20 points. Touche une carte pour la lever, touche-la encore pour la jouer. Avec « Avec un ami », tu peux jouer en ligne avec quelqu’un qui a aussi PolyPlays (application installée).</p>
   </section>
 
 
@@ -6193,6 +6209,8 @@ button, input, select, textarea { font-family: inherit; }
     let sc = [0, 0], mn = 0, dealer = 0, turn = 0, ph = 'idle', round = 1, passes = 0, hands = [[], [], [], []], turned = '', rest = [], trump = '', taker = -1;
     let trick = [], last = null, cnt = [0, 0], tp = [0, 0], played = [], pl = {}, bt = -1, done = 0, lastDelta = null;
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
+    const NM0 = NAMES.slice();
+    const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
 
     function newDeck() {
       const d = []; SUITS.forEach((s) => RANKS.forEach((r) => d.push(r + s)));
@@ -6264,14 +6282,14 @@ button, input, select, textarea { font-family: inherit; }
       rest = [];
       [0, 1, 2, 3].forEach((q) => { if (hands[q].indexOf('K' + s) >= 0 && hands[q].indexOf('Q' + s) >= 0) bt = team(q); });
       ph = 'play'; turn = (dealer + 1) % 4; sel = '';
-      toast(NAMES[p] === 'Toi' ? 'Tu prends à ' + SY[s] : NAMES[p] + ' prend à ' + SY[s], 1600);
+      ev('take', p, s);
       render(); schedule();
     }
     function pass(p) {
       passes++;
       if (passes >= 4) {
         if (round === 1) { round = 2; passes = 0; turn = (dealer + 1) % 4; }
-        else { toast('Personne ne prend : on redonne', 1800); dealer = (dealer + 1) % 4; mn--; ph = 'redeal'; render(); later(deal, 1500); return; }
+        else { ev('redeal', -1); dealer = (dealer + 1) % 4; mn--; ph = 'redeal'; render(); later(deal, 1500); return; }
       } else turn = (turn + 1) % 4;
       render(); schedule();
     }
@@ -6327,8 +6345,8 @@ button, input, select, textarea { font-family: inherit; }
       if (trick.length && su(c) !== su(trick[0].c)) vd[p][su(trick[0].c)] = true;
       hands[p].splice(i, 1); trick.push({ p, c }); played.push(c); pl[c] = p; sel = '';
       SFX.play('flip');
-      if (note) { if (p) bubble(p, note); else toast(note, 1800); SFX.play('pair'); }
-      else if (p && trick.length > 1 && su(c) === trump && su(trick[0].c) !== trump) bubble(p, 'Coupé !');
+      if (note) { ev('note', p, note); SFX.play('pair'); }
+      else if (trick.length > 1 && su(c) === trump && su(trick[0].c) !== trump) ev('cut', p);
       if (trick.length === 4) { ph = 'wait'; render(); sweep(); later(endTrick, WAITMS[opt.sp]); return; }
       turn = (p + 1) % 4; render(); schedule();
     }
@@ -6407,19 +6425,22 @@ button, input, select, textarea { font-family: inherit; }
       const nb = mk('div', ''); nb.style.cssText = 'display:flex;justify-content:space-between;font-weight:700';
       const n1 = mk('span', '', 'Nous ' + sc[0]), n2 = mk('span', '', 'Eux ' + sc[1]); n1.style.color = '#4ADE9C'; n2.style.color = '#FF7B8E'; nb.appendChild(n1); nb.appendChild(n2); box.appendChild(nb);
       if (over) { const w = sc[0] > sc[1]; const ov = mk('div', 'qk', w ? 'PARTIE GAGNÉE' : 'PARTIE PERDUE'); ov.style.cssText = 'text-align:center;font:600 .74rem var(--font-mono);letter-spacing:.16em;color:var(--amber)'; box.insertBefore(ov, hd); }
+      if (net.role === 'guest') { box.appendChild(mk('p', '', 'En attente de ' + NAMES[net.hp] + '…')); resEl.hidden = false; return; }
       const go = mk('button', 'btn primary', over ? 'Voir le résultat' : 'Manche suivante'); go.type = 'button'; go.addEventListener('click', nextManche); box.appendChild(go);
       resEl.hidden = false; try { go.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
     }
 
     /* ---------- cadence ---------- */
-    function later(fn, ms) { clearTimeout(timer); timer = setTimeout(() => { timer = 0; if (active || fast) fn(); }, fast ? 0 : ms); }
+    function later(fn, ms) { clearTimeout(timer); timer = setTimeout(() => { timer = 0; if (active || fast || net.role === 'host') fn(); }, fast ? 0 : ms); }
     function schedule() {
       clearTimeout(timer); timer = 0;
       if (ph !== 'bid' && ph !== 'play') return;
+      if (net.role === 'guest' || (net.role === 'host' && net.started && (net.paused || turn === net.g))) return;
       if (turn === 0 && !auto) return;
       later(aiAct, 650 * SPD[opt.sp]);
     }
     function aiAct() {
+      if (net.role === 'guest') return;
       if (ph === 'bid') { const s = bidAI(turn); if (s) take(turn, s); else pass(turn); }
       else if (ph === 'play') playCard(turn, pick(turn));
     }
@@ -6436,7 +6457,8 @@ button, input, select, textarea { font-family: inherit; }
     function fanOf(n) { const f = mk('div', 'blfan'); for (let i = 0; i < n; i++) f.appendChild(mk('i', 'blb')); return f; }
     function slot(p) { return [{ x: 50, y: 64 }, { x: 64, y: 50 }, { x: 50, y: 36 }, { x: 36, y: 50 }][p]; }
     function statusText() {
-      if (ph === 'idle') return 'Touche « Nouvelle partie ».';
+      if (net.role === 'guest' && !net.on) return 'Connexion perdue… on réessaie.';
+      if (ph === 'idle') return net.role === 'guest' ? 'En attente du lancement…' : 'Touche « Nouvelle partie ».';
       if (ph === 'over') return sc[0] > sc[1] ? 'Partie gagnée ! ' + sc[0] + ' à ' + sc[1] : 'Partie perdue, ' + sc[0] + ' à ' + sc[1] + '.';
       if (ph === 'mend') return 'Manche terminée.';
       if (ph === 'redeal') return 'Personne ne prend. On redonne.';
@@ -6485,15 +6507,15 @@ button, input, select, textarea { font-family: inherit; }
       setText(eSt, statusText());
       // actions
       eAct.textContent = ''; eAct.className = 'blact';
-      if (ph === 'bid' && turn === 0) {
+      if (ph === 'bid' && turn === 0 && !(net.role === 'guest' && !net.on)) {
         if (round === 1) {
           const a = mk('button', 'btn primary', 'Je prends'), b = mk('button', 'btn', 'Je passe'); a.type = b.type = 'button';
-          a.addEventListener('click', () => { if (ph === 'bid' && turn === 0) take(0, su(turned)); }); b.addEventListener('click', () => { if (ph === 'bid' && turn === 0) pass(0); });
+          a.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uTake(su(turned)); }); b.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uPass(); });
           eAct.appendChild(a); eAct.appendChild(b);
         } else {
           eAct.classList.add('four');
-          SUITS.forEach((s) => { const b = mk('button', 'btn su' + (red(s) ? ' red' : ''), SY[s]); b.type = 'button'; b.setAttribute('aria-label', 'Prendre à ' + SY[s]); if (s === su(turned)) b.disabled = true; else b.addEventListener('click', () => { if (ph === 'bid' && turn === 0) take(0, s); }); eAct.appendChild(b); });
-          const p = mk('button', 'btn wide', 'Je passe'); p.type = 'button'; p.addEventListener('click', () => { if (ph === 'bid' && turn === 0) pass(0); }); eAct.appendChild(p);
+          SUITS.forEach((s) => { const b = mk('button', 'btn su' + (red(s) ? ' red' : ''), SY[s]); b.type = 'button'; b.setAttribute('aria-label', 'Prendre à ' + SY[s]); if (s === su(turned)) b.disabled = true; else b.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uTake(s); }); eAct.appendChild(b); });
+          const p = mk('button', 'btn wide', 'Je passe'); p.type = 'button'; p.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uPass(); }); eAct.appendChild(p);
         }
       }
       // main
@@ -6509,14 +6531,290 @@ button, input, select, textarea { font-family: inherit; }
         btn.addEventListener('click', () => onCard(c));
         eHand.appendChild(btn);
       });
+      netUi();
+      if (net.role === 'host') bcast();
     }
+    function uTake(s) { if (net.role === 'guest') send({ t: 'take', s }); else take(0, s); }
+    function uPass() { if (net.role === 'guest') send({ t: 'pass' }); else pass(0); }
+    function uPlay(c) { if (net.role === 'guest') { sel = ''; send({ t: 'play', c }); render(); } else playCard(0, c); }
     function onCard(c) {
-      if (ph !== 'play' || turn !== 0) return;
+      if (ph !== 'play' || turn !== 0 || (net.role === 'guest' && !net.on)) return;
       const L = legal(hands[0], trick, trump, 0);
       if (L.indexOf(c) < 0) { toast('Carte interdite : ' + statusText().replace(/\.$/, '').toLowerCase(), 1600); SFX.play('wrong'); return; }
-      if (sel === c) { playCard(0, c); return; }
+      if (sel === c) { uPlay(c); return; }
       sel = c; SFX.play('tick'); render();
     }
+
+    /* ---------- en ligne (PeerJS, un ami + deux joueurs virtuels) ---------- */
+    const PFX = 'polyplays-bl-', ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const onEl = $e('blOn'), onBody = $e('blOnBody'), netEl = $e('blNet'), bOn = $e('blOnB');
+    let myName = String(store.get('arcade.belote.name', '') || '').slice(0, 12), pendCode = '';
+    const cleanN = (v, d) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, 12) : '') || d;
+    const send = (m) => { try { if (net.conn && net.conn.open) net.conn.send(m); } catch (e) { /* ignore */ } };
+    function loadPeer() {
+      return new Promise((ok, ko) => {
+        if (window.Peer) { ok(); return; }
+        const sc2 = document.createElement('script'); sc2.src = 'peerjs.min.js';
+        sc2.onload = () => (window.Peer ? ok() : ko(new Error('x'))); sc2.onerror = () => ko(new Error('x'));
+        document.head.appendChild(sc2); setTimeout(() => { if (!window.Peer) ko(new Error('x')); }, 8000);
+      });
+    }
+    function evShow(k, p, x) {
+      if (k === 'take') { toast(p === 0 ? 'Tu prends à ' + SY[x] : NAMES[p] + ' prend à ' + SY[x], 1600); }
+      else if (k === 'redeal') toast('Personne ne prend : on redonne', 1800);
+      else if (k === 'note') { if (p) bubble(p, x); else toast(x, 1800); }
+      else if (k === 'cut') bubble(p, 'Coupé !');
+    }
+    function ev(k, p, x) {
+      evShow(k, p, x);
+      if (net.role === 'host' && net.on) send({ t: 'ev', k, p: p < 0 ? p : (p - net.g + 4) % 4, x });
+    }
+    function viewFor() {
+      const g = net.g, rt = (q) => (q < 0 ? q : (q - g + 4) % 4), sw = g & 1, ar = (a) => (sw ? [a[1], a[0]] : a.slice());
+      const hs = [0, 1, 2, 3].map((q) => { const h = hands[(q + g) % 4] || []; return q === 0 ? h.slice() : h.map(() => '7S'); });
+      const tr = (x) => ({ p: rt(x.p), c: x.c });
+      const L = lastDelta && { rows: { cards: ar(lastDelta.rows.cards), der: ar(lastDelta.rows.der), bel: ar(lastDelta.rows.bel), cap: ar(lastDelta.rows.cap) }, res: ar(lastDelta.res), made: lastDelta.made, T: lastDelta.T ^ sw, need: 82, got: lastDelta.got };
+      const nm = [0, 1, 2, 3].map((q) => (q === 0 ? 'Toi' : NAMES[(q + g) % 4]));
+      return { ph, turn: rt(turn), round, passes, dealer: rt(dealer), mn, trump, taker: rt(taker), turned: ph === 'bid' || ph === 'redeal' ? turned : '', hands: hs, trick: trick.map(tr), last: last && { cards: last.cards.map(tr), w: rt(last.w) }, sc: ar(sc), over, G, done, ld: L, nm, hp: rt(0), hn: NAMES[0] };
+    }
+    function bcast(force) {
+      if (net.role !== 'host' || !net.on || !net.started) return;
+      const v = JSON.stringify(viewFor());
+      if (!force && v === net.sent) return;
+      net.sent = v; send({ t: 'st', s: v });
+    }
+    function applySt(v) {
+      const pt = trick.length, pp = ph;
+      ph = v.ph; turn = v.turn; round = v.round; passes = v.passes; dealer = v.dealer; mn = v.mn; trump = v.trump; taker = v.taker; turned = v.turned; hands = v.hands; trick = v.trick; last = v.last; sc = v.sc; over = v.over; G = v.G; done = v.done; lastDelta = v.ld; net.hp = v.hp; net.hn = v.hn;
+      NAMES.splice(0, 4, v.nm[0], v.nm[1], v.nm[2], v.nm[3]);
+      if (!(ph === 'play' && turn === 0) || hands[0].indexOf(sel) < 0) sel = '';
+      resEl.hidden = true; render();
+      if (trick.length > pt && trick.length <= 4) SFX.play('flip');
+      if (ph === 'wait' && pp !== 'wait') sweep();
+      if (ph === 'mend' && lastDelta) { showRes(); if (pp !== 'mend') SFX.play(lastDelta.made === (lastDelta.T === 0) ? 'win' : 'wrong'); }
+      if (ph === 'over' && pp !== 'over') SFX.play(sc[0] > sc[1] ? 'win' : 'lose', 250);
+    }
+    function startHb() {
+      clearInterval(net.hb);
+      net.hb = setInterval(() => {
+        if (!net.role) return;
+        send({ t: 'p' });
+        if (net.on && Date.now() - net.last > 10000) { if (net.role === 'host') lostConn(); else guestLost(); }
+      }, 3000);
+    }
+    /* hôte */
+    function hostOpen(tries) {
+      net.code = Array.from({ length: 4 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
+      const pe = new window.Peer(PFX + net.code, { debug: 0 }); net.peer = pe;
+      pe.on('open', () => { if (net.peer !== pe) return; net.st = 'salon'; renderOn(); });
+      pe.on('connection', (c) => hostAccept(c));
+      pe.on('error', (e) => {
+        if (net.peer !== pe) return;
+        if (e && e.type === 'unavailable-id' && tries < 5) { try { pe.destroy(); } catch (x) { /* ignore */ } hostOpen(tries + 1); return; }
+        if (net.st === 'open') { net.msg = 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; renderOn(); }
+      });
+      pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
+    }
+    function hostAccept(c) {
+      c.on('data', (d) => {
+        if (!d || typeof d !== 'object') return;
+        if (d.t === 'hi') {
+          const nm = cleanN(d.n, 'Ami');
+          if (net.conn && net.conn !== c && net.on && !(net.fname && nm === net.fname)) { try { c.send({ t: 'full' }); } catch (e) { /* ignore */ } setTimeout(() => { try { c.close(); } catch (e) { /* ignore */ } }, 400); return; }
+          if (net.conn && net.conn !== c) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
+          if (net.started && net.fname && nm !== net.fname) { try { c.send({ t: 'full' }); } catch (e) { /* ignore */ } setTimeout(() => { try { c.close(); } catch (e) { /* ignore */ } }, 400); return; }
+          net.conn = c; net.fname = nm; guestIn(); return;
+        }
+        if (c !== net.conn) return;
+        net.last = Date.now();
+        if (d.t === 'bye') { lostConn(); return; }
+        if (!net.on || !net.started || net.paused) return;
+        const g = net.g;
+        if (d.t === 'take' && ph === 'bid' && turn === g && typeof d.s === 'string' && (round === 1 ? d.s === su(turned) : SUITS.indexOf(d.s) >= 0 && d.s !== su(turned))) take(g, d.s);
+        else if (d.t === 'pass' && ph === 'bid' && turn === g) pass(g);
+        else if (d.t === 'play' && ph === 'play' && turn === g && typeof d.c === 'string' && hands[g].indexOf(d.c) >= 0 && legal(hands[g], trick, trump, g).indexOf(d.c) >= 0) playCard(g, d.c);
+      });
+      c.on('close', () => { if (c === net.conn) lostConn(); });
+      c.on('error', () => { if (c === net.conn) lostConn(); });
+    }
+    function guestIn() {
+      net.on = true; net.paused = false; net.last = Date.now(); startHb();
+      if (net.started) NAMES[net.g] = net.fname;
+      sendWel();
+      if (net.started) { net.sent = ''; bcast(true); schedule(); }
+      netUi(); renderOn();
+    }
+    function sendWel() { send({ t: 'wel', m: net.mode, hn: cleanN(myName, 'Joueur'), o: opt.t, started: net.started }); }
+    function lostConn() {
+      if (net.role !== 'host') return;
+      net.on = false; const c = net.conn; net.conn = null; try { if (c) c.close(); } catch (e) { /* ignore */ }
+      net.paused = net.started; if (!net.started) net.fname = '';
+      netUi(); renderOn();
+    }
+    function hostLaunch() {
+      if (net.role !== 'host' || !net.on) return;
+      net.g = net.mode === 'face' ? 1 : 2; NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]); NAMES[net.g] = net.fname; NAMES[0] = cleanN(myName, 'Joueur');
+      net.started = true; net.paused = false; net.st = 'game'; net.sent = ''; onEl.hidden = true;
+      newGame();
+    }
+    /* invité */
+    function guestJoin(code) {
+      net.role = 'guest'; net.code = code; net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false;
+      clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
+      loadPeer().then(() => {
+        if (net.role !== 'guest') return;
+        const pe = new window.Peer({ debug: 0 }); net.peer = pe;
+        pe.on('open', () => { if (net.peer === pe) dial(); });
+        pe.on('error', (e) => {
+          if (net.peer !== pe) return;
+          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); renderOn(); }
+        });
+        pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
+      }).catch(() => { netLeave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; net.st = 'err'; showOn('err'); });
+    }
+    function dial() {
+      if (net.role !== 'guest' || !net.peer) return;
+      if (net.conn) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
+      let c; try { c = net.peer.connect(PFX + net.code, { reliable: true, serialization: 'json' }); } catch (e) { return; }
+      net.conn = c;
+      c.on('open', () => { if (net.conn !== c) return; net.last = Date.now(); send({ t: 'hi', n: cleanN(myName, 'Ami') }); startHb(); });
+      c.on('data', (d) => { if (net.conn === c) guestData(d); });
+      c.on('close', () => { if (net.conn === c) guestLost(); });
+      c.on('error', () => { if (net.conn === c) guestLost(); });
+      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Impossible de joindre ton ami. Le réseau bloque peut-être la connexion directe : essaie en wifi ou en 4G.'; net.st = 'err'; renderOn(); } }, 15000); }
+    }
+    function guestData(d) {
+      if (!d || typeof d !== 'object') return;
+      net.last = Date.now();
+      if (d.t === 'wel') {
+        net.on = true; net.retry = 0; clearTimeout(net.rt); clearTimeout(net.ct); net.hn = cleanN(d.hn, 'Ton ami'); net.mode = d.m === 'face' ? 'face' : 'together'; if ([1, 501, 1000].indexOf(+d.o) >= 0) net.objT = +d.o;
+        if (net.st !== 'game') net.st = 'salon'; netUi(); renderOn();
+      } else if (d.t === 'st' && typeof d.s === 'string') {
+        let v; try { v = JSON.parse(d.s); } catch (e) { return; }
+        if (!v || !Array.isArray(v.hands) || !Array.isArray(v.nm)) return;
+        net.on = true; if (net.st !== 'game') { net.st = 'game'; onEl.hidden = true; }
+        applySt(v);
+      } else if (d.t === 'ev' && net.st === 'game') evShow(d.k, d.p, d.x);
+      else if (d.t === 'full') { net.msg = 'Ce salon a déjà son joueur.'; netLeave(true); net.st = 'err'; showOn('err'); }
+      else if (d.t === 'bye') { net.st = 'gone'; net.on = false; clearTimeout(net.rt); netUi(); renderOn(); render(); }
+    }
+    function guestLost() {
+      if (net.role !== 'guest' || net.st === 'gone' || net.st === 'err') return;
+      net.on = false; const c = net.conn; net.conn = null; try { if (c) c.close(); } catch (e) { /* ignore */ }
+      if (net.st === 'conn') return;
+      netUi(); renderOn(); render(); retry();
+    }
+    function retry() {
+      clearTimeout(net.rt);
+      if (net.role !== 'guest' || net.on || net.st === 'gone') return;
+      if (net.retry++ > 20) { net.msg = 'Connexion perdue. Quitte puis rejoins avec le code.'; net.st = 'err'; renderOn(); return; }
+      net.rt = setTimeout(() => { if (net.role !== 'guest' || net.on) return; try { const pe = net.peer; if (pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } dial(); retry(); }, 5000);
+    }
+    function netLeave(quiet) {
+      if (!net.role) return;
+      send({ t: 'bye' }); const pe = net.peer, c = net.conn;
+      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct);
+      setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
+      net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.sent = '';
+      NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]);
+      resEl.hidden = true; clearTimeout(timer); timer = 0;
+      ph = 'idle'; over = false; sc = [0, 0]; mn = 0; hands = [[], [], [], []]; trick = []; last = null; trump = ''; sel = '';
+      onEl.hidden = true; render();
+      if (!quiet && active) newGame();
+    }
+    /* écrans */
+    function netUi() {
+      let t = '', c = '';
+      if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
+      else if (net.role === 'host' && net.st === 'salon') { t = '● Salon ' + net.code + (net.on ? ' · ' + net.fname + ' est là' : ' · en attente d’un ami'); c = net.on ? 'ok' : ''; }
+      else if (net.role === 'guest') {
+        if (net.st === 'gone') { t = '● ' + net.hn + ' a quitté la partie'; c = 'ko'; }
+        else if (net.st === 'game') { t = net.on ? '● Connecté à ' + net.hn : '● Connexion perdue · on réessaie…'; c = net.on ? 'ok' : 'ko'; }
+        else if (net.st === 'salon') { t = '● Salon de ' + net.hn + ' · en attente du lancement'; c = 'ok'; }
+        else if (net.st === 'conn') t = '● Connexion en cours…';
+      }
+      setText(netEl, t); netEl.hidden = !t; netEl.className = 'blnet' + (c ? ' ' + c : '');
+      setText(bOn, net.role ? '👥 En ligne' : '👥 Avec un ami');
+      bNew.hidden = net.role === 'guest';
+    }
+    function B(txt, cls, fn) { const b = mk('button', 'btn ' + (cls || ''), txt); b.type = 'button'; b.addEventListener('click', fn); return b; }
+    function segOn(labels, cur, set) {
+      const g = mk('div', 'seg'); g.setAttribute('role', 'group');
+      labels.forEach((it) => { const b = mk('button', '', it[1]); b.type = 'button'; b.setAttribute('aria-pressed', String(cur === it[0])); b.addEventListener('click', () => set(it[0])); g.appendChild(b); });
+      return g;
+    }
+    function fld(lab, el) { const w = mk('label', 'blfld'); w.appendChild(mk('span', '', lab)); w.appendChild(el); return w; }
+    function nameIn() {
+      const i = mk('input'); i.type = 'text'; i.maxLength = 12; i.value = myName; i.autocomplete = 'off'; i.placeholder = 'Ton prénom';
+      i.addEventListener('input', () => { myName = i.value.replace(/[<>]/g, '').slice(0, 12); try { store.set('arcade.belote.name', myName); } catch (e) { /* ignore */ } });
+      return fld('Ton prénom', i);
+    }
+    let onMode = '';
+    function showOn(m) { onMode = m || onMode; renderOn(); onEl.hidden = false; }
+    function renderOn() {
+      onBody.textContent = '';
+      const add = (e) => onBody.appendChild(e), close = () => B('Fermer', '', () => { onEl.hidden = true; });
+      if (!net.role && onMode !== 'join' && onMode !== 'err') {
+        add(mk('h3', '', 'Belote en ligne'));
+        add(mk('p', '', 'Joue avec un ami qui a aussi PolyPlays. Vous êtes deux humains, avec deux joueurs virtuels pour compléter la table.'));
+        add(nameIn());
+        add(B('Créer un salon', 'primary', () => {
+          net.role = 'host'; net.st = 'open'; net.msg = ''; net.mode = net.mode || 'together'; net.started = false; net.on = false; renderOn(); netUi();
+          loadPeer().then(() => { if (net.role === 'host') hostOpen(0); }).catch(() => { netLeave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; onMode = 'err'; showOn('err'); });
+        }));
+        add(B('Rejoindre avec un code', '', () => { onMode = 'join'; renderOn(); }));
+        add(close()); return;
+      }
+      if (!net.role && onMode === 'err') {
+        add(mk('h3', '', 'Oups')); add(mk('p', '', net.msg || 'Connexion impossible.')); add(B('Retour', 'primary', () => { onMode = ''; net.msg = ''; renderOn(); })); add(close()); return;
+      }
+      if (!net.role && onMode === 'join') {
+        add(mk('h3', '', 'Rejoindre un salon'));
+        const ci = mk('input'); ci.type = 'text'; ci.maxLength = 4; ci.value = net.code || ''; ci.autocomplete = 'off'; ci.autocapitalize = 'characters'; ci.placeholder = 'CODE'; ci.className = 'blcode'; ci.setAttribute('inputmode', 'text');
+        ci.addEventListener('input', () => { ci.value = ci.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); net.code = ci.value; go.disabled = ci.value.length !== 4; });
+        add(fld('Code du salon (4 lettres)', ci)); add(nameIn());
+        const go = B('Rejoindre', 'primary', () => { if (ci.value.length === 4) guestJoin(ci.value); }); go.disabled = ci.value.length !== 4; add(go);
+        add(B('Retour', '', () => { onMode = ''; renderOn(); })); return;
+      }
+      if (net.st === 'open' || net.st === 'conn') {
+        add(mk('h3', '', net.st === 'open' ? 'Création du salon…' : 'Connexion…'));
+        add(mk('p', '', net.st === 'open' ? 'Un instant.' : 'On rejoint le salon ' + net.code + '.')); add(B('Annuler', '', () => { netLeave(true); onMode = ''; renderOn(); })); return;
+      }
+      if (net.st === 'err') {
+        add(mk('h3', '', 'Oups')); add(mk('p', '', net.msg || 'Connexion impossible.'));
+        add(B('Quitter', 'primary', () => { netLeave(); onMode = ''; })); return;
+      }
+      if (net.role === 'host' && !net.started) {
+        add(mk('h3', '', 'Ton salon'));
+        const code = mk('div', 'blcodebig', net.code); add(code);
+        add(mk('p', '', 'Donne ce code à ton ami, ou envoie-lui le lien.'));
+        const row = mk('div', 'blrow2');
+        row.appendChild(B('Copier le lien', '', (e) => { const url = location.href.split('#')[0] + '#salon=' + net.code; const b = e.currentTarget; const ok = () => { b.textContent = 'Lien copié ✓'; setTimeout(() => { b.textContent = 'Copier le lien'; }, 1600); }; try { navigator.clipboard.writeText(url).then(ok, () => { b.textContent = url; }); } catch (x) { b.textContent = url; } }));
+        row.appendChild(B('Partager', '', () => { const url = location.href.split('#')[0] + '#salon=' + net.code; try { if (navigator.share) navigator.share({ title: 'Belote PolyPlays', text: 'Viens jouer à la belote avec moi ! Code : ' + net.code, url }).catch(() => {}); } catch (x) { /* ignore */ } }));
+        add(row);
+        add(segOn([['together', 'Ensemble'], ['face', 'Face à face']], net.mode, (v) => { net.mode = v; renderOn(); if (net.on) sendWel(); }));
+        add(segOn([[1, 'Une manche'], [501, '501'], [1000, '1000']], opt.t, (v) => { opt.t = v; saveOpt(); pend(); renderOn(); if (net.on) sendWel(); }));
+        const L = mk('div', 'blseats'), me2 = cleanN(myName, 'Joueur');
+        const seat = (a, b, cls) => { const d = mk('div', cls || ''); d.appendChild(mk('b', '', a)); d.appendChild(mk('span', '', b)); L.appendChild(d); };
+        seat(me2, 'toi · prêt', 'ok');
+        seat(net.on ? net.fname : 'En attente…', net.mode === 'together' ? 'ton partenaire' : 'adversaire', net.on ? 'ok' : 'wait');
+        if (net.mode === 'together') { seat('Léa', 'ordinateur'); seat('Hugo', 'ordinateur'); } else { seat('Camille', 'ordinateur'); seat('Hugo', 'ordinateur'); }
+        add(L);
+        const go = B('Lancer la partie', 'primary', hostLaunch); go.disabled = !net.on; add(go);
+        add(B('Annuler le salon', '', () => { netLeave(true); onMode = ''; renderOn(); }));
+        return;
+      }
+      if (net.role === 'guest' && net.st === 'salon') {
+        add(mk('h3', '', 'Salon de ' + net.hn));
+        add(mk('p', '', 'Tu es connecté. ' + (net.mode === 'together' ? 'Tu joues avec ' + net.hn + ' contre deux joueurs virtuels.' : 'Tu joues face à ' + net.hn + ', chacun avec un joueur virtuel.') + ' La partie démarre dès que ' + net.hn + ' la lance.'));
+        add(B('Quitter', '', () => { netLeave(); onMode = ''; })); return;
+      }
+      add(mk('h3', '', 'Partie en ligne'));
+      add(mk('p', '', netEl.textContent.replace('● ', '') || 'Connecté.'));
+      add(close()); add(B('Quitter la partie en ligne', '', () => { netLeave(); onMode = ''; }));
+    }
+    bOn.addEventListener('click', () => { if (!net.role) onMode = ''; showOn(); });
+    netEl.addEventListener('click', () => { if (net.role) showOn(); });
     eLb.addEventListener('click', () => { showLast = !showLast; render(); });
     eLast.addEventListener('click', () => { showLast = false; render(); });
 
@@ -6539,13 +6837,14 @@ button, input, select, textarea { font-family: inherit; }
     seg('blAid', [[true, 'Oui'], [false, 'Non']], () => opt.aid, (v) => { opt.aid = v; render(); });
 
     function newGame() {
+      if (net.role === 'guest') return;
       clearTimeout(timer); resEl.hidden = true; over = false; G = { t: opt.t, lv: opt.lv }; sc = [0, 0]; mn = 0; dealer = Math.floor(Math.random() * 4); last = null;
       SFX.play('flip'); deal();
     }
     bNew.addEventListener('click', newGame);
     SAVE.reg('belote', {
       snap() {
-        if (ph === 'idle' || ph === 'over' || ph === 'redeal' || (ph === 'mend' && over)) return null;
+        if (net.role || ph === 'idle' || ph === 'over' || ph === 'redeal' || (ph === 'mend' && over)) return null;
         return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: G.t, lv: G.lv, vd };
       },
       load(d) {
@@ -6566,9 +6865,11 @@ button, input, select, textarea { font-family: inherit; }
     if (ph === 'idle') { render(); }
     return {
       newGame,
-      activate() { active = true; if (ph === 'idle') newGame(); else if (ph === 'mend' && lastDelta) showRes(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
-      deactivate() { active = false; clearTimeout(timer); timer = 0; resEl.hidden = true; },
+      activate() { active = true; if (net.role) { render(); if (ph === 'mend' && lastDelta) showRes(); return; } if (ph === 'idle') newGame(); else if (ph === 'mend' && lastDelta) showRes(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
+      deactivate() { active = false; if (!net.role) { clearTimeout(timer); timer = 0; } resEl.hidden = true; },
+      joinLink(code) { if (net.role) return; net.code = code; net.st = ''; net.msg = ''; showOn('join'); },
       _test: {
+        get net() { return { role: net.role, on: net.on, g: net.g, paused: net.paused, started: net.started, code: net.code, st: net.st, fname: net.fname, hn: net.hn }; },
         get st() { return { ph, turn, trump, taker, sc: sc.slice(), mn, trick: trick.slice(), hands: hands.map((h) => h.slice()), done, tp: tp.slice(), cnt: cnt.slice(), bt, over, round, dealer, lastDelta, played: played.slice() }; },
         setAuto(v) { auto = !!v; schedule(); }, setThr(o) { Object.assign(THR, o); }, setOpt(o) { Object.assign(opt, o); G = { t: opt.t, lv: opt.lv }; }, setLv(a) { lvS = a; }, newGame, legal, winner, pick, strength, step() { if (ph === 'redeal') { clearTimeout(timer); deal(); } else if (ph === 'wait') { clearTimeout(timer); endTrick(); } else aiAct(); }, nextManche
       }
@@ -7667,6 +7968,7 @@ function glyph(id, a, b, c) {
   renderHome();
   if (location.hash && TABS[location.hash.slice(1)]) openGame(location.hash.slice(1));
   DEFI.fromHash();
+  { const sm = /^#salon=([A-Z]{4})$/.exec(location.hash); if (sm) { openGame('belote'); BL.joinLink(sm[1]); } }
 
   const KEYDIR = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
