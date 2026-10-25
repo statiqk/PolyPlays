@@ -4763,7 +4763,7 @@ button, input, select, textarea { font-family: inherit; }
     const SIZES = { 3: [3, 4], 4: [4, 4], 5: [5, 4] };
     const gridEl = $('mmGrid'), stEl = $('mmStatus'), eBest = $('mmBest'), winEl = $('mmWin'), eMoves = $('mmMoves'), ePairs = $('mmPairs'), eTime = $('mmTime'), bNew = $('mmNew');
     const sBtn = { 3: $('mmS3'), 4: $('mmS4'), 5: $('mmS5') };
-    let size = 4, cards = [], open = [], lock = false, moves = 0, found = 0, started = false, over = false, elapsed = 0, t0 = 0, timer = 0, active = false;
+    let gen = 0, size = 4, cards = [], open = [], lock = false, moves = 0, found = 0, started = false, over = false, elapsed = 0, t0 = 0, timer = 0, active = false;
     let bests = store.get('arcade.memory.best', {}); if (!bests || typeof bests !== 'object') bests = {};
     function fmt(ms) { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
     function now() { return elapsed + (timer ? performance.now() - t0 : 0); }
@@ -4793,7 +4793,9 @@ button, input, select, textarea { font-family: inherit; }
         } else {
           lock = true; status('Pas la même. Réessaie !', true); SFX.play('wrong', 250);
           cards[a].el.classList.add('bad'); cards[b].el.classList.add('bad');
+          const g0 = gen;
           setTimeout(() => {
+            if (g0 !== gen) return;
             [a, b].forEach((x) => { cards[x].state = 'down'; cards[x].el.className = 'mmc'; cards[x].el.setAttribute('aria-label', 'Carte face cachée'); });
             open = []; lock = false; status('Retourne une carte.');
           }, 700);
@@ -4825,7 +4827,7 @@ button, input, select, textarea { font-family: inherit; }
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !winEl.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closeWin(); } }, true);
     function build(deckIn) {
       const [cols, rows] = SIZES[size], n = cols * rows;
-      closeWin(); stopTimer(); elapsed = 0; started = false; over = false; lock = false; open = []; moves = 0; found = 0;
+      gen++; closeWin(); stopTimer(); elapsed = 0; started = false; over = false; lock = false; open = []; moves = 0; found = 0;
       let deck = [];
       for (let k = 0; k < n / 2; k++) deck.push(k, k);
       if (Array.isArray(deckIn) && deckIn.length === n) deck = deckIn.slice(); else shuffle(deck);
@@ -6149,7 +6151,8 @@ button, input, select, textarea { font-family: inherit; }
       }
     });
     Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv)));
-    if (!restore()) newGame(); else { Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv))); render(); }
+    let restored = false; try { restored = restore(); } catch (err) { restored = false; }
+    if (!restored) newGame(); else { Object.keys(lvBtn).forEach((k) => lvBtn[k].setAttribute('aria-pressed', String(k === lv))); render(); }
     return {
       reset: newGame,
       activate() { active = true; if (started && !over) startTimer(); },
@@ -7160,7 +7163,7 @@ function glyph(id, a, b, c) {
     const label = (id, k) => gmap[id].n + (k && CFG[id].k && CFG[id].k[k] ? ' · ' + CFG[id].k[k] : '');
     const text = (id, v) => CFG[id].f(v);
     const better = (id, a, b) => (CFG[id].hi ? a > b : a < b);
-    let list = store.get('arcade.ch', []); if (!Array.isArray(list)) list = []; list = list.filter((e) => e && typeof e === 'object' && typeof e.id === 'string' && CFG[e.id]);
+    let list = store.get('arcade.ch', []); if (!Array.isArray(list)) list = []; list = list.filter((e) => e && typeof e === 'object' && typeof e.id === 'string' && CFG[e.id] && typeof e.v === 'number' && isFinite(e.v) && typeof e.from === 'string');
     let cur = null, lastRun = null, snackT = 0;
     const save = () => store.set('arcade.ch', list.slice(-12));
     const snack = $('dfSnack'), sheet = $('dfSheet'), card = $('dfCard'), bar = $('dfBar'), listEl = $('dfList');
