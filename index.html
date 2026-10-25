@@ -6172,6 +6172,8 @@ button, input, select, textarea { font-family: inherit; }
     const saveOpt = () => store.set('arcade.belote.opt', opt);
     let wins = +store.get('arcade.belote.wins', 0) || 0;
     // état de la partie
+    let G = { t: opt.t, lv: opt.lv }, lvS = null, vd = [{}, {}, {}, {}];
+    const lvOf = (p) => (lvS ? lvS[p] : G.lv);
     let sc = [0, 0], mn = 0, dealer = 0, turn = 0, ph = 'idle', round = 1, passes = 0, hands = [[], [], [], []], turned = '', rest = [], trump = '', taker = -1;
     let trick = [], last = null, cnt = [0, 0], tp = [0, 0], played = [], pl = {}, bt = -1, done = 0, lastDelta = null;
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
@@ -6214,7 +6216,7 @@ button, input, select, textarea { font-family: inherit; }
       const d = newDeck();
       hands = [0, 1, 2, 3].map((p) => d.slice(p * 5, p * 5 + 5));
       turned = d[20]; rest = d.slice(21); trump = ''; taker = -1; round = 1; passes = 0; turn = (dealer + 1) % 4; ph = 'bid';
-      trick = []; last = null; cnt = [0, 0]; tp = [0, 0]; played = []; pl = {}; bt = -1; done = 0; sel = ''; showLast = false; lastDelta = null;
+      trick = []; last = null; cnt = [0, 0]; tp = [0, 0]; played = []; pl = {}; bt = -1; done = 0; sel = ''; showLast = false; lastDelta = null; vd = [{}, {}, {}, {}];
       render(); schedule();
     }
     function strength(hand, s) {
@@ -6227,15 +6229,16 @@ button, input, select, textarea { font-family: inherit; }
       if (hasJ && has9) v += 8; else if (hasJ && n >= 2) v += 4;
       return v;
     }
+    const bel = (h, s, lv) => (lv === 'h' && h.indexOf('K' + s) >= 0 && h.indexOf('Q' + s) >= 0 ? 8 : 0);
     const THR = { e: 38, n: 42, h: 42 };
     function bidAI(p) {
-      const lv = opt.lv, t = THR[lv] + (lv === 'e' ? Math.floor(Math.random() * 14) - 7 : 0);
+      const lv = lvOf(p), t = THR[lv] + (lv === 'e' ? Math.floor(Math.random() * 14) - 7 : 0);
       if (round === 1) {
         const h = hands[p].concat([turned]);
-        return strength(h, su(turned)) >= t ? su(turned) : null;
+        return strength(h, su(turned)) + bel(h, su(turned), lv) >= t ? su(turned) : null;
       }
       let best = null, bv = -1;
-      SUITS.forEach((s) => { if (s === su(turned)) return; const v = strength(hands[p], s); if (v > bv) { bv = v; best = s; } });
+      SUITS.forEach((s) => { if (s === su(turned)) return; const v = strength(hands[p], s) + bel(hands[p], s, lv); if (v > bv) { bv = v; best = s; } });
       const lastBid = passes === 3, thr = t - 6 - (lastBid ? 6 : 0);
       return bv >= thr ? best : null;
     }
@@ -6266,9 +6269,9 @@ button, input, select, textarea { font-family: inherit; }
     function pick(p) {
       const hand = hands[p], L = legal(hand, trick, trump, p);
       if (L.length === 1) return L[0];
-      const lv = opt.lv, mine = team(p), tk = team(taker) === mine;
+      const lv = lvOf(p), mine = team(p), tk = team(taker) === mine;
       const low = (a, b) => val(a) - val(b), pp = (c) => pts(c, trump);
-      if (lv === 'e' && Math.random() < .55) return L[Math.floor(Math.random() * L.length)];
+      if ((lv === 'e' && Math.random() < .55) || (lv === 'n' && Math.random() < .15)) return L[Math.floor(Math.random() * L.length)];
       if (!trick.length) {
         const tr = L.filter((c) => su(c) === trump), non = L.filter((c) => su(c) !== trump);
         const masters = non.filter((c) => isMaster(c, hand)).sort((a, b) => val(b) - val(a));
@@ -6280,6 +6283,12 @@ button, input, select, textarea { font-family: inherit; }
           return tr.slice().sort((a, b) => val(b) - val(a))[0];
         }
         if (masters.length) return masters[0];
+        if (lv === 'h' && non.length) {
+          const opp = [0, 1, 2, 3].filter((q) => team(q) !== mine), par = (p + 2) % 4;
+          const okN = non.filter((c) => !opp.some((q) => vd[q][su(c)])), pv = okN.filter((c) => vd[par][su(c)]);
+          if (pv.length) return pv.slice().sort(low)[0];
+          if (okN.length) { const cs = {}; hand.forEach((c) => { cs[su(c)] = (cs[su(c)] || 0) + 1; }); return okN.slice().sort((a, b) => (cs[su(a)] - cs[su(b)]) || low(a, b))[0]; }
+        }
         if (non.length) { const cntS = {}; hand.forEach((c) => { cntS[su(c)] = (cntS[su(c)] || 0) + 1; }); return non.slice().sort((a, b) => (cntS[su(a)] - cntS[su(b)]) || low(a, b))[0]; }
         return tr.slice().sort(low)[0];
       }
@@ -6300,6 +6309,7 @@ button, input, select, textarea { font-family: inherit; }
         const o = (rk(c) === 'K' ? 'Q' : 'K') + trump;
         if (hands[p].indexOf(o) >= 0) note = 'Belote'; else if (pl[o] === p) note = 'Rebelote !';
       }
+      if (trick.length && su(c) !== su(trick[0].c)) vd[p][su(trick[0].c)] = true;
       hands[p].splice(i, 1); trick.push({ p, c }); played.push(c); pl[c] = p; sel = '';
       SFX.play('flip');
       if (note) { toast(note, 1800); SFX.play('pair'); }
@@ -6323,7 +6333,7 @@ button, input, select, textarea { font-family: inherit; }
       const made = p[T] >= 82; let res;
       if (made) res = p.slice(); else { res = [0, 0]; res[T] = bt === T ? 20 : 0; res[D] = 162 + (cnt[D] === 8 ? 90 : 0) + (bt === D ? 20 : 0); }
       sc[0] += res[0]; sc[1] += res[1];
-      over = opt.t === 1 || (Math.max(sc[0], sc[1]) >= opt.t && sc[0] !== sc[1]);
+      over = G.t === 1 || (Math.max(sc[0], sc[1]) >= G.t && sc[0] !== sc[1]);
       ph = 'mend'; lastDelta = { rows, res, made, T, need: 82, got: p[T] };
       render(); showRes();
       SFX.play(made === (T === 0) ? 'win' : 'wrong');
@@ -6332,7 +6342,7 @@ button, input, select, textarea { font-family: inherit; }
     function finish() {
       const won = sc[0] > sc[1];
       if (won) { wins++; store.set('arcade.belote.wins', wins); }
-      store.set('arcade.belote.last', { sc: sc.slice(), t: opt.t });
+      store.set('arcade.belote.last', { sc: sc.slice(), t: G.t });
     }
     function nextManche() {
       resEl.hidden = true;
@@ -6356,10 +6366,10 @@ button, input, select, textarea { font-family: inherit; }
       if (r.cap[0] || r.cap[1]) row('Capot', r.cap[0], r.cap[1]);
       if (!d.made) row('Contrat chuté', d.T === 0 ? '−' : '', d.T === 1 ? '−' : '');
       row('Total', d.res[0], d.res[1], 'tot'); box.appendChild(tb);
-      const bar = mk('div', 'blbar'), a = mk('u'), b = mk('s'), tot = Math.max(opt.t === 1 ? Math.max(sc[0] + sc[1], 1) : opt.t, 1);
+      const bar = mk('div', 'blbar'), a = mk('u'), b = mk('s'), tot = Math.max(G.t === 1 ? Math.max(sc[0] + sc[1], 1) : G.t, 1);
       a.style.width = Math.min(100, sc[0] / tot * 100) + '%'; b.style.width = Math.min(100, sc[1] / tot * 100) + '%'; bar.appendChild(a); bar.appendChild(b);
       const pr = mk('div', ''); pr.style.cssText = 'display:flex;justify-content:space-between;font-size:.86rem;color:var(--muted)';
-      pr.appendChild(mk('span', '', opt.t === 1 ? 'Une manche' : 'Partie en ' + opt.t)); pr.appendChild(mk('span', '', opt.t === 1 ? '' : 'objectif ' + opt.t));
+      pr.appendChild(mk('span', '', G.t === 1 ? 'Une manche' : 'Partie en ' + G.t)); pr.appendChild(mk('span', '', G.t === 1 ? '' : 'objectif ' + G.t));
       box.appendChild(pr); box.appendChild(bar);
       const nb = mk('div', ''); nb.style.cssText = 'display:flex;justify-content:space-between;font-weight:700';
       const n1 = mk('span', '', 'Nous ' + sc[0]), n2 = mk('span', '', 'Eux ' + sc[1]); n1.style.color = '#4ADE9C'; n2.style.color = '#FF7B8E'; nb.appendChild(n1); nb.appendChild(n2); box.appendChild(nb);
@@ -6486,19 +6496,23 @@ button, input, select, textarea { font-family: inherit; }
         bs.push([b, it[0]]); g.appendChild(b);
       });
     }
-    seg('blObj', [[1, 'Une manche'], [501, '501'], [1000, '1000']], () => opt.t, (v) => { opt.t = v; });
-    seg('blLv', [['e', 'Facile'], ['n', 'Normal'], ['h', 'Fort']], () => opt.lv, (v) => { opt.lv = v; });
+    function pend() {
+      if (ph === 'idle' || ph === 'over' || (ph === 'mend' && over)) G = { t: opt.t, lv: opt.lv };
+      else if (G.t !== opt.t || G.lv !== opt.lv) toast('S’appliquera à la prochaine partie', 2200);
+    }
+    seg('blObj', [[1, 'Une manche'], [501, '501'], [1000, '1000']], () => opt.t, (v) => { opt.t = v; pend(); });
+    seg('blLv', [['e', 'Facile'], ['n', 'Normal'], ['h', 'Fort']], () => opt.lv, (v) => { opt.lv = v; pend(); });
     seg('blAid', [[true, 'Oui'], [false, 'Non']], () => opt.aid, (v) => { opt.aid = v; render(); });
 
     function newGame() {
-      clearTimeout(timer); resEl.hidden = true; over = false; sc = [0, 0]; mn = 0; dealer = Math.floor(Math.random() * 4); last = null;
+      clearTimeout(timer); resEl.hidden = true; over = false; G = { t: opt.t, lv: opt.lv }; sc = [0, 0]; mn = 0; dealer = Math.floor(Math.random() * 4); last = null;
       SFX.play('flip'); deal();
     }
     bNew.addEventListener('click', newGame);
     SAVE.reg('belote', {
       snap() {
         if (ph === 'idle' || ph === 'over' || ph === 'redeal' || (ph === 'mend' && over)) return null;
-        return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: opt.t };
+        return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: G.t, lv: G.lv, vd };
       },
       load(d) {
         const okH = Array.isArray(d.hands) && d.hands.length === 4 && d.hands.every((h) => Array.isArray(h) && h.every((c) => typeof c === 'string' && /^(7|8|9|10|J|Q|K|A)[SHDC]$/.test(c)));
@@ -6506,7 +6520,8 @@ button, input, select, textarea { font-family: inherit; }
         sc = [+d.sc[0] || 0, +d.sc[1] || 0]; mn = +d.mn || 1; dealer = d.dealer & 3; turn = d.turn & 3; ph = d.ph; round = d.round === 2 ? 2 : 1; passes = +d.passes || 0;
         hands = d.hands; turned = d.turned; rest = Array.isArray(d.rest) ? d.rest : []; trump = d.trump || ''; taker = typeof d.taker === 'number' ? d.taker : -1;
         trick = d.trick; last = d.last || null; cnt = d.cnt || [0, 0]; tp = d.tp || [0, 0]; played = d.played || []; pl = d.pl || {}; bt = typeof d.bt === 'number' ? d.bt : -1; done = +d.done || 0; over = false; sel = '';
-        if (d.t) opt.t = d.t;
+        G = { t: [1, 501, 1000].indexOf(+d.t) >= 0 ? +d.t : opt.t, lv: ['e', 'n', 'h'].indexOf(d.lv) >= 0 ? d.lv : opt.lv };
+        vd = Array.isArray(d.vd) && d.vd.length === 4 ? d.vd : [{}, {}, {}, {}];
         if (ph === 'mend') { dealer = (dealer + 1) % 4; deal(); return; }
         if (trick.length === 4) { ph = 'wait'; render(); later(endTrick, 400); return; }
         render(); schedule();
@@ -6521,7 +6536,7 @@ button, input, select, textarea { font-family: inherit; }
       deactivate() { active = false; clearTimeout(timer); timer = 0; },
       _test: {
         get st() { return { ph, turn, trump, taker, sc: sc.slice(), mn, trick: trick.slice(), hands: hands.map((h) => h.slice()), done, tp: tp.slice(), cnt: cnt.slice(), bt, over, round, dealer, lastDelta, played: played.slice() }; },
-        setAuto(v) { auto = !!v; schedule(); }, setThr(o) { Object.assign(THR, o); }, setOpt(o) { Object.assign(opt, o); }, newGame, legal, winner, pick, strength, step() { if (ph === 'redeal') { clearTimeout(timer); deal(); } else if (ph === 'wait') { clearTimeout(timer); endTrick(); } else aiAct(); }, nextManche
+        setAuto(v) { auto = !!v; schedule(); }, setThr(o) { Object.assign(THR, o); }, setOpt(o) { Object.assign(opt, o); G = { t: opt.t, lv: opt.lv }; }, setLv(a) { lvS = a; }, newGame, legal, winner, pick, strength, step() { if (ph === 'redeal') { clearTimeout(timer); deal(); } else if (ph === 'wait') { clearTimeout(timer); endTrick(); } else aiAct(); }, nextManche
       }
     };
   })();
