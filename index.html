@@ -854,6 +854,13 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blres tr.tot td { font-weight: 800; border-top: 1px solid var(--muted); }
 .blbar { height: calc(9px * var(--u)); border-radius: 5px; background: var(--line); display: flex; gap: 2px; overflow: hidden; }
 .blnet { margin: 0; text-align: center; font: 600 .74rem var(--font-mono); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+#gAmi, #blOnB { display: none; }
+#gAmi { position: relative; font-size: calc(18px * var(--u)); line-height: 1; }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) #gAmi { display: grid; }
+#gview:has(.panel[data-net]:not([data-net=""]):not([hidden])) #gAmi::after { content: ""; position: absolute; top: -2px; right: -2px; width: calc(11px * var(--u)); height: calc(11px * var(--u)); border-radius: 50%; background: #4ADE9C; border: 2px solid #15131C; }
+#gview:has(.panel[data-net="ok"]:not([hidden])) #gAmi { background: #16a36b; }
+#gview:has(.panel[data-net="ko"]:not([hidden])) #gAmi { background: #b8860b; }
+#gview:has(.panel[data-net="ko"]:not([hidden])) #gAmi::after { background: #FF7B8E; }
 .blnet.ok { color: #4ADE9C; } .blnet.ko { color: #FF7B8E; }
 .qs#blOn { z-index: 96; }
 .qs#appShare { z-index: 96; }
@@ -1318,6 +1325,7 @@ button, input, select, textarea { font-family: inherit; }
       <button type="button" class="spk7" id="gHelp" aria-label="Aide du jeu" aria-pressed="false" hidden>?</button>
       <button type="button" class="spk7 lk7" id="gLock" aria-pressed="true"></button>
       <button type="button" class="spk7" id="gSnd" aria-label="Couper le son"></button>
+      <button type="button" class="spk7" id="gAmi" aria-label="Jouer avec un ami en ligne" title="Avec un ami">👥</button>
       <button type="button" class="spk7" id="gMore" aria-label="Menu du jeu" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg></button>
     </header>
     <div class="gpb" id="gPopB" hidden></div>
@@ -2690,6 +2698,7 @@ button, input, select, textarea { font-family: inherit; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
       bar.textContent = t; bar.hidden = !t; bar.className = 'blnet' + (c ? ' ' + c : '');
+      { const pn = bar.closest('.panel'); if (pn) pn.dataset.net = net.role ? (c === 'ko' ? 'ko' : 'ok') : ''; }
       btns.forEach((b) => { b.textContent = net.role ? '\u{1F465} En ligne' : '\u{1F465} Avec un ami'; });
     }
     const B = (txt, cls, fn) => { const b = E('button', 'btn ' + (cls || ''), txt); b.type = 'button'; b.addEventListener('click', fn); return b; };
@@ -2747,7 +2756,6 @@ button, input, select, textarea { font-family: inherit; }
       add(E('h3', '', 'Partie en ligne')); add(E('p', '', bar.textContent.replace('● ', '') || 'Connecté.')); add(close()); add(B('Quitter la partie en ligne', '', () => { leave(); mode = ''; }));
     }
     function open() { if (!net.role) mode = ''; show(); }
-    cfg.btnParents.forEach((p) => { const b = E('button', 'btn', '\u{1F465} Avec un ami'); b.type = 'button'; b.addEventListener('click', open); p.appendChild(b); btns.push(b); });
     bar.addEventListener('click', () => { if (net.role) show(); });
     const api = { open, join(code) { if (net.role) return; net.code = code; net.st = ''; net.msg = ''; show('join'); }, send(d) { send({ t: 'g', d }); }, leave, ui, get on() { return net.on; }, get role() { return net.role; }, get started() { return net.started; }, get peerName() { return peerName(); } };
     MPREG[cfg.key] = api;
@@ -7197,6 +7205,7 @@ button, input, select, textarea { font-family: inherit; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
       setText(netEl, t); netEl.hidden = !t; netEl.className = 'blnet' + (c ? ' ' + c : '');
+      { const pn = $e('panel-belote'); if (pn) pn.dataset.net = net.role ? (c === 'ko' ? 'ko' : 'ok') : ''; }
       setText(bOn, net.role ? '👥 En ligne' : '👥 Avec un ami');
       bNew.hidden = net.role === 'guest';
     }
@@ -8455,6 +8464,10 @@ function glyph(id, a, b, c) {
   renderHome();
   if (location.hash && TABS[location.hash.slice(1)]) openGame(location.hash.slice(1));
   DEFI.fromHash();
+  $('gAmi').addEventListener('click', () => {
+    const vis = (k) => { const p = $('panel-' + k); return p && !p.hidden; };
+    if (vis('belote')) $('blOnB').click(); else if (vis('puis4')) MPREG.puis4.open(); else if (vis('navale')) MPREG.navale.open();
+  });
   { const sm = /^#salon=([A-Z]{4})$/.exec(location.hash); if (sm) { openGame('belote'); BL.joinLink(sm[1]); } }
   { const m2 = /^#salon-(puis4|navale)=([A-Z]{4})$/.exec(location.hash); if (m2) { openGame(m2[1]); MPREG[m2[1]].join(m2[2]); } }
 
