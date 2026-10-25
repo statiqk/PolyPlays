@@ -6789,8 +6789,9 @@ button, input, select, textarea { font-family: inherit; }
         const code = mk('div', 'blcodebig', net.code); add(code);
         add(mk('p', '', 'Donne ce code à ton ami, ou envoie-lui le lien.'));
         const row = mk('div', 'blrow2');
-        row.appendChild(B('Copier le lien', '', (e) => { const url = location.href.split('#')[0] + '#salon=' + net.code; const b = e.currentTarget; const ok = () => { b.textContent = 'Lien copié ✓'; setTimeout(() => { b.textContent = 'Copier le lien'; }, 1600); }; try { navigator.clipboard.writeText(url).then(ok, () => { b.textContent = url; }); } catch (x) { b.textContent = url; } }));
-        row.appendChild(B('Partager', '', () => { const url = location.href.split('#')[0] + '#salon=' + net.code; try { if (navigator.share) navigator.share({ title: 'Belote PolyPlays', text: 'Viens jouer à la belote avec moi ! Code : ' + net.code, url }).catch(() => {}); } catch (x) { /* ignore */ } }));
+        const invite = () => { const url = location.href.split('#')[0] + '#salon=' + net.code; return '🃏 ' + cleanN(myName, 'Un ami') + ' t’invite à une belote en ligne sur PolyPlays !\nOuvre ce lien : ' + url + '\nOu entre le code ' + net.code + ' dans Belote › Avec un ami.\nLe salon reste ouvert tant que je garde l’app ouverte.'; };
+        row.appendChild(B('Copier l’invitation', '', (e) => { const t = invite(), b = e.currentTarget; const ok = () => { b.textContent = 'Invitation copiée ✓'; setTimeout(() => { b.textContent = 'Copier l’invitation'; }, 1600); }; try { navigator.clipboard.writeText(t).then(ok, () => { b.textContent = net.code; }); } catch (x) { b.textContent = net.code; } }));
+        row.appendChild(B('Partager', '', () => { try { if (navigator.share) navigator.share({ text: invite() }).catch(() => {}); } catch (x) { /* ignore */ } }));
         add(row);
         add(segOn([['together', 'Ensemble'], ['face', 'Face à face']], net.mode, (v) => { net.mode = v; renderOn(); if (net.on) sendWel(); }));
         add(segOn([[1, 'Une manche'], [501, '501'], [1000, '1000']], opt.t, (v) => { opt.t = v; saveOpt(); pend(); renderOn(); if (net.on) sendWel(); }));
