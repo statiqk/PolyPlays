@@ -33,6 +33,10 @@
 <link rel="apple-touch-startup-image" media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/1620x2160.jpg?v=2">
 <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/1536x2048.jpg?v=2">
 <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/1668x2224.jpg?v=2">
+<link rel="apple-touch-startup-image" media="(device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1260x2736.jpg?v=2">
+<link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1210px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/1668x2420.jpg?v=2">
+<link rel="apple-touch-startup-image" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/2064x2752.jpg?v=2">
+<link rel="apple-touch-startup-image" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/1488x2266.jpg?v=2">
 <style>
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/instrument-sans-latin-400-normal.woff2) format('woff2')}
 @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}
@@ -5009,6 +5013,7 @@ button, input, select, textarea { font-family: inherit; }
       const el = document.createElement('button');
       el.type = 'button'; el.className = 'slot' + (red ? ' red' : '') + (cls ? ' ' + cls : '');
       el.innerHTML = label ? '<span>' + label + '</span>' : '';
+      el.setAttribute('aria-label', label ? 'Emplacement ' + String(label).replace(/<[^>]*>/g, '') : 'Emplacement vide');
       return el;
     }
     const STUCK = 'Plus aucun coup possible. Annule un coup ou lance une nouvelle partie.';
@@ -5865,7 +5870,7 @@ button, input, select, textarea { font-family: inherit; }
       bdEl.textContent = ''; els = []; shown = [];
       bdEl.style.setProperty('--c', C); bdEl.style.setProperty('--r', R);
       for (let i = 0; i < C * R; i++) {
-        const e = document.createElement('i'); e.dataset.i = i; e.setAttribute('role', 'button');
+        const e = document.createElement('i'); e.dataset.i = i; e.setAttribute('role', 'button'); e.setAttribute('aria-label', 'Case ligne ' + (Math.floor(i / C) + 1) + ', colonne ' + (i % C + 1));
         bdEl.appendChild(e); els.push(e);
       }
     }
@@ -5996,7 +6001,7 @@ button, input, select, textarea { font-family: inherit; }
     function stopTimer() { if (!timer) return; elapsed += performance.now() - t0; clearInterval(timer); timer = 0; tick(); }
 
     for (let i = 0; i < 81; i++) {
-      const e = document.createElement('div'); e.dataset.i = i; e.setAttribute('role', 'button');
+      const e = document.createElement('div'); e.dataset.i = i; e.setAttribute('role', 'button'); e.setAttribute('aria-label', 'Ligne ' + (Math.floor(i / 9) + 1) + ', colonne ' + (i % 9 + 1));
       bdEl.appendChild(e); cells.push(e);
     }
     for (let d = 1; d <= 9; d++) {
@@ -6164,7 +6169,7 @@ button, input, select, textarea { font-family: inherit; }
     const pw = (c, t, lead) => (su(c) === t ? 100 + OT[rk(c)] : su(c) === lead ? ON[rk(c)] : -1);
     const fast = !!window.__arcadeTest;
     const $e = (id) => $(id);
-    const eNous = $e('blNous'), eEux = $e('blEux'), eMn = $e('blMn'), eSt = $e('blStatus'), eAct = $e('blAct'), eHand = $e('blHand'), eMid = $e('blMid'), eAt = $e('blAt'), eTo = $e('blToast'), eLb = $e('blLastB'), eLast = $e('blLast'), eTable = $e('blT');
+    const eNous = $e('blNous'), eEux = $e('blEux'), eMn = $e('blMn'), eSt = $e('blStatus'), eAct = $e('blAct'), eHand = $e('blHand'), eMid = $e('blMid'), eAt = $e('blAt'), eTo = $e('blToast'), eLb = $e('blLastB'), eLast = $e('blLast');
     const seatEl = [null, $e('blS1'), $e('blS2'), $e('blS3')];
     const resEl = $e('blRes'), resBody = $e('blResBody'), bNew = $e('blNew');
     let opt = store.get('arcade.belote.opt', null); if (!opt || typeof opt !== 'object') opt = {};
@@ -6525,7 +6530,7 @@ button, input, select, textarea { font-family: inherit; }
         if (trick.length === 4) { ph = 'wait'; render(); later(endTrick, 400); return; }
         render(); schedule();
       },
-      prog: (d) => 'Manche ' + d.mn + ' · ' + d.sc[0] + '–' + d.sc[1],
+      prog: (d) => 'Manche ' + (+d.mn || 1) + ' · ' + (+d.sc[0] || 0) + '–' + (+d.sc[1] || 0),
       reset: () => { ph = 'idle'; over = false; sc = [0, 0]; mn = 0; hands = [[], [], [], []]; trick = []; last = null; trump = ''; render(); }
     });
     if (ph === 'idle') { render(); }
@@ -7155,7 +7160,7 @@ function glyph(id, a, b, c) {
     const label = (id, k) => gmap[id].n + (k && CFG[id].k && CFG[id].k[k] ? ' · ' + CFG[id].k[k] : '');
     const text = (id, v) => CFG[id].f(v);
     const better = (id, a, b) => (CFG[id].hi ? a > b : a < b);
-    let list = store.get('arcade.ch', []); if (!Array.isArray(list)) list = [];
+    let list = store.get('arcade.ch', []); if (!Array.isArray(list)) list = []; list = list.filter((e) => e && typeof e === 'object' && typeof e.id === 'string' && CFG[e.id]);
     let cur = null, lastRun = null, snackT = 0;
     const save = () => store.set('arcade.ch', list.slice(-12));
     const snack = $('dfSnack'), sheet = $('dfSheet'), card = $('dfCard'), bar = $('dfBar'), listEl = $('dfList');
