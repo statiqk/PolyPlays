@@ -857,8 +857,12 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 #gAmi, #blOnB { display: none; }
 #gAmi { position: relative; font-size: calc(18px * var(--u)); line-height: 1; }
 #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) #gAmi { display: grid; }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { padding-left: calc(52px * var(--u)); }
-body.locked[data-fit] #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { padding-left: calc(46px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd { min-width: 0; gap: calc(8px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .bk7, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .spk7 { width: calc(38px * var(--u)); height: calc(38px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .bk7 svg, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .spk7 svg { width: calc(20px * var(--u)); height: calc(20px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd h2 { font-size: 1.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.locked[data-fit] #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
 #gview:has(.panel[data-net]:not([data-net=""]):not([hidden])) #gAmi::after { content: ""; position: absolute; top: -2px; right: -2px; width: calc(11px * var(--u)); height: calc(11px * var(--u)); border-radius: 50%; background: #4ADE9C; border: 2px solid #15131C; }
 #gview:has(.panel[data-net="ok"]:not([hidden])) #gAmi { background: #16a36b; }
 #gview:has(.panel[data-net="ko"]:not([hidden])) #gAmi { background: #b8860b; }
