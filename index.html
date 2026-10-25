@@ -803,6 +803,9 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blpc .bg, .blc .bg { position: absolute; right: 8%; bottom: 3%; font-size: 52cqw; line-height: 1; opacity: .2; }
 .blpc.win { box-shadow: 0 0 0 .7cqw var(--amber), 0 .6cqw 1.6cqw rgba(0, 0, 0, .5); }
 .blpc.dim { filter: brightness(.7); }
+.blgain { position: absolute; transform: translate(-50%, -50%); font: 800 6cqw var(--font-mono); color: var(--amber); text-shadow: 0 .4cqw 1cqw rgba(0, 0, 0, .7); animation: blgain .9s ease-out both; pointer-events: none; z-index: 6; }
+@keyframes blgain { 0% { opacity: 0; margin-top: 0; } 25% { opacity: 1; } 100% { opacity: 0; margin-top: -9cqw; } }
+.blbub { position: absolute; z-index: 5; background: #fff; color: #1B1530; font: 700 3.6cqw var(--font-body); border-radius: 3cqw; padding: .8cqw 2.6cqw; box-shadow: 0 .5cqw 1.4cqw rgba(0, 0, 0, .45); animation: blin2 .2s ease-out both; pointer-events: none; white-space: nowrap; }
 @keyframes blin { from { opacity: 0; transform: translate(-50%, -30%) scale(.85); } to { opacity: 1; transform: translate(-50%, -50%); } }
 .blpc.turned { width: 18cqw; }
 .blcap { position: absolute; left: 50%; transform: translateX(-50%); font: 500 3.2cqw var(--font-mono); color: #CFEBDB; white-space: nowrap; }
@@ -830,7 +833,7 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blc.up { transform: translateY(-3.6cqw); box-shadow: 0 0 0 .8cqw var(--amber), 0 .6cqw 1.4cqw rgba(0, 0, 0, .55); z-index: 30 !important; }
 .blc.no { filter: brightness(.5); cursor: default; }
 .blc:focus-visible { outline: calc(3px * var(--u)) solid #fff; z-index: 31; }
-@media (prefers-reduced-motion: reduce) { .blc, .blpc, .bltoast { transition: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { .blc, .blpc, .bltoast, .blgain, .blbub { transition: none; animation: none; } }
 .blres { display: grid; gap: calc(10px * var(--u)); }
 .blres table { width: 100%; border-collapse: collapse; font-size: .98rem; }
 .blres th { font: 500 .66rem var(--font-mono); letter-spacing: .1em; color: var(--muted); text-align: right; padding: 4px 0; }
@@ -1608,6 +1611,10 @@ button, input, select, textarea { font-family: inherit; }
     <div class="row">
       <span class="k" id="blLvLab">Adversaires</span>
       <div class="seg" role="group" aria-labelledby="blLvLab" id="blLv"></div>
+    </div>
+    <div class="row">
+      <span class="k" id="blSpLab">Rythme des adversaires</span>
+      <div class="seg" role="group" aria-labelledby="blSpLab" id="blSp"></div>
     </div>
     <div class="row">
       <span class="k" id="blAidLab">Cartes jouables</span>
@@ -6176,8 +6183,9 @@ button, input, select, textarea { font-family: inherit; }
     const seatEl = [null, $e('blS1'), $e('blS2'), $e('blS3')];
     const resEl = $e('blRes'), resBody = $e('blResBody'), bNew = $e('blNew');
     let opt = store.get('arcade.belote.opt', null); if (!opt || typeof opt !== 'object') opt = {};
-    opt = { t: [1, 501, 1000].indexOf(+opt.t) >= 0 ? +opt.t : 501, lv: ['e', 'n', 'h'].indexOf(opt.lv) >= 0 ? opt.lv : 'n', aid: opt.aid !== false };
+    opt = { t: [1, 501, 1000].indexOf(+opt.t) >= 0 ? +opt.t : 501, lv: ['e', 'n', 'h'].indexOf(opt.lv) >= 0 ? opt.lv : 'n', aid: opt.aid !== false, sp: ['l', 'n', 'r'].indexOf(opt.sp) >= 0 ? opt.sp : 'n' };
     const saveOpt = () => store.set('arcade.belote.opt', opt);
+    const SPD = { l: 1.5, n: 1, r: 0.4 }, WAITMS = { l: 1400, n: 1000, r: 700 };
     let wins = +store.get('arcade.belote.wins', 0) || 0;
     // état de la partie
     let G = { t: opt.t, lv: opt.lv }, lvS = null, vd = [{}, {}, {}, {}];
@@ -6319,9 +6327,27 @@ button, input, select, textarea { font-family: inherit; }
       if (trick.length && su(c) !== su(trick[0].c)) vd[p][su(trick[0].c)] = true;
       hands[p].splice(i, 1); trick.push({ p, c }); played.push(c); pl[c] = p; sel = '';
       SFX.play('flip');
-      if (note) { toast(note, 1800); SFX.play('pair'); }
-      if (trick.length === 4) { ph = 'wait'; render(); later(endTrick, 1000); return; }
+      if (note) { if (p) bubble(p, note); else toast(note, 1800); SFX.play('pair'); }
+      else if (p && trick.length > 1 && su(c) === trump && su(trick[0].c) !== trump) bubble(p, 'Coupé !');
+      if (trick.length === 4) { ph = 'wait'; render(); sweep(); later(endTrick, WAITMS[opt.sp]); return; }
       turn = (p + 1) % 4; render(); schedule();
+    }
+    /* bulles de réaction des adversaires et pli qui file vers le gagnant */
+    const BUB = { 1: 'right:3cqw;top:36%', 2: 'left:50%;top:15%;transform:translateX(-50%)', 3: 'left:3cqw;top:36%' };
+    function bubble(p, txt) {
+      if (fast || !BUB[p]) return;
+      const host = $e('blT'), b = mk('div', 'blbub', txt); b.style.cssText = BUB[p]; host.appendChild(b);
+      setTimeout(() => { if (b.parentNode) b.remove(); }, 1500);
+    }
+    function sweep() {
+      if (fast || !active) return;
+      const w = winner(trick, trump).p; let s = 0; trick.forEach((x) => { s += pts(x.c, trump); }); if (done === 7) s += 10;
+      setTimeout(() => {
+        if (ph !== 'wait' || !active) return;
+        const d = slot(w), tx = d.x + (d.x - 50) * 0.9, ty = d.y + (d.y - 50) * 0.9;
+        eMid.querySelectorAll('.blpc').forEach((c) => { c.style.animation = 'none'; c.style.transition = 'left .32s ease-in, top .32s ease-in, opacity .32s ease-in'; c.style.left = tx + '%'; c.style.top = ty + '%'; c.style.opacity = '0'; });
+        const g = mk('div', 'blgain', '+' + s); g.style.left = d.x + '%'; g.style.top = d.y + '%'; eMid.appendChild(g);
+      }, WAITMS[opt.sp] * 0.45);
     }
     function endTrick() {
       const w = winner(trick, trump); let s = 0; trick.forEach((x) => { s += pts(x.c, trump); });
@@ -6391,7 +6417,7 @@ button, input, select, textarea { font-family: inherit; }
       clearTimeout(timer); timer = 0;
       if (ph !== 'bid' && ph !== 'play') return;
       if (turn === 0 && !auto) return;
-      later(aiAct, 650);
+      later(aiAct, 650 * SPD[opt.sp]);
     }
     function aiAct() {
       if (ph === 'bid') { const s = bidAI(turn); if (s) take(turn, s); else pass(turn); }
@@ -6509,6 +6535,7 @@ button, input, select, textarea { font-family: inherit; }
     }
     seg('blObj', [[1, 'Une manche'], [501, '501'], [1000, '1000']], () => opt.t, (v) => { opt.t = v; pend(); });
     seg('blLv', [['e', 'Facile'], ['n', 'Normal'], ['h', 'Fort']], () => opt.lv, (v) => { opt.lv = v; pend(); });
+    seg('blSp', [['l', 'Lent'], ['n', 'Normal'], ['r', 'Rapide']], () => opt.sp, (v) => { opt.sp = v; });
     seg('blAid', [[true, 'Oui'], [false, 'Non']], () => opt.aid, (v) => { opt.aid = v; render(); });
 
     function newGame() {
