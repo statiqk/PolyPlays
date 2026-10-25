@@ -854,6 +854,8 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blnet { margin: 0; text-align: center; font: 600 .74rem var(--font-mono); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
 .blnet.ok { color: #4ADE9C; } .blnet.ko { color: #FF7B8E; }
 .qs#blOn { z-index: 96; }
+.qs#appShare { z-index: 96; }
+.asmsg { padding: 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); font-size: .92rem; line-height: 1.45; white-space: pre-line; word-break: break-word; }
 .blon .blfld { display: grid; gap: 6px; text-align: left; font: 500 .7rem var(--font-mono); letter-spacing: .08em; color: var(--muted); }
 .blon input { box-sizing: border-box; width: 100%; min-height: calc(48px * var(--u)); padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: inherit; font: 600 1rem var(--font-ui, inherit); }
 .blon input.blcode { text-align: center; font: 800 1.6rem var(--font-mono); letter-spacing: .3em; text-transform: uppercase; }
@@ -1292,7 +1294,7 @@ button, input, select, textarea { font-family: inherit; }
 <main class="app">
   <section class="home" id="home">
     <header class="h7">
-      <div class="h7top"><div class="ttl"><h1>PolyPlays</h1><button type="button" class="pwr" id="ptLink" aria-label="À propos de PolyTabs">Powered By PolyTabs</button></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
+      <div class="h7top"><div class="ttl"><h1>PolyPlays</h1><button type="button" class="pwr" id="ptLink" aria-label="À propos de PolyTabs">Powered By PolyTabs</button></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hShare" aria-label="Partager PolyPlays" title="Partager PolyPlays"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
     <div id="dayCard"></div>
@@ -1303,6 +1305,7 @@ button, input, select, textarea { font-family: inherit; }
     <div id="ptHome"></div>
   </section>
 
+    <div class="qs" id="appShare" hidden role="dialog" aria-modal="true" aria-labelledby="asT"><div class="qc"><h3 id="asT">Partager PolyPlays</h3><p>Ton ami reçoit un lien pour installer l’appli.</p><div class="asmsg" id="asMsg"></div><button type="button" class="btn primary" id="asSend">Envoyer</button><button type="button" class="btn" id="asCopy">Copier le message</button><button type="button" class="btn" id="asX">Fermer</button></div></div>
     <div class="qs" id="qPt" hidden role="dialog" aria-modal="true" aria-labelledby="qPtT"><div class="qc ptq"><div class="ptlg"><i class="ptl"><b></b><b></b><b></b></i></div><h3 id="qPtT">PolyTabs</h3><div class="pts">Tout ton travail, un seul espace.</div><div class="ptf"><div><i style="background:#4f9dff"></i><b>Sites</b><small>en panneaux</small></div><div><i style="background:#b389f9"></i><b>Fichiers</b><small>locaux</small></div><div><i style="background:#f5b942"></i><b>Widgets</b><small>utiles</small></div></div><p>Une appli Windows pour garder tout ton travail ouvert côte à côte, sur 1 à 3 écrans. Pour tous les profils.</p><a class="btn primary" id="qPtGo" href="https://polytabs.fr" target="_blank" rel="noopener">Découvrir PolyTabs.fr</a><button type="button" class="btn" id="qPtNo">Plus tard</button></div></div>
   <section id="gview" hidden>
     <header class="ghd">
@@ -7973,6 +7976,27 @@ function glyph(id, a, b, c) {
     $('duBack').addEventListener('click', () => { if (curId) toMenu(); else closeAll(); });
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !root.hidden) { e.preventDefault(); e.stopImmediatePropagation(); if (curId) toMenu(); else closeAll(); } }, true);
     return { open, _test: { start, closeAll } };
+  })();
+
+  /* Partager l'appli */
+  (function () {
+    const sh = $('appShare'), msg = $('asMsg'), URLP = 'https://polyplays.polytabs.fr';
+    const who = () => String(store.get('arcade.name', '') || store.get('arcade.belote.name', '') || '').replace(/[<>]/g, '').trim().slice(0, 24);
+    const text = () => { const n = who(); return '\u{1F0CF} ' + (n ? n + ' te conseille' : 'Je te conseille') + ' PolyPlays : des mini-jeux gratuits, dont une belote en ligne à jouer avec un ami.'; };
+    const close = () => { sh.hidden = true; };
+    $('hShare').addEventListener('click', () => { msg.textContent = text() + '\n' + URLP; sh.hidden = false; try { $('asSend').focus({ preventScroll: true }); } catch (e) { /* ignore */ } });
+    $('asX').addEventListener('click', close);
+    sh.addEventListener('click', (e) => { if (e.target === sh) close(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sh.hidden) { e.preventDefault(); e.stopImmediatePropagation(); close(); } }, true);
+    $('asSend').addEventListener('click', async () => {
+      try { if (navigator.share) { await navigator.share({ title: 'PolyPlays', text: text(), url: URLP }); close(); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+      copy();
+    });
+    function copy() {
+      const b = $('asCopy'), t = text() + '\n' + URLP, ok = () => { b.textContent = 'Message copié ✓'; setTimeout(() => { b.textContent = 'Copier le message'; }, 1600); };
+      try { navigator.clipboard.writeText(t).then(ok, () => { b.textContent = 'Copie impossible'; }); } catch (e) { b.textContent = 'Copie impossible'; }
+    }
+    $('asCopy').addEventListener('click', copy);
   })();
 
   setInterval(refreshBanner, 1000);
