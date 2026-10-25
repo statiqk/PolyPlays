@@ -805,6 +805,8 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .bl-l .blb, .bl-r .blb { margin-left: 0; margin-top: -6.4cqw; width: 9cqw; height: 6.4cqw; }
 .bl-l .blb:first-child, .bl-r .blb:first-child { margin-top: 0; }
 .blmid { position: absolute; inset: 0; pointer-events: none; }
+.bldl { position: absolute; inset: 0; z-index: 6; cursor: pointer; }
+.bldc { position: absolute; width: 7cqw; height: 10cqw; border-radius: 1.2cqw; background: repeating-linear-gradient(45deg, #4F46E5 0 .9cqw, #4338CA .9cqw 1.8cqw); border: .45cqw solid #fff; box-shadow: 0 .4cqw 1cqw rgba(0, 0, 0, .5); transform: translate(-50%, -50%); }
 .blpc { position: absolute; width: 15cqw; aspect-ratio: 3 / 4.2; border-radius: 1.6cqw; background: #F4F2FA; box-shadow: 0 .6cqw 1.6cqw rgba(0, 0, 0, .5); transform: translate(-50%, -50%); container-type: inline-size; animation: blin .22s ease-out both; }
 .blpc.red, .blc.red { color: #E5484D; }
 .blpc.blk, .blc.blk { color: #1B1530; }
@@ -1643,6 +1645,10 @@ button, input, select, textarea { font-family: inherit; }
     <div class="row">
       <span class="k" id="blSpLab">Rythme des adversaires</span>
       <div class="seg" role="group" aria-labelledby="blSpLab" id="blSp"></div>
+    </div>
+    <div class="row">
+      <span class="k" id="blDlLab">Animation de donne</span>
+      <div class="seg" role="group" aria-labelledby="blDlLab" id="blDl"></div>
     </div>
     <div class="row">
       <span class="k" id="blAidLab">Cartes jouables</span>
@@ -6212,7 +6218,7 @@ button, input, select, textarea { font-family: inherit; }
     const seatEl = [null, $e('blS1'), $e('blS2'), $e('blS3')];
     const resEl = $e('blRes'), resBody = $e('blResBody'), bNew = $e('blNew');
     let opt = store.get('arcade.belote.opt', null); if (!opt || typeof opt !== 'object') opt = {};
-    opt = { t: [1, 501, 1000].indexOf(+opt.t) >= 0 ? +opt.t : 501, lv: ['e', 'n', 'h'].indexOf(opt.lv) >= 0 ? opt.lv : 'n', aid: opt.aid !== false, sp: ['l', 'n', 'r'].indexOf(opt.sp) >= 0 ? opt.sp : 'n' };
+    opt = { t: [1, 501, 1000].indexOf(+opt.t) >= 0 ? +opt.t : 501, lv: ['e', 'n', 'h'].indexOf(opt.lv) >= 0 ? opt.lv : 'n', aid: opt.aid !== false, dl: opt.dl !== false, sp: ['l', 'n', 'r'].indexOf(opt.sp) >= 0 ? opt.sp : 'n' };
     const saveOpt = () => store.set('arcade.belote.opt', opt);
     const SPD = { l: 1.5, n: 1, r: 0.4 }, WAITMS = { l: 1400, n: 1000, r: 700 };
     let wins = +store.get('arcade.belote.wins', 0) || 0;
@@ -6223,6 +6229,7 @@ button, input, select, textarea { font-family: inherit; }
     let trick = [], last = null, cnt = [0, 0], tp = [0, 0], played = [], pl = {}, bt = -1, done = 0, lastDelta = null;
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
     const NM0 = NAMES.slice();
+    let dealing = false, dlEnd = null;
     const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
 
     function newDeck() {
@@ -6263,6 +6270,7 @@ button, input, select, textarea { font-family: inherit; }
       hands = [0, 1, 2, 3].map((p) => d.slice(p * 5, p * 5 + 5));
       turned = d[20]; rest = d.slice(21); trump = ''; taker = -1; round = 1; passes = 0; turn = (dealer + 1) % 4; ph = 'bid';
       trick = []; last = null; cnt = [0, 0]; tp = [0, 0]; played = []; pl = {}; bt = -1; done = 0; sel = ''; showLast = false; lastDelta = null; vd = [{}, {}, {}, {}];
+      if (wantAnim()) { dealing = true; render(); dealAnim(() => { render(); schedule(); }); return; }
       render(); schedule();
     }
     function strength(hand, s) {
@@ -6443,11 +6451,46 @@ button, input, select, textarea { font-family: inherit; }
       resEl.hidden = false; try { go.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
     }
 
+    /* ---------- animation de donne ---------- */
+    function wantAnim() { return opt.dl && active && !fast && opt.sp !== 'r' && ph === 'bid' && typeof Element.prototype.animate === 'function'; }
+    function dealAnim(done) {
+      const host = $e('blT'), k = SPD[opt.sp], ov = mk('div', 'bldl'), tm = []; let fin = false;
+      host.appendChild(ov);
+      const T = (fn, ms) => { tm.push(setTimeout(fn, ms * k)); };
+      const end = () => { if (fin) return; fin = true; tm.forEach(clearTimeout); ov.remove(); dealing = false; dlEnd = null; done(); };
+      dlEnd = end; ov.addEventListener('click', end);
+      const cs = [];
+      for (let i = 0; i < 14; i++) { const c = mk('i', 'bldc'); c.style.left = '50%'; c.style.top = (50 - i * 0.25) + '%'; ov.appendChild(c); cs.push(c); }
+      const A = (el, kf, ms, delay, extra) => { try { el.animate(kf, Object.assign({ duration: ms * k, delay: (delay || 0) * k, fill: 'forwards', easing: 'ease-in-out' }, extra || {})); } catch (e) { /* ignore */ } };
+      // deux mélanges : les deux moitiés s'entrecroisent
+      cs.forEach((c, i) => {
+        const sd = i % 2 ? 1 : -1;
+        A(c, [{ transform: 'translate(-50%,-50%)' }, { transform: 'translate(calc(-50% + ' + sd * 9 + 'cqw), calc(-50% + ' + (sd * 1.5) + 'cqw)) rotate(' + sd * 7 + 'deg)', offset: .5 }, { transform: 'translate(-50%,-50%)' }], 340, i * 9, { iterations: 2 });
+      });
+      SFX.play('flip'); T(() => SFX.play('flip'), 350);
+      // coupe : la moitié du dessus glisse sur le côté puis revient
+      T(() => {
+        SFX.play('place');
+        cs.slice(7).forEach((c) => A(c, [{ transform: 'translate(-50%,-50%)' }, { transform: 'translate(calc(-50% + 14cqw), calc(-50% - 2cqw))', offset: .45 }, { transform: 'translate(calc(-50% + 14cqw), calc(-50% - 2cqw))', offset: .6 }, { transform: 'translate(-50%,-50%)' }], 420));
+      }, 760);
+      // distribution : 3 puis 2 cartes à chacun
+      const TG = [{ x: 50, y: 90 }, { x: 93, y: 50 }, { x: 50, y: 10 }, { x: 7, y: 50 }];
+      T(() => {
+        for (let n = 0; n < 8; n++) {
+          const tg = TG[(dealer + 1 + (n % 4)) % 4], c = cs[13 - n];
+          A(c, [{ left: '50%', top: '50%', opacity: 1 }, { left: tg.x + '%', top: tg.y + '%', opacity: 1, offset: .8 }, { left: tg.x + '%', top: tg.y + '%', opacity: 0 }], 300, n * 85, { easing: 'ease-out' });
+          T(() => SFX.play('tick'), 1250 + n * 85);
+        }
+        cs.slice(0, 6).forEach((c) => A(c, [{ opacity: 1 }, { opacity: 0 }], 240, 720));
+      }, 1220);
+      T(end, 2250);
+    }
     /* ---------- cadence ---------- */
     function later(fn, ms) { clearTimeout(timer); timer = setTimeout(() => { timer = 0; if (active || fast || net.role === 'host') fn(); }, fast ? 0 : ms); }
     function schedule() {
       clearTimeout(timer); timer = 0;
       if (ph !== 'bid' && ph !== 'play') return;
+      if (dealing) return;
       if (net.role === 'guest' || (net.role === 'host' && net.started && (net.paused || turn === net.g))) return;
       if (turn === 0 && !auto) return;
       later(aiAct, 650 * SPD[opt.sp]);
@@ -6471,6 +6514,7 @@ button, input, select, textarea { font-family: inherit; }
     function slot(p) { return [{ x: 50, y: 64 }, { x: 64, y: 50 }, { x: 50, y: 36 }, { x: 36, y: 50 }][p]; }
     function statusText() {
       if (net.role === 'guest' && !net.on) return 'Connexion perdue… on réessaie.';
+      if (dealing) return 'On distribue…';
       if (ph === 'idle') return net.role === 'guest' ? 'En attente du lancement…' : 'Touche « Nouvelle partie ».';
       if (ph === 'over') return sc[0] > sc[1] ? 'Partie gagnée ! ' + sc[0] + ' à ' + sc[1] : 'Partie perdue, ' + sc[0] + ' à ' + sc[1] + '.';
       if (ph === 'mend') return 'Manche terminée.';
@@ -6495,7 +6539,7 @@ button, input, select, textarea { font-family: inherit; }
       [1, 2, 3].forEach((p) => {
         const el = seatEl[p]; el.textContent = '';
         const nm = mk('b', '', NAMES[p]); el.classList.toggle('on', (ph === 'bid' || ph === 'play') && turn === p); el.appendChild(nm);
-        el.appendChild(fanOf(ph === 'idle' ? 0 : hands[p].length));
+        el.appendChild(fanOf(ph === 'idle' || dealing ? 0 : hands[p].length));
         if (ph === 'bid' && turn !== p && passes > 0 && ((p - (dealer + 1) + 4) % 4) < passes) el.appendChild(mk('span', 'ps', 'passe'));
       });
       // atout
@@ -6506,7 +6550,8 @@ button, input, select, textarea { font-family: inherit; }
       } else eAt.hidden = true;
       // centre
       eMid.textContent = '';
-      if (ph === 'bid' || ph === 'redeal') {
+      if (dealing) { /* animation de donne */ }
+      else if (ph === 'bid' || ph === 'redeal') {
         const c = cardFace(turned, 'blpc turned'); c.style.left = '50%'; c.style.top = '50%'; if (round === 2 || ph === 'redeal') c.classList.add('dim'); eMid.appendChild(c);
         const cap = mk('div', 'blcap', round === 2 ? 'personne n’a pris au 1er tour' : 'carte retournée'); cap.style.top = '72%'; eMid.appendChild(cap);
       } else if (ph === 'play' || ph === 'wait') {
@@ -6520,7 +6565,7 @@ button, input, select, textarea { font-family: inherit; }
       setText(eSt, statusText());
       // actions
       eAct.textContent = ''; eAct.className = 'blact';
-      if (ph === 'bid' && turn === 0 && !(net.role === 'guest' && !net.on)) {
+      if (ph === 'bid' && turn === 0 && !dealing && !(net.role === 'guest' && !net.on)) {
         if (round === 1) {
           const a = mk('button', 'btn primary', 'Je prends'), b = mk('button', 'btn', 'Je passe'); a.type = b.type = 'button';
           a.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uTake(su(turned)); }); b.addEventListener('click', () => { if (ph === 'bid' && turn === 0) uPass(); });
@@ -6533,7 +6578,7 @@ button, input, select, textarea { font-family: inherit; }
       }
       // main
       eHand.textContent = '';
-      const mine = ph === 'idle' ? [] : sorted(hands[0]), my = ph === 'play' && turn === 0, L = my ? legal(hands[0], trick, trump, 0) : [];
+      const mine = ph === 'idle' || dealing ? [] : sorted(hands[0]), my = ph === 'play' && turn === 0, L = my ? legal(hands[0], trick, trump, 0) : [];
       mine.forEach((c, i) => {
         const b = cardFace(c, 'blc'), btn = mk('button', 'blc ' + (red(su(c)) ? 'red' : 'blk')); btn.type = 'button';
         while (b.firstChild) btn.appendChild(b.firstChild);
@@ -6588,7 +6633,7 @@ button, input, select, textarea { font-family: inherit; }
       const tr = (x) => ({ p: rt(x.p), c: x.c });
       const L = lastDelta && { rows: { cards: ar(lastDelta.rows.cards), der: ar(lastDelta.rows.der), bel: ar(lastDelta.rows.bel), cap: ar(lastDelta.rows.cap) }, res: ar(lastDelta.res), made: lastDelta.made, T: lastDelta.T ^ sw, need: 82, got: lastDelta.got };
       const nm = [0, 1, 2, 3].map((q) => (q === 0 ? 'Toi' : NAMES[(q + g) % 4]));
-      return { ph, turn: rt(turn), round, passes, dealer: rt(dealer), mn, trump, taker: rt(taker), turned: ph === 'bid' || ph === 'redeal' ? turned : '', hands: hs, trick: trick.map(tr), last: last && { cards: last.cards.map(tr), w: rt(last.w) }, sc: ar(sc), over, G, done, ld: L, nm, hp: rt(0), hn: NAMES[0] };
+      return { ph, turn: rt(turn), round, passes, dealer: rt(dealer), mn, trump, taker: rt(taker), turned: ph === 'bid' || ph === 'redeal' ? turned : '', hands: hs, trick: trick.map(tr), last: last && { cards: last.cards.map(tr), w: rt(last.w) }, sc: ar(sc), over, G, done, ld: L, nm, hp: rt(0), hn: NAMES[0], dl: dealing };
     }
     function bcast(force) {
       if (net.role !== 'host' || !net.on || !net.started) return;
@@ -6601,7 +6646,9 @@ button, input, select, textarea { font-family: inherit; }
       ph = v.ph; turn = v.turn; round = v.round; passes = v.passes; dealer = v.dealer; mn = v.mn; trump = v.trump; taker = v.taker; turned = v.turned; hands = v.hands; trick = v.trick; last = v.last; sc = v.sc; over = v.over; G = v.G; done = v.done; lastDelta = v.ld; net.hp = v.hp; net.hn = v.hn;
       NAMES.splice(0, 4, v.nm[0], v.nm[1], v.nm[2], v.nm[3]);
       if (!(ph === 'play' && turn === 0) || hands[0].indexOf(sel) < 0) sel = '';
-      resEl.hidden = true; render();
+      resEl.hidden = true;
+      if (v.dl && !dealing && ph === 'bid' && wantAnim()) { dealing = true; render(); dealAnim(() => { render(); }); return; }
+      render();
       if (trick.length > pt && trick.length <= 4) SFX.play('flip');
       if (ph === 'wait' && pp !== 'wait') sweep();
       if (ph === 'mend' && lastDelta) { showRes(); if (pp !== 'mend') SFX.play(lastDelta.made === (lastDelta.T === 0) ? 'win' : 'wrong'); }
@@ -6730,6 +6777,7 @@ button, input, select, textarea { font-family: inherit; }
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
       net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.sent = '';
       NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]);
+      if (dlEnd) dlEnd();
       resEl.hidden = true; clearTimeout(timer); timer = 0;
       ph = 'idle'; over = false; sc = [0, 0]; mn = 0; hands = [[], [], [], []]; trick = []; last = null; trump = ''; sel = '';
       onEl.hidden = true; render();
@@ -6848,10 +6896,12 @@ button, input, select, textarea { font-family: inherit; }
     seg('blObj', [[1, 'Une manche'], [501, '501'], [1000, '1000']], () => opt.t, (v) => { opt.t = v; pend(); });
     seg('blLv', [['e', 'Facile'], ['n', 'Normal'], ['h', 'Fort']], () => opt.lv, (v) => { opt.lv = v; pend(); });
     seg('blSp', [['l', 'Lent'], ['n', 'Normal'], ['r', 'Rapide']], () => opt.sp, (v) => { opt.sp = v; });
+    seg('blDl', [[true, 'Oui'], [false, 'Non']], () => opt.dl, (v) => { opt.dl = v; });
     seg('blAid', [[true, 'Oui'], [false, 'Non']], () => opt.aid, (v) => { opt.aid = v; render(); });
 
     function newGame() {
       if (net.role === 'guest') return;
+      if (dlEnd) dlEnd();
       clearTimeout(timer); resEl.hidden = true; over = false; G = { t: opt.t, lv: opt.lv }; sc = [0, 0]; mn = 0; dealer = Math.floor(Math.random() * 4); last = null;
       SFX.play('flip'); deal();
     }
@@ -6880,7 +6930,7 @@ button, input, select, textarea { font-family: inherit; }
     return {
       newGame,
       activate() { active = true; if (net.role) { render(); if (ph === 'mend' && lastDelta) showRes(); return; } if (ph === 'idle') newGame(); else if (ph === 'mend' && lastDelta) showRes(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
-      deactivate() { active = false; if (!net.role) { clearTimeout(timer); timer = 0; } resEl.hidden = true; },
+      deactivate() { active = false; if (dlEnd) dlEnd(); if (!net.role) { clearTimeout(timer); timer = 0; } resEl.hidden = true; },
       joinLink(code) { if (net.role) return; net.code = code; net.st = ''; net.msg = ''; showOn('join'); },
       _test: {
         get net() { return { role: net.role, on: net.on, g: net.g, paused: net.paused, started: net.started, code: net.code, st: net.st, fname: net.fname, hn: net.hn }; },
