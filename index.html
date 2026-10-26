@@ -9115,7 +9115,7 @@ function glyph(id, a, b, c) {
         }
         [[0, '#38BDF8', H - M], [1, '#FB7185', M]].forEach(([i, c, y]) => { const x = pad[i].x * (W - PW()); ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y - PH / 2, PW(), PH, 6) : ctx.rect(x, y - PH / 2, PW(), PH); ctx.fill(); });
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, R, 0, 7); ctx.fill();
-        if (performance.now() < serveAt && !over) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = '600 15px "Instrument Sans", Arial'; ctx.fillText('Glisse ton doigt sur ta moitié', W / 2, H / 2 + (ball.vy > 0 ? -92 : 92)); }
+        if (performance.now() < serveAt && !over) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = '600 15px "Instrument Sans", Arial'; ctx.fillText('Glisse ton doigt sur ta moitié', W / 2, H / 2 + 102); ctx.save(); ctx.translate(W / 2, H / 2 - 102); ctx.rotate(Math.PI); ctx.fillText('Glisse ton doigt sur ta moitié', 0, 0); ctx.restore(); }
       }
       raf = requestAnimationFrame(frame);
       const onR = () => { size(); }; window.addEventListener('resize', onR);
