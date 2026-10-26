@@ -1449,6 +1449,9 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
 }
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
+/* Sur iPhone installé, le splash peut être rogné avant le bas de l'écran : le fond de la page prend alors le même dégradé, pour que la bande ne se voie pas */
+html.spl, html.spl body { background: radial-gradient(circle at 0 0, rgba(56,214,255,.25), transparent 45%), radial-gradient(circle at 100% 100%, rgba(255,79,184,.25), transparent 45%), radial-gradient(ellipse at 50% 42%, #1C1650 0%, #0a0620 60%, #050310 100%) fixed #0a0620; }
+html.spl main.app { visibility: hidden; }
 #spl::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0 0,rgba(56,214,255,.25),transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,79,184,.25),transparent 45%)}
 #spl i.st{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff}
 #spl .c{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:-4vh}
@@ -1502,6 +1505,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   var upd = false;
   try { if (sessionStorage.getItem('splUpd')) { upd = true; sessionStorage.removeItem('splUpd'); } if (sessionStorage.getItem('spl') && !upd) skip = true; sessionStorage.setItem('spl', '1'); } catch (e) { /* ignore */ }
   if (skip) { s.remove(); return; }
+  document.documentElement.classList.add('spl');
   try { var tt = s.querySelector('.t'); if (tt) { var tx = tt.textContent; tt.textContent = ''; tx.split('').forEach(function (ch, i) { var sp = document.createElement('span'); sp.textContent = ch; sp.style.setProperty('--i', i); tt.appendChild(sp); }); } } catch (e) { /* ignore */ }
   var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
   try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); } } catch (e) { /* ignore */ }
@@ -1516,7 +1520,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   window.__splUpd = function (st) { if (done) return; updRes = true; if (st === 'found') { hold = true; set(55, 'Mise à jour…'); } else if (st === 'fail') hold = false; };
   function fin() {
     if (done) return; done = true; hold = false; set(100, upd ? 'Mise à jour installée' : 'C’est parti !');
-    setTimeout(function () { s.classList.add('out'); setTimeout(function () { s.remove(); }, 650); }, 280);
+    setTimeout(function () { s.classList.add('out'); document.documentElement.classList.remove('spl'); setTimeout(function () { s.remove(); }, 650); }, 280);
   }
   (function tick() {
     var el = Date.now() - t0;
