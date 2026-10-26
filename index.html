@@ -107,7 +107,8 @@ h1 {
 }
 .home { padding-bottom: calc(28px * var(--u)); }
 .home { overflow-x: clip; }
-body.onhome { box-sizing: border-box; min-height: 100vh; min-height: 100dvh; }
+/* +1 px : la page reste défilable, sinon iOS (appli installée) raccourcit la zone d'affichage et laisse une bande en bas */
+body.onhome { box-sizing: border-box; min-height: calc(100vh + 1px); min-height: calc(100dvh + 1px); }
 body.onhome::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(60% 32% at 12% 4%, rgba(124, 58, 237, .55), transparent 70%), radial-gradient(55% 30% at 95% 20%, rgba(14, 165, 233, .4), transparent 70%), radial-gradient(60% 30% at 35% 62%, rgba(236, 72, 153, .28), transparent 70%), radial-gradient(55% 28% at 90% 98%, rgba(16, 185, 129, .35), transparent 70%); }
 /* Accueil : filtres, grille d'icônes, carte « Reprendre », défi du jour compact */
 .cats { display: flex; width: 0; min-width: 100%; gap: calc(7px * var(--u)); margin: calc(12px * var(--u)) 0 calc(6px * var(--u)); overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 5; padding: calc(8px * var(--u)) 0; background: linear-gradient(var(--bg) 82%, transparent); -webkit-overflow-scrolling: touch; }
@@ -1461,7 +1462,6 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
 #spl .pw i{width:calc(20px*var(--k));height:calc(20px*var(--k));border-radius:25%;background:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%3E%3Crect%20width=%2224%22%20height=%2224%22%20rx=%226%22%20fill=%22%230f1115%22/%3E%3Cg%20transform=%22translate%283%203%29%20scale%28.75%29%22%3E%3Crect%20x=%222%22%20y=%223%22%20width=%2212%22%20height=%229%22%20rx=%222.2%22%20fill=%22%234f9dff%22/%3E%3Crect%20x=%2216%22%20y=%223%22%20width=%226%22%20height=%229%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.55%22/%3E%3Crect%20x=%222%22%20y=%2214%22%20width=%227%22%20height=%227%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.55%22/%3E%3Crect%20x=%2211%22%20y=%2214%22%20width=%2211%22%20height=%227%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.8%22/%3E%3C/g%3E%3C/svg%3E") center/cover}
 #spl .pw b{color:#F4F2FA;font-weight:500}
 #spl.stat .b,#spl.stat .l{visibility:hidden}
-#spl{bottom:calc(-1*var(--sx,0px))}
 #spl .t,#spl .s,#spl .b,#spl .l{opacity:0;transition:opacity .25s}#spl.fr .t,#spl.fr .s,#spl.fr .b,#spl.fr .l{opacity:1}#spl.sa .t,#spl.sa .s,#spl.stat .t,#spl.stat .s{opacity:1;transition:none}
 #spl .lgw{position:relative;width:calc(140px*var(--k));height:calc(140px*var(--k))}
 #spl .lg{width:100%;height:100%;display:block}
@@ -1504,7 +1504,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   if (skip) { s.remove(); return; }
   try { var tt = s.querySelector('.t'); if (tt) { var tx = tt.textContent; tt.textContent = ''; tx.split('').forEach(function (ch, i) { var sp = document.createElement('span'); sp.textContent = ch; sp.style.setProperty('--i', i); tt.appendChild(sp); }); } } catch (e) { /* ignore */ }
   var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
-  try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); if (window.innerHeight >= window.innerWidth) { s.style.bottom = 'auto'; s.style.height = h + 'px'; } } } catch (e) { /* ignore */ }
+  try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); } } catch (e) { /* ignore */ }
   s.style.setProperty('--k', String(Math.max(.8, Math.min(1.65, Math.min(w / 390, h / 844)))));
   var bar = s.querySelector('.b u'), lab = s.querySelector('.l'), t0 = Date.now(), p = 0, done = false, fontsOk = false, loaded = document.readyState === 'complete', hold = false, updRes = upd || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller;
   function set(v, l) { if (v > p) { p = v; bar.style.width = p + '%'; } if (l) lab.textContent = l; }
