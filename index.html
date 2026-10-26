@@ -1259,6 +1259,47 @@ button, input, select, textarea { font-family: inherit; }
 #panel-poker.ol #pkNew { display: none; }
 body.locked[data-fit] #panel-poker .actions, body.locked[data-fit] #panel-poker .stats { display: none; }
 body.locked[data-fit] #panel-poker .pk { min-height: 0; }
+.pkfs { display: none; }
+.pkfs[hidden] { display: none !important; }
+/* Poker en paysage (téléphone) : la table occupe tout l'écran, adversaires autour, actions sous le pouce */
+@media (orientation: landscape) and (max-height: 560px) {
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .app { max-width: none; padding: 0; display: block; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #gview:not([hidden]), body.locked[data-fit]:has(#panel-poker:not([hidden])) .gbody { display: block; padding: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd { position: fixed; z-index: 6; left: max(36px, env(safe-area-inset-left, 0px)); right: max(36px, env(safe-area-inset-right, 0px)); top: max(18px, env(safe-area-inset-top, 0px)); padding: 0; background: none; box-shadow: none; border-radius: 0; pointer-events: none; justify-content: flex-start; gap: 8px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd > div { display: none; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd > button { pointer-events: auto; background: rgba(0, 0, 0, .5); box-shadow: none; width: 36px; height: 36px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd > .bk7 { margin-right: auto; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .pkfs { display: grid; position: fixed; z-index: 7; top: max(18px, env(safe-area-inset-top, 0px)); left: calc(max(36px, env(safe-area-inset-left, 0px)) + 44px); top: max(18px, env(safe-area-inset-top, 0px)); width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: rgba(0, 0, 0, .5); color: #fff; cursor: pointer; padding: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd .bk7 svg, body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd .spk7 svg { width: 18px; height: 18px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker:not([hidden]) { position: fixed; inset: 0; z-index: 1; display: block; padding: 0; --cw: min(11vh, 6vw); }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .fitbox { position: absolute; inset: max(8px, env(safe-area-inset-top, 0px)) max(26px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(26px, env(safe-area-inset-left, 0px)); container-type: normal; display: block; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk { position: absolute; inset: 0; max-width: none; width: auto; height: auto; min-height: 0; margin: 0; border-radius: 30px; padding: 46px 18px 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; justify-items: center; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkb { display: contents; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 1px 6px; padding: 4px 10px; border-radius: 14px; flex-direction: unset; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(1) { grid-area: 2 / 1; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(2) { grid-area: 1 / 2; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(3) { grid-area: 2 / 3; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks b { font-size: .85rem; max-width: 7em; grid-column: 1; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .ch { font-size: .8rem; grid-column: 2; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkcs, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pktag, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkbt { grid-column: 1 / 3; justify-self: center; min-height: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pktag:empty, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkbt:empty { display: none; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkc.s { width: calc(var(--cw) * .7); height: calc(var(--cw) * .98); font-size: calc(var(--cw) * .3); }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkm { grid-area: 2 / 2; gap: 6px; min-width: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkpot { font-size: .9rem; padding: 2px 16px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkmsg { min-height: 0; font-size: .78rem; max-width: 100%; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkme { grid-area: 3 / 1 / 4 / 3; justify-self: start; flex-direction: row; align-items: center; gap: 12px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkme .pkcs { min-height: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkrow { flex-direction: column; align-items: flex-start; gap: 3px; font-size: .85rem; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats { display: flex; position: absolute; z-index: 5; top: max(22px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); gap: 5px; padding: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stat { padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, .4); display: flex; gap: 5px; align-items: baseline; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .k { font-size: .56rem; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .v { font-size: .78rem; line-height: 1.2; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkact { position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); width: min(52%, 440px); gap: 6px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr1 .btn, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr2 .btn { border-radius: 99px; min-height: 38px; font-size: .85rem; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr2 .btn { min-height: 34px; padding: 0 12px; font-size: .78rem; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker #pkNext { position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); min-width: 220px; border-radius: 99px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .actions, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .hint { display: none; }
+}
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
 #spl::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0 0,rgba(56,214,255,.25),transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,79,184,.25),transparent 45%)}
@@ -1749,6 +1790,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       <div class="stat"><div class="k">Mains gagnées</div><div class="v" id="pkHands">0</div></div>
       <div class="stat"><div class="k">Record</div><div class="v" id="pkBest">0</div></div>
     </div>
+    <button type="button" class="pkfs" id="pkFs" aria-label="Plein écran" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     <div class="fitbox">
       <div class="pk" role="group" aria-label="Table de poker">
         <div class="pkb" id="pkBots"></div>
@@ -7493,6 +7535,18 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     const botsEl = $('pkBots'), bdEl = $('pkBd'), potEl = $('pkPot'), msgEl = $('pkMsg'), meEl = $('pkMe');
     const actEl = $('pkAct'), bF = $('pkFold'), bC = $('pkCall'), bR = $('pkRaise'), sl = $('pkSl'), rw2 = $('pkRw2');
     const q1 = $('pkQ1'), q2 = $('pkQ2'), q3 = $('pkQ3'), bNext = $('pkNext'), bNew = $('pkNew');
+    /* plein écran (là où le navigateur le permet ; absent sur iPhone, où l'appli installée sert de plein écran) */
+    const bFs = $('pkFs');
+    if (bFs && document.documentElement.requestFullscreen) {
+      bFs.hidden = false;
+      bFs.addEventListener('click', () => {
+        try {
+          if (document.fullscreenElement) { document.exitFullscreen(); return; }
+          document.documentElement.requestFullscreen({ navigationUI: 'hide' }).then(() => { try { screen.orientation.lock('landscape').catch(() => { /* ignore */ }); } catch (e) { /* ignore */ } }).catch(() => { /* ignore */ });
+        } catch (e) { /* ignore */ }
+      });
+      document.addEventListener('fullscreenchange', () => { bFs.setAttribute('aria-pressed', String(!!document.fullscreenElement)); if (!document.fullscreenElement) { try { screen.orientation.unlock(); } catch (e) { /* ignore */ } } });
+    }
     const s1 = $('pkBl1'), s2 = $('pkBl2'), lE = $('pkLE'), lN = $('pkLN'), lH = $('pkLH');
     const SUN = ['pique', 'cœur', 'carreau', 'trèfle'], RKN = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'valet', 'dame', 'roi', 'as'];
     const SU = '\u2660\u2665\u2666\u2663', RK = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -7808,7 +7862,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (!P[turn].hu) next();
     }
     function enter() { if (!P.length) init(); else resume(); }
-    function leave() { if (!ol) clearTimeout(T); }
+    function leave() { if (!ol) clearTimeout(T); try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) { /* ignore */ } }
 
     mpx = MPX({
       key: 'poker', prefix: 'polyplays-pk-', game: 'Poker', barBefore: msgEl, btnParents: [],
