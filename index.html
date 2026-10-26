@@ -1047,6 +1047,7 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .du .gb { min-height: calc(48px * var(--u)); padding: 0 calc(20px * var(--u)); border-radius: calc(999px * var(--u)); border: 0; font: 700 1rem var(--font-body); background: var(--amber); color: #1a1200; cursor: pointer; }
 .du .gb.alt { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
 .du-end { position: absolute; inset: 0 calc(12px * var(--u)) calc(12px * var(--u)); border-radius: calc(22px * var(--u)); background: rgba(8, 5, 18, .78); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(12px * var(--u)); text-align: center; z-index: 3; -webkit-backdrop-filter: blur(calc(4px * var(--u))); backdrop-filter: blur(calc(4px * var(--u))); }
+.du-end.pe { justify-content: stretch; gap: 0; } .pe-h { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(10px * var(--u)); width: 100%; padding: 0 calc(12px * var(--u)); box-sizing: border-box; } .pe-h.r180 { transform: rotate(180deg); } .pe-mid { flex: none; width: 100%; display: flex; justify-content: center; padding: calc(8px * var(--u)) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .du-end h3 { margin: 0; font-size: 1.6rem; } .du-end p { margin: 0; color: var(--muted); }
 .du-end .r { display: flex; gap: calc(10px * var(--u)); }
 .bdg { display: grid; gap: calc(14px * var(--u)); align-content: center; justify-items: center; flex: 1; width: 100%; }
@@ -9057,14 +9058,14 @@ function glyph(id, a, b, c) {
     function pong(host) {
       const cv = document.createElement('canvas'); cv.className = 'du-cv'; host.appendChild(cv);
       const ctx = cv.getContext('2d');
-      let W = 1, H = 1, dpr = 1, raf = 0, last = 0, ball, serveAt = 0, over = false;
+      let W = 1, H = 1, dpr = 1, raf = 0, last = 0, ball, serveAt = 0, over = false, paused = false, rally = 0, best = 0, lastN = 0, pz = null, pauseBox = null;
       const pad = [{ x: 0.5, s: 0 }, { x: 0.5, s: 0 }]; // x in 0..1 ; 0 = bottom player, 1 = top player
       const ptr = new Map();
       const LOGO = new Image(); LOGO.src = 'icons/icon-192.png';
       function size() { const r = host.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1); W = Math.max(120, r.width - 24); H = Math.max(160, r.height - 12); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
       size();
       const PW = () => W * 0.28, PH = 11, M = 28, R = 8;
-      function serve(dir) { ball = { x: W / 2, y: H / 2, vx: (Math.random() * 2 - 1) * W * 0.2, vy: dir * H * 0.4 }; serveAt = performance.now() + 900; }
+      function serve(dir) { ball = { x: W / 2, y: H / 2, vx: (Math.random() * 2 - 1) * W * 0.2, vy: dir * H * 0.4 }; serveAt = performance.now() + 2100; rally = 0; lastN = 0; }
       serve(Math.random() < 0.5 ? 1 : -1);
       const place = (e, i) => { const r = cv.getBoundingClientRect(); pad[i].x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); };
       cv.addEventListener('pointerdown', (e) => { e.preventDefault(); const r = cv.getBoundingClientRect(), side = (e.clientY - r.top) < r.height / 2 ? 1 : 0; ptr.set(e.pointerId, side); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } place(e, side); });
@@ -9076,13 +9077,47 @@ function glyph(id, a, b, c) {
         const dir = i === 0 ? 1 : -1;
         if (ball.vy * dir > 0 && (i === 0 ? ball.y + R >= py - PH / 2 && ball.y - R <= py + PH : ball.y - R <= py + PH / 2 && ball.y + R >= py - PH) && Math.abs(ball.x - x) <= PW() / 2 + R) {
           const off = (ball.x - x) / (PW() / 2), sp = Math.min(Math.abs(ball.vy) * 1.06, H * 1.25);
-          ball.vy = -dir * sp; ball.vx = off * W * 0.7 + ball.vx * 0.15; ball.y = i === 0 ? py - PH / 2 - R : py + PH / 2 + R; SFX.play('piece');
+          ball.vy = -dir * sp; ball.vx = off * W * 0.7 + ball.vx * 0.15; ball.y = i === 0 ? py - PH / 2 - R : py + PH / 2 + R; SFX.play('piece'); rally++; if (rally > best) best = rally;
         }
       }
+      function finish(w) {
+        const d = document.createElement('div'); d.className = 'du-end pe';
+        const half = (i, rot) => {
+          const win = w === i, el = document.createElement('div'); el.className = 'pe-h' + (rot ? ' r180' : '');
+          el.innerHTML = '<h3></h3><p></p><button type="button" class="gb">Revanche</button>';
+          el.querySelector('h3').textContent = 'Joueur ' + (i + 1) + (win ? ' gagne !' : ' perd');
+          el.querySelector('p').textContent = pad[i].s + ' – ' + pad[1 - i].s + (best >= 2 ? ' · meilleur échange : ' + best + ' touches' : '');
+          el.querySelector('button').addEventListener('click', () => { d.remove(); pad[0].s = pad[1].s = 0; tally = [0, 0]; setTally(); best = 0; over = false; serve(Math.random() < .5 ? 1 : -1); });
+          return el;
+        };
+        const mid = document.createElement('div'); mid.className = 'pe-mid'; mid.innerHTML = '<button type="button" class="gb alt">Menu</button>';
+        mid.querySelector('button').addEventListener('click', toMenu);
+        d.appendChild(half(1, true)); d.appendChild(mid); d.appendChild(half(0, false)); host.appendChild(d);
+      }
+      function setPause(on) {
+        if (over || on === paused) return;
+        paused = on;
+        if (on) {
+          pauseBox = document.createElement('div'); pauseBox.className = 'du-end';
+          pauseBox.innerHTML = '<h3>Pause</h3><div class="r"><button type="button" class="gb">Reprendre</button><button type="button" class="gb alt">Menu</button></div>';
+          pauseBox.querySelectorAll('button')[0].addEventListener('click', () => setPause(false));
+          pauseBox.querySelectorAll('button')[1].addEventListener('click', toMenu);
+          host.appendChild(pauseBox);
+        } else {
+          if (pauseBox) { pauseBox.remove(); pauseBox = null; }
+          serveAt = performance.now() + 2100; lastN = 0; last = 0;
+        }
+      }
+      pz = document.createElement('button'); pz.type = 'button'; pz.className = 'spk7'; pz.setAttribute('aria-label', 'Pause');
+      pz.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+      pz.addEventListener('click', () => setPause(!paused));
+      tallyEl.parentNode.insertBefore(pz, tallyEl.nextSibling);
+      const onVis = () => { if (document.hidden) setPause(true); };
+      document.addEventListener('visibilitychange', onVis);
       function frame(now) {
         raf = requestAnimationFrame(frame);
         const dt = Math.min(0.04, (now - (last || now)) / 1000); last = now;
-        if (!over && now >= serveAt) {
+        if (!over && !paused && now >= serveAt) {
           ball.x += ball.vx * dt; ball.y += ball.vy * dt;
           if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx); } else if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx); }
           hit(0, now); hit(1, now);
@@ -9090,7 +9125,7 @@ function glyph(id, a, b, c) {
           if (ball.y > H + R) w = 1; else if (ball.y < -R) w = 0;
           if (w >= 0) {
             pad[w].s++; tally[w] = pad[w].s; setTally(); SFX.play('capture');
-            if (pad[w].s >= 5) { over = true; endBox(host, 'Joueur ' + (w + 1) + ' gagne !', pad[0].s + ' – ' + pad[1].s, () => { pad[0].s = pad[1].s = 0; tally = [0, 0]; setTally(); over = false; serve(Math.random() < .5 ? 1 : -1); }); SFX.play('win', 200); }
+            if (pad[w].s >= 5) { over = true; finish(w); SFX.play('win', 200); }
             else serve(w === 0 ? -1 : 1);
           }
         }
@@ -9107,19 +9142,24 @@ function glyph(id, a, b, c) {
         { // médaillon PolyPlays au centre du terrain
           const mr = 36, cx = W / 2, cy = H / 2;
           ctx.save(); ctx.shadowColor = 'rgba(168,85,247,.55)'; ctx.shadowBlur = 20; ctx.fillStyle = '#14122a'; ctx.beginPath(); ctx.arc(cx, cy, mr, 0, 7); ctx.fill(); ctx.restore();
-          if (LOGO.complete && LOGO.naturalWidth) { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, mr - 3, 0, 7); ctx.clip(); ctx.drawImage(LOGO, cx - mr, cy - mr, mr * 2, mr * 2); ctx.restore(); }
+          const cn = Math.ceil((serveAt - performance.now()) / 700), cdn = cn >= 1 && cn <= 3 && !over && !paused;
+          if (cdn) {
+            if (cn !== lastN) { lastN = cn; SFX.play('piece'); }
+            ctx.fillStyle = '#fff'; ctx.font = '700 44px "Bricolage Grotesque", "Instrument Sans", Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(cn), cx, cy + 2);
+          } else if (LOGO.complete && LOGO.naturalWidth) { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, mr - 3, 0, 7); ctx.clip(); ctx.drawImage(LOGO, cx - mr, cy - mr, mr * 2, mr * 2); ctx.restore(); }
           ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, mr - 1.5, 0, 7); ctx.stroke();
           ctx.fillStyle = 'rgba(255,255,255,.8)'; ctx.font = '700 17px "Bricolage Grotesque", "Instrument Sans", Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText('PolyPlays', cx, cy + mr + 28);
           ctx.save(); ctx.translate(cx, cy - mr - 28); ctx.rotate(Math.PI); ctx.fillText('PolyPlays', 0, 0); ctx.restore();
         }
+        [[0, '#38BDF8', H - M - 28], [1, '#FB7185', M + 28]].forEach(([i, c, y]) => { for (let k = 0; k < 5; k++) { ctx.fillStyle = k < pad[i].s ? c : 'rgba(255,255,255,.18)'; ctx.beginPath(); ctx.arc(W / 2 + (k - 2) * 20, y, 5.5, 0, 7); ctx.fill(); } });
         [[0, '#38BDF8', H - M], [1, '#FB7185', M]].forEach(([i, c, y]) => { const x = pad[i].x * (W - PW()); ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y - PH / 2, PW(), PH, 6) : ctx.rect(x, y - PH / 2, PW(), PH); ctx.fill(); });
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, R, 0, 7); ctx.fill();
         if (performance.now() < serveAt && !over) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = '600 15px "Instrument Sans", Arial'; ctx.fillText('Glisse ton doigt sur ta moitié', W / 2, H / 2 + 102); ctx.save(); ctx.translate(W / 2, H / 2 - 102); ctx.rotate(Math.PI); ctx.fillText('Glisse ton doigt sur ta moitié', 0, 0); ctx.restore(); }
       }
       raf = requestAnimationFrame(frame);
       const onR = () => { size(); }; window.addEventListener('resize', onR);
-      return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onR); };
+      return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onR); document.removeEventListener('visibilitychange', onVis); if (pz) { pz.remove(); pz = null; } };
     }
 
     /* ---- Puissance 4 ---- */
