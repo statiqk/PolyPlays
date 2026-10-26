@@ -9060,6 +9060,7 @@ function glyph(id, a, b, c) {
       let W = 1, H = 1, dpr = 1, raf = 0, last = 0, ball, serveAt = 0, over = false;
       const pad = [{ x: 0.5, s: 0 }, { x: 0.5, s: 0 }]; // x in 0..1 ; 0 = bottom player, 1 = top player
       const ptr = new Map();
+      const LOGO = new Image(); LOGO.src = 'icons/icon-192.png';
       function size() { const r = host.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1); W = Math.max(120, r.width - 24); H = Math.max(160, r.height - 12); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
       size();
       const PW = () => W * 0.28, PH = 11, M = 28, R = 8;
@@ -9103,9 +9104,18 @@ function glyph(id, a, b, c) {
         ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.font = '700 ' + Math.round(W * 0.34) + 'px "Instrument Sans", Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(String(pad[0].s), W / 2, H * 0.75);
         ctx.save(); ctx.translate(W / 2, H * 0.25); ctx.rotate(Math.PI); ctx.fillText(String(pad[1].s), 0, 0); ctx.restore();
+        { // médaillon PolyPlays au centre du terrain
+          const mr = 36, cx = W / 2, cy = H / 2;
+          ctx.save(); ctx.shadowColor = 'rgba(168,85,247,.55)'; ctx.shadowBlur = 20; ctx.fillStyle = '#14122a'; ctx.beginPath(); ctx.arc(cx, cy, mr, 0, 7); ctx.fill(); ctx.restore();
+          if (LOGO.complete && LOGO.naturalWidth) { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, mr - 3, 0, 7); ctx.clip(); ctx.drawImage(LOGO, cx - mr, cy - mr, mr * 2, mr * 2); ctx.restore(); }
+          ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, mr - 1.5, 0, 7); ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,.8)'; ctx.font = '700 17px "Bricolage Grotesque", "Instrument Sans", Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('PolyPlays', cx, cy + mr + 28);
+          ctx.save(); ctx.translate(cx, cy - mr - 28); ctx.rotate(Math.PI); ctx.fillText('PolyPlays', 0, 0); ctx.restore();
+        }
         [[0, '#38BDF8', H - M], [1, '#FB7185', M]].forEach(([i, c, y]) => { const x = pad[i].x * (W - PW()); ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y - PH / 2, PW(), PH, 6) : ctx.rect(x, y - PH / 2, PW(), PH); ctx.fill(); });
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, R, 0, 7); ctx.fill();
-        if (performance.now() < serveAt && !over) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = '600 15px "Instrument Sans", Arial'; ctx.fillText('Glisse ton doigt sur ta moitié', W / 2, H / 2 + (ball.vy > 0 ? -34 : 34)); }
+        if (performance.now() < serveAt && !over) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = '600 15px "Instrument Sans", Arial'; ctx.fillText('Glisse ton doigt sur ta moitié', W / 2, H / 2 + (ball.vy > 0 ? -92 : 92)); }
       }
       raf = requestAnimationFrame(frame);
       const onR = () => { size(); }; window.addEventListener('resize', onR);
