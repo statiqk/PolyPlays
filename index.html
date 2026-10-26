@@ -1275,14 +1275,14 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .fitbox { position: absolute; inset: max(8px, env(safe-area-inset-top, 0px)) max(26px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(26px, env(safe-area-inset-left, 0px)); container-type: normal; display: block; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk { position: absolute; inset: 0; max-width: none; width: auto; height: auto; min-height: 0; margin: 0; border-radius: 30px; padding: 52px 18px 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; justify-items: center; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkb { display: contents; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 1px 6px; padding: 4px 10px; border-radius: 14px; flex-direction: unset; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks { display: grid; grid-template-columns: 17px auto auto 17px; justify-content: center; align-items: center; gap: 1px 5px; padding: 4px 8px; border-radius: 14px; flex-direction: unset; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(1) { grid-area: 2 / 1; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(2) { grid-area: 1 / 2; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(3) { grid-area: 2 / 3; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks b { font-size: .85rem; max-width: 7em; grid-column: 1; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .ch { font-size: .8rem; grid-column: 2; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkcs, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pktag, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkbt { grid-column: 1 / 3; justify-self: center; min-height: 0; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkd { right: auto; left: -12px; top: -10px; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks b { font-size: .85rem; max-width: 7em; grid-column: 2; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .ch { font-size: .8rem; grid-column: 3; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkcs, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pktag, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkbt { grid-column: 1 / 5; justify-self: center; min-height: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkd { position: static; grid-column: 1; grid-row: 1; justify-self: center; align-self: center; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pktag:empty, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkbt:empty { display: none; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkc.s { width: calc(var(--cw) * .7); height: calc(var(--cw) * .98); font-size: calc(var(--cw) * .3); }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkm { grid-area: 2 / 2; gap: 6px; min-width: 0; }
