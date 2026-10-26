@@ -107,8 +107,8 @@ h1 {
 }
 .home { padding-bottom: calc(28px * var(--u)); }
 .home { overflow-x: clip; }
-/* +1 px : la page reste défilable, sinon iOS (appli installée) raccourcit la zone d'affichage et laisse une bande en bas */
-body.onhome { box-sizing: border-box; min-height: calc(100vh + 1px); min-height: calc(100dvh + 1px); }
+/* +160 px : même avec peu de jeux la page garde une vraie marge de défilement, comme « Tous » (qui n'a pas la bande en bas au lancement sur iPhone) */
+body.onhome { box-sizing: border-box; min-height: calc(100vh + 160px); min-height: calc(100dvh + 160px); }
 body.onhome::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(60% 32% at 12% 4%, rgba(124, 58, 237, .55), transparent 70%), radial-gradient(55% 30% at 95% 20%, rgba(14, 165, 233, .4), transparent 70%), radial-gradient(60% 30% at 35% 62%, rgba(236, 72, 153, .28), transparent 70%), radial-gradient(55% 28% at 90% 98%, rgba(16, 185, 129, .35), transparent 70%); }
 /* Accueil : filtres, grille d'icônes, carte « Reprendre », défi du jour compact */
 .cats { display: flex; width: 0; min-width: 100%; gap: calc(7px * var(--u)); margin: calc(12px * var(--u)) 0 calc(6px * var(--u)); overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 5; padding: calc(8px * var(--u)) 0; background: linear-gradient(var(--bg) 82%, transparent); -webkit-overflow-scrolling: touch; }
