@@ -1,4 +1,4 @@
-const V = 'polyplays-fa2c132aed';
+const V = 'polyplays-71f0b7323b';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 const OPT = ['peerjs.min.js',
   'fonts/instrument-sans-latin-400-normal.woff2', 'fonts/instrument-sans-latin-500-normal.woff2', 'fonts/instrument-sans-latin-600-normal.woff2', 'fonts/instrument-sans-latin-700-normal.woff2',

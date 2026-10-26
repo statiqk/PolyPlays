@@ -1143,6 +1143,8 @@ body.locked[data-fit] .status:empty { display: none; }
 /* Memory : cartes à proportion fixe, plateau centré, symboles plus grands */
 body.locked[data-fit] .fitbox.mmf > .mmgrid { width: min(100cqw, calc(100cqh * var(--ar, .7))); height: auto; aspect-ratio: var(--ar, .7); max-height: 100cqh; }
 .mmc svg { width: 62%; }
+.mmc:not(.up):not(.ok) { background: linear-gradient(rgba(14, 100, 170, .28), rgba(14, 100, 170, .28)), url(icons/icon-512.png) center / cover #0EA5E9; }
+.mmc:not(.up):not(.ok)::after { content: none; }
 
 /* Boutons et zones plus espacés dans tous les jeux */
 .panel { gap: calc(16px * var(--u)); }
