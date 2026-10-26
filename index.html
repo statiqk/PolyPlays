@@ -1151,16 +1151,16 @@ body.locked[data-fit] .fitbox.mmf > .mmgrid { width: min(100cqw, calc(100cqh * v
   body.locked[data-fit]:has(#panel-memory:not([hidden])) .ghd .bk7, body.locked[data-fit]:has(#panel-memory:not([hidden])) .ghd .spk7 { width: 34px; height: 34px; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) .ghd h2 { font-size: 1.25rem; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) .gbody { padding-top: 8px; }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory:not([hidden]) { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); grid-template-rows: auto auto auto 1fr; gap: 8px 18px; height: calc(100dvh - 78px); }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .stats { grid-column: 1; grid-row: 1; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory:not([hidden]) { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); grid-template-rows: 1fr auto auto auto auto 1fr; gap: 10px 18px; height: calc(100dvh - 78px); }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .stats { grid-column: 1; grid-row: 2; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .stat { padding: 6px 10px; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .stat .v { font-size: clamp(.95rem, 2.6vw, 1.3rem); }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .mmbar { grid-column: 1; grid-row: 2; flex-direction: column; align-items: stretch; gap: 6px; }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .mmbar .seg { align-self: stretch; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .mmbar { grid-column: 1; grid-row: 3; flex-direction: column; align-items: stretch; gap: 6px; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .mmbar .seg { align-self: stretch; display: flex; justify-content: center; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .mmbest { text-align: center; font-size: .78rem; }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .status { grid-column: 1; grid-row: 3; margin: 0; justify-self: start; align-self: start; }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .actions { grid-column: 1; grid-row: 4; align-self: end; }
-  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .fitbox { grid-column: 2; grid-row: 1 / 5; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .status { grid-column: 1; grid-row: 4; margin: 0; justify-self: center; align-self: center; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .actions { grid-column: 1; grid-row: 5; align-self: start; }
+  body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .fitbox { grid-column: 2; grid-row: 1 / 7; min-height: 0; display: flex; align-items: center; justify-content: center; }
   body.locked[data-fit]:has(#panel-memory:not([hidden])) #panel-memory .hint { display: none; }
 }
 
