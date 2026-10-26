@@ -1372,6 +1372,41 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { bottom: 80px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bltoast { bottom: 50px; }
 }
+/* Solitaire en paysage (téléphone) : table verte plein écran, colonnes sur toute la largeur */
+@media (orientation: landscape) and (max-height: 560px) {
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .app { max-width: none; padding: 0; display: block; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #gview:not([hidden]), body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .gbody { display: block; padding: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd { position: fixed; z-index: 6; left: max(36px, env(safe-area-inset-left, 0px)); right: max(36px, env(safe-area-inset-right, 0px)); top: max(18px, env(safe-area-inset-top, 0px)); padding: 0; background: none; box-shadow: none; border-radius: 0; pointer-events: none; justify-content: flex-start; gap: 8px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd > div { display: none; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd > button { pointer-events: auto; background: rgba(0, 0, 0, .5); box-shadow: none; width: 36px; height: 36px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd > .bk7 { margin-right: auto; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .pkfs { display: grid; position: fixed; z-index: 7; top: max(18px, env(safe-area-inset-top, 0px)); left: calc(max(36px, env(safe-area-inset-left, 0px)) + 44px); width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: rgba(0, 0, 0, .5); color: #fff; cursor: pointer; padding: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd .bk7 svg, body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd .spk7 svg { width: 18px; height: 18px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire:not([hidden]) { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: max(58px, calc(env(safe-area-inset-top, 0px) + 46px)) 0 max(10px, env(safe-area-inset-bottom, 0px)); --cw: min(calc((100vw - 224px) / 7 - 7px), 16vh); background: radial-gradient(ellipse at 50% 48%, #1f8a5c 0%, #115339 62%, #0a3326 100%); box-shadow: inset 0 0 0 5px #2a1d5e, inset 0 0 0 7px rgba(124, 92, 255, .4); }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stats { display: flex; position: absolute; z-index: 5; top: calc(max(22px, env(safe-area-inset-top, 0px)) + 4.8px); left: 50%; transform: translateX(-50%); gap: 5px; padding: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stat { padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, .4); display: flex; gap: 5px; align-items: center; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stats .k { font-size: .56rem; line-height: 1; margin: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stats .v { font-size: .78rem; line-height: 1; margin: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop, body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltab { grid-template-columns: repeat(7, var(--cw)); gap: 0 7px; width: calc(var(--cw) * 7 + 42px); flex: none; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop { margin-bottom: 8px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 6px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltab::-webkit-scrollbar { display: none; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltab .sc.dn + .sc { margin-top: calc(14% - 133.33%) !important; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltab .sc:not(.dn) + .sc { margin-top: calc(32% - 133.33%) !important; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop .sc.dn, body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop .sc { border-radius: 9%; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .status { position: absolute; z-index: 4; left: max(18px, calc(env(safe-area-inset-left, 0px) + 12px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); width: 100px; margin: 0; min-height: 0; padding: 5px 8px; border-radius: 12px; background: rgba(0, 0, 0, .38); color: #eafff4; font-size: .66rem; line-height: 1.25; text-align: left; border: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .actions { position: absolute; z-index: 5; right: max(18px, calc(env(safe-area-inset-right, 0px) + 12px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); width: 104px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin: 0; padding: 0; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .actions .btn { min-height: 34px; padding: 0 6px; font-size: .74rem; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .hint { display: none; }
+}
+@media (orientation: landscape) and (max-height: 340px) {
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd, body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .pkfs { top: max(12px, env(safe-area-inset-top, 0px)); }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .ghd > button, body.locked[data-fit]:has(#panel-solitaire:not([hidden])) .pkfs { width: 32px; height: 32px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire:not([hidden]) { padding-top: max(46px, calc(env(safe-area-inset-top, 0px) + 40px)); --cw: min(calc((100vw - 224px) / 7 - 7px), 15vh); }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stats { top: max(14px, env(safe-area-inset-top, 0px)); }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stat { padding: 2px 9px; }
+  body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop { margin-bottom: 4px; }
+}
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
 #spl::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0 0,rgba(56,214,255,.25),transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,79,184,.25),transparent 45%)}
@@ -1943,6 +1978,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   </section>
 
   <section class="panel" id="panel-solitaire" aria-labelledby="gTitle" hidden>
+    <button type="button" class="pkfs" id="slFs" aria-label="Plein écran" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     <div class="stats">
       <div class="stat"><div class="k">Coups</div><div class="v" id="slMoves">0</div></div>
       <div class="stat"><div class="k">Temps</div><div class="v" id="slTime">0:00</div></div>
@@ -5579,6 +5615,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   /* =====================  SOLITAIRE  ===================== */
   const SL = (function () {
     const SUIT = ['♠', '♥', '♦', '♣'], RANK = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    bindFs($('slFs'));
     const topEl = $('slTop'), tabEl = $('slTab'), stEl = $('slStatus'), eMoves = $('slMoves'), eTime = $('slTime'), eWins = $('slWins'), bUndo = $('slUndo'), bNew = $('slNew');
     let S, sel = null, moves = 0, hist = [], over = false, started = false, elapsed = 0, t0 = 0, timer = 0, active = false;
     let wins = +store.get('arcade.soli.wins', 0) || 0;
