@@ -8098,8 +8098,8 @@ html.spl main.app { visibility: hidden; }
   };
 let __gl = 0;
 function cardLogo(x, y, w, h, tr, fill) {
-  const id = 'gl' + (++__gl), p = 0.7, r = 2.5;
-  return `<clipPath id="${id}"><rect x="${x + p}" y="${y + p}" width="${w - 2 * p}" height="${h - 2 * p}" rx="${r}"/></clipPath><g${tr ? ` transform="${tr}"` : ''}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4.5" fill="${fill}"/><g clip-path="url(#${id})"><rect x="${x + p}" y="${y + p}" width="${w - 2 * p}" height="${h - 2 * p}" fill="#1d1640"/><image href="icons/icon-192.png" x="${x + w / 2 - (w - 2 * p) * .72}" y="${y + h / 2 - (w - 2 * p) * .72}" width="${(w - 2 * p) * 1.44}" height="${(w - 2 * p) * 1.44}"/></g></g>`;
+  const id = 'gl' + (++__gl), p = 1.2, r = 3.3;
+  return `<clipPath id="${id}"><rect x="${x + p}" y="${y + p}" width="${w - 2 * p}" height="${h - 2 * p}" rx="${r}"/></clipPath><g${tr ? ` transform="${tr}"` : ''}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4.5" fill="${fill}"/><g clip-path="url(#${id})"><rect x="${x + p}" y="${y + p}" width="${w - 2 * p}" height="${h - 2 * p}" fill="#1d1640"/><image href="icons/icon-512.png" x="${x + w / 2 - (w - 2 * p) * .72}" y="${y + h / 2 - (w - 2 * p) * .72}" width="${(w - 2 * p) * 1.44}" height="${(w - 2 * p) * 1.44}"/></g></g>`;
 }
 function glyph(id, a, b, c) {
   const S = {
