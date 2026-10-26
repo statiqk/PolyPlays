@@ -7760,7 +7760,9 @@ html.spl main.app { visibility: hidden; }
     const pay = (p, a) => { a = Math.min(a, p.chips); p.chips -= a; p.bet += a; p.tot += a; if (!p.chips) p.allin = 1; };
     const pot = () => P.reduce((s, p) => s + p.tot, 0);
     const fresh = () => NAMES.map((n, i) => ({ n, hu: i === 0 || (!!ol && i === 1), chips: 1000, hand: [], bet: 0, tot: 0, fold: 0, allin: 0, out: 0, acted: 0, show: 0, sc: 0, ag: i ? .8 + Math.random() * .5 : 1 }));
-    const isFresh = () => st === 'play' && phase === 0 && P.every((p) => p.chips + p.tot === 1000 && !p.acted);
+    let hAct = 0;
+    /* Table neuve : stacks d'origine et rien joué par toi (les bots jouent tout de suite après une nouvelle donne, ça ne compte pas comme une partie en cours) */
+    const isFresh = () => st === 'play' && phase === 0 && P.length > 0 && P.every((p) => p.chips + p.tot === 1000) && !hAct;
     function init() {
       clearTimeout(T); clearTimeout(PT); pend = false; SB = cfgSB; BB = SB * 2; ME = ol ? (ol.role === 'host' ? 0 : 1) : 0;
       ov = null; win = []; ev = null; st = 'play'; board = []; dealer = -1; phase = 0;
@@ -7771,6 +7773,7 @@ html.spl main.app { visibility: hidden; }
       clearTimeout(T); pend = false;
       P.forEach((p) => { if (p.chips <= 0) p.out = 1; });
       P.forEach((p) => { p.hand = []; p.bet = p.tot = p.allin = p.acted = p.show = p.sc = p.cl = 0; p.fold = p.out; });
+      hAct = 0;
       deck = [...Array(52).keys()];
       for (let i = 51; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)), t = deck[i]; deck[i] = deck[j]; deck[j] = t; }
       board = []; phase = 0; st = 'play'; win = []; ov = null;
@@ -7803,7 +7806,7 @@ html.spl main.app { visibility: hidden; }
         const c = Math.min(cur - p.bet, p.chips); pay(p, c);
         ev = c ? { t: p.allin ? 'allin' : 'call', i, a: p.allin ? p.bet : c } : { t: 'check', i }; SFX.play(c ? 'place' : 'tick');
       }
-      p.acted = 1; advance();
+      p.acted = 1; if (i === 0) hAct = 1; advance();
     }
     function advance() {
       const al = P.filter((p) => !p.fold);
@@ -8009,6 +8012,7 @@ html.spl main.app { visibility: hidden; }
       deck, b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, w: win, sb: SB, lv: level
     });
     function restore(d) {
+      hAct = 1;
       if (!d || !Array.isArray(d.P) || d.P.length !== 4 || !Array.isArray(d.deck) || !Array.isArray(d.b)) throw new Error('bad');
       const num = (x, lo, hi) => { x = +x; if (!(x >= lo && x <= hi)) throw new Error('bad'); return x | 0; };
       P = d.P.map((p, i) => ({ n: NAMES[i], hu: i === 0, chips: num(p.chips, 0, 1e6), bet: num(p.bet, 0, 1e6), tot: num(p.tot, 0, 1e6), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, acted: p.acted ? 1 : 0, cl: p.cl ? 1 : 0, show: p.show ? 1 : 0, sc: +p.sc || 0, ag: Math.max(.5, Math.min(1.5, +p.ag || 1)), hand: (Array.isArray(p.hand) ? p.hand : []).slice(0, 2).map((x) => num(x, 0, 51)) }));
