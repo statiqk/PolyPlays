@@ -2668,7 +2668,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-    const net = { role: null, peer: null, conn: null, code: '', on: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', hn: '', st: '', msg: '' };
+    const net = { role: null, peer: null, conn: null, code: '', on: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', ftk: '', tk: '', hn: '', st: '', msg: '' };
     const E = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
     const clean = (v, d) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, 12) : '') || d;
     const stored = () => String(store.get('arcade.mp.name', '') || store.get('arcade.belote.name', '') || store.get('arcade.name', '') || '').replace(/[<>]/g, '').slice(0, 12);
@@ -2716,10 +2716,11 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
         if (!d || typeof d !== 'object') return;
         if (d.t === 'hi') {
           const nm = clean(d.n, 'Ami');
-          if (net.conn && net.conn !== c && net.on && !(net.fname && nm === net.fname)) { refuse(c); return; }
-          if (net.started && net.fname && nm !== net.fname) { refuse(c); return; }
+          const same = !!(net.ftk && typeof d.k === 'string' && d.k === net.ftk);
+          if (net.conn && net.conn !== c && net.on && !same) { refuse(c); return; }
+          if (net.started && !same) { refuse(c); return; }
           if (net.conn && net.conn !== c) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
-          net.conn = c; net.fname = nm; guestIn(); return;
+          net.conn = c; net.fname = nm; net.ftk = typeof d.k === 'string' ? d.k.slice(0, 40) : ''; guestIn(); return;
         }
         if (c !== net.conn) return;
         net.last = Date.now();
@@ -2738,7 +2739,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     function lostConn() {
       if (net.role !== 'host') return;
       net.on = false; const c = net.conn; net.conn = null; try { if (c) c.close(); } catch (e) { /* ignore */ }
-      if (!net.started) net.fname = '';
+      if (!net.started) { net.fname = ''; net.ftk = ''; }
       if (net.started && cfg.onDown) cfg.onDown();
       ui(); draw();
     }
@@ -2749,7 +2750,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     }
     /* invité */
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
         const pe = new window.Peer({ debug: 0 }); net.peer = pe;
@@ -2766,7 +2767,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (net.conn) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
       let c; try { c = net.peer.connect(PFX + net.code, { reliable: true, serialization: 'json' }); } catch (e) { return; }
       net.conn = c;
-      c.on('open', () => { if (net.conn !== c) return; net.last = Date.now(); send({ t: 'hi', n: clean(myName, 'Ami') }); startHb(); });
+      c.on('open', () => { if (net.conn !== c) return; net.last = Date.now(); send({ t: 'hi', n: clean(myName, 'Ami'), k: net.tk }); startHb(); });
       c.on('data', (d) => { if (net.conn === c) guestData(d); });
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
@@ -2804,7 +2805,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       send({ t: 'bye' }); const pe = net.peer, c = net.conn, was = net.started;
       clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
-      net.role = null; net.peer = null; net.conn = null; net.on = false; net.started = false; net.st = ''; net.fname = ''; net.hn = '';
+      net.role = null; net.peer = null; net.conn = null; net.on = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.hn = '';
       sheet.hidden = true; ui();
       if (was || !quiet) cfg.onEnd();
     }
@@ -4139,17 +4140,21 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (!over && S.turn !== side) aiMove();
     }
     function setSide(s) {
-      side = s;
-      bW.setAttribute('aria-pressed', String(s === 1));
-      bB.setAttribute('aria-pressed', String(s === -1));
-      newGame();
+      if (s === side) return;
+      const go = () => {
+        side = s;
+        bW.setAttribute('aria-pressed', String(s === 1));
+        bB.setAttribute('aria-pressed', String(s === -1));
+        newGame();
+      };
+      if (!over && hist.length>0) askYN('Changer de camp ?', 'La partie en cours sera abandonnée.', 'Changer', go); else go();
     }
+    /* le niveau s'applique dès le prochain coup de l'ordinateur, sans effacer la partie */
     function setLevel(l) {
       level = l;
       lE.setAttribute('aria-pressed', String(l === 'easy'));
       lN.setAttribute('aria-pressed', String(l === 'norm'));
       lH.setAttribute('aria-pressed', String(l === 'hard'));
-      newGame();
     }
     bW.addEventListener('click', () => setSide(1));
     bB.addEventListener('click', () => setSide(-1));
@@ -4187,7 +4192,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     const PN = { 2: 'Cavalier', 3: 'Fou', 4: 'Tour', 5: 'Dame' };
     let S, side = 1, level = 'norm', sel = -1, targets = [], info = null, last = 0, hasLast = false;
     let busy = false, over = false, keys = [], gid = 0;
-    let wins = store.get('arcade.chess.wins', 0);
+    let wins = store.get('arcade.chess.wins', 0), counted = false;
     let sfxMove = 'piece';
     const cells = [];
 
@@ -4251,7 +4256,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       info = CH.status(S);
       if (!info.over && keys.filter((k) => k === keys[keys.length - 1]).length >= 3) info = { over: true, result: 'repetition', check: info.check, moves: [] };
       over = info.over;
-      if (over && info.result === 'mate' && S.turn !== side) { wins++; store.set('arcade.chess.wins', wins); }
+      if (over && info.result === 'mate' && S.turn !== side && !counted) { counted = true; wins++; store.set('arcade.chess.wins', wins); }
       if (over) SFX.play(info.result === 'mate' ? (S.turn !== side ? 'win' : 'lose') : 'draw', 350); else SFX.play(info.check ? 'check' : sfxMove);
       render();
       if (!over && S.turn !== side) aiMove();
@@ -4328,7 +4333,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     }
     function newGame() {
       gid++;
-      S = CH.init(); keys = [CH.key(S)]; sel = -1; targets = []; hasLast = false; busy = false; stopThink();
+      S = CH.init(); keys = [CH.key(S)]; sel = -1; targets = []; hasLast = false; busy = false; counted = false; stopThink();
       promoEl.hidden = true;
       info = CH.status(S); over = false;
       render();
@@ -4346,17 +4351,21 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (!over && S.turn !== side) aiMove();
     }
     function setSide(s) {
-      side = s;
-      bW.setAttribute('aria-pressed', String(s === 1));
-      bB.setAttribute('aria-pressed', String(s === -1));
-      newGame();
+      if (s === side) return;
+      const go = () => {
+        side = s;
+        bW.setAttribute('aria-pressed', String(s === 1));
+        bB.setAttribute('aria-pressed', String(s === -1));
+        newGame();
+      };
+      if (!over && S.st.length>0) askYN('Changer de camp ?', 'La partie en cours sera abandonnée.', 'Changer', go); else go();
     }
+    /* le niveau s'applique dès le prochain coup de l'ordinateur, sans effacer la partie */
     function setLevel(l) {
       level = l;
       lE.setAttribute('aria-pressed', String(l === 'easy'));
       lN.setAttribute('aria-pressed', String(l === 'norm'));
       lH.setAttribute('aria-pressed', String(l === 'hard'));
-      newGame();
     }
     bW.addEventListener('click', () => setSide(1));
     bB.addEventListener('click', () => setSide(-1));
@@ -6763,7 +6772,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
     const NM0 = NAMES.slice();
     let dealing = false, dlEnd = null;
-    const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
+    const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', ftk: '', tk: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
 
     function newDeck() {
       const d = []; SUITS.forEach((s) => RANKS.forEach((r) => d.push(r + s)));
@@ -7213,10 +7222,10 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
         if (!d || typeof d !== 'object') return;
         if (d.t === 'hi') {
           const nm = cleanN(d.n, 'Ami');
-          if (net.conn && net.conn !== c && net.on && !(net.fname && nm === net.fname)) { try { c.send({ t: 'full' }); } catch (e) { /* ignore */ } setTimeout(() => { try { c.close(); } catch (e) { /* ignore */ } }, 400); return; }
+          const same = !!(net.ftk && typeof d.k === 'string' && d.k === net.ftk);
+          if ((net.conn && net.conn !== c && net.on && !same) || (net.started && !same)) { try { c.send({ t: 'full' }); } catch (e) { /* ignore */ } setTimeout(() => { try { c.close(); } catch (e) { /* ignore */ } }, 400); return; }
           if (net.conn && net.conn !== c) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
-          if (net.started && net.fname && nm !== net.fname) { try { c.send({ t: 'full' }); } catch (e) { /* ignore */ } setTimeout(() => { try { c.close(); } catch (e) { /* ignore */ } }, 400); return; }
-          net.conn = c; net.fname = nm; guestIn(); return;
+          net.conn = c; net.fname = nm; net.ftk = typeof d.k === 'string' ? d.k.slice(0, 40) : ''; guestIn(); return;
         }
         if (c !== net.conn) return;
         net.last = Date.now();
@@ -7241,7 +7250,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     function lostConn() {
       if (net.role !== 'host') return;
       net.on = false; const c = net.conn; net.conn = null; try { if (c) c.close(); } catch (e) { /* ignore */ }
-      net.paused = net.started; if (!net.started) net.fname = '';
+      net.paused = net.started; if (!net.started) { net.fname = ''; net.ftk = ''; }
       netUi(); renderOn();
     }
     function hostLaunch() {
@@ -7252,7 +7261,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     }
     /* invité */
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false;
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false;
       clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
@@ -7270,7 +7279,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (net.conn) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
       let c; try { c = net.peer.connect(PFX + net.code, { reliable: true, serialization: 'json' }); } catch (e) { return; }
       net.conn = c;
-      c.on('open', () => { if (net.conn !== c) return; net.last = Date.now(); send({ t: 'hi', n: cleanN(myName, 'Ami') }); startHb(); });
+      c.on('open', () => { if (net.conn !== c) return; net.last = Date.now(); send({ t: 'hi', n: cleanN(myName, 'Ami'), k: net.tk }); startHb(); });
       c.on('data', (d) => { if (net.conn === c) guestData(d); });
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
@@ -7308,7 +7317,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       send({ t: 'bye' }); const pe = net.peer, c = net.conn;
       clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
-      net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.sent = '';
+      net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.sent = '';
       NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]);
       if (dlEnd) dlEnd();
       resEl.hidden = true; clearTimeout(timer); timer = 0;
@@ -7541,7 +7550,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     function newHand() {
       clearTimeout(T); pend = false;
       P.forEach((p) => { if (p.chips <= 0) p.out = 1; });
-      P.forEach((p) => { p.hand = []; p.bet = p.tot = p.allin = p.acted = p.show = p.sc = 0; p.fold = p.out; });
+      P.forEach((p) => { p.hand = []; p.bet = p.tot = p.allin = p.acted = p.show = p.sc = p.cl = 0; p.fold = p.out; });
       deck = [...Array(52).keys()];
       for (let i = 51; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)), t = deck[i]; deck[i] = deck[j]; deck[j] = t; }
       board = []; phase = 0; st = 'play'; win = []; ov = null;
@@ -7556,6 +7565,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       if (st !== 'play' || turn !== i || !p || p.fold || p.allin) return;
       clearTimeout(T);
       const old = cur;
+      if (t === 'raise' && p.cl) t = 'call';
       if (t === 'raise') {
         to = Math.floor(+to); const mx = p.chips + p.bet;
         if (!isFinite(to)) t = 'call';
@@ -7563,8 +7573,11 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       }
       if (t === 'fold') { p.fold = 1; ev = { t: 'fold', i }; SFX.play('tick'); }
       else if (t === 'raise') {
-        if (to - cur >= minR) minR = to - cur;
-        cur = to; P.forEach((q) => { q.acted = 0; });
+        const full = to - cur >= minR;
+        if (full) minR = to - cur;
+        /* une relance incomplète (tapis court) ne rouvre pas les relances de ceux qui avaient déjà parlé */
+        P.forEach((q) => { if (full) q.cl = 0; else if (q.acted) q.cl = 1; q.acted = 0; });
+        cur = to;
         pay(p, to - p.bet); ev = { t: p.allin ? 'allin' : old ? 'raise' : 'bet', i, a: p.bet }; SFX.play('place');
       } else {
         const c = Math.min(cur - p.bet, p.chips); pay(p, c);
@@ -7581,7 +7594,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       next();
     }
     function nextPhase() {
-      P.forEach((p) => { p.bet = 0; p.acted = 0; }); cur = 0; minR = BB; phase++;
+      P.forEach((p) => { p.bet = 0; p.acted = 0; p.cl = 0; }); cur = 0; minR = BB; phase++;
       if (phase > 3) return showdown();
       for (let k = 0; k < (phase === 1 ? 3 : 1); k++) board.push(deck.pop());
       SFX.play('piece');
@@ -7618,10 +7631,13 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       clearTimeout(T);
       const al = P.filter((p) => !p.fold), multi = al.length > 1;
       if (multi) al.forEach((p) => { p.show = 1; p.sc = bestHand(p.hand.concat(board)); });
+      /* mise non suivie : rendue à son propriétaire, ce n'est pas un gain */
+      const srt = P.slice().sort((a, b) => b.tot - a.tot);
+      if (srt[0].tot > srt[1].tot) { const ex = srt[0].tot - srt[1].tot; srt[0].chips += ex; srt[0].tot -= ex; }
       const lv = [...new Set(al.map((p) => p.tot))].sort((a, b) => a - b), won = {}; let prev = 0;
       lv.forEach((l) => {
         let amt = 0; P.forEach((p) => { amt += Math.max(0, Math.min(p.tot, l) - prev); });
-        const el = al.filter((p) => p.tot >= l), top = Math.max.apply(null, el.map((p) => p.sc)), ws = el.filter((p) => p.sc === top), sh = Math.floor(amt / ws.length);
+        const el = al.filter((p) => p.tot >= l), top = Math.max.apply(null, el.map((p) => p.sc)), ws = el.filter((p) => p.sc === top).sort((a, b) => ((P.indexOf(a) - dealer + 3) % 4) - ((P.indexOf(b) - dealer + 3) % 4)), sh = Math.floor(amt / ws.length);
         ws.forEach((p, k) => { const g = sh + (k ? 0 : amt - sh * ws.length), i = P.indexOf(p); p.chips += g; won[i] = (won[i] || 0) + g; });
         prev = l;
       });
@@ -7655,14 +7671,14 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
 
     /* ---- en ligne ---- */
     const view = (v) => ({
-      P: P.map((p, i) => ({ n: p.n, hu: p.hu, chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, show: p.show, hand: p.hand.length ? (p.show || i === v ? p.hand : [-1, -1]) : [] })),
+      P: P.map((p, i) => ({ n: p.n, hu: p.hu, chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, cl: p.cl ? 1 : 0, show: p.show, hand: p.hand.length ? (p.show || i === v ? p.hand : [-1, -1]) : [] })),
       b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, o: ov, w: win, sb: SB
     });
     function sync() { if (!ol || ol.role !== 'host' || !mpx || !mpx.on || !P.length) return; mpx.send({ k: 'st', s: view(1) }); }
     function apply(s) {
       if (!s || !Array.isArray(s.P) || s.P.length !== 4 || !Array.isArray(s.b)) return;
       const prev = st, n = (x) => +x | 0;
-      P = s.P.map((p) => ({ n: String(p.n).replace(/[<>]/g, '').slice(0, 12), hu: !!p.hu, chips: n(p.chips), bet: n(p.bet), tot: n(p.tot), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, show: p.show ? 1 : 0, hand: Array.isArray(p.hand) ? p.hand.slice(0, 2).map(n) : [] }));
+      P = s.P.map((p) => ({ n: String(p.n).replace(/[<>]/g, '').slice(0, 12), hu: !!p.hu, chips: n(p.chips), bet: n(p.bet), tot: n(p.tot), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, cl: p.cl ? 1 : 0, show: p.show ? 1 : 0, hand: Array.isArray(p.hand) ? p.hand.slice(0, 2).map(n) : [] }));
       board = s.b.slice(0, 5).map(n); dealer = n(s.d); turn = Math.max(0, Math.min(3, n(s.t))); cur = n(s.c); minR = n(s.r) || 20; phase = n(s.ph);
       st = s.s === 'end' || s.s === 'over' ? s.s : 'play'; ev = s.e && typeof s.e === 'object' ? s.e : null; ov = s.o && typeof s.o === 'object' ? s.o : null;
       win = Array.isArray(s.w) ? s.w.map(n) : []; SB = n(s.sb) || 10; BB = SB * 2; pend = false;
@@ -7734,11 +7750,11 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       setText(bNext, st === 'over' ? 'Rejouer' : 'Main suivante');
       [bF, bC, bR, sl, q1, q2, q3].forEach((x) => { x.disabled = !my; });
       if (!m) return;
-      const call = Math.min(cur - m.bet, m.chips), mx = m.chips + m.bet, can = mx > cur, lo = Math.min(cur + minR, mx);
+      const call = Math.min(cur - m.bet, m.chips), mx = m.chips + m.bet, can = mx > cur && !m.cl, lo = Math.min(cur + minR, mx);
       setText(bC, call ? 'Suivre ' + fm(call) : 'Check'); rw2.hidden = !can; bR.hidden = !can;
       if (my && can) {
         const key = [turn, cur, phase, board.length, m.bet].join(':');
-        if (sl.dataset.k !== key) { sl.dataset.k = key; sl.min = lo; sl.max = mx; sl.step = SB; sl.value = lo; }
+        if (sl.dataset.k !== key) { sl.dataset.k = key; sl.min = lo; sl.max = mx; sl.step = 1; sl.value = lo; }
         updR();
       }
     }
@@ -7758,7 +7774,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     bF.addEventListener('click', () => human('fold'));
     bC.addEventListener('click', () => human('call'));
     bR.addEventListener('click', () => human('raise', +sl.value));
-    sl.addEventListener('input', updR);
+    sl.addEventListener('input', () => { const v = +sl.value; if (v > +sl.min && v < +sl.max) sl.value = Math.max(+sl.min, Math.min(+sl.max, Math.round(v / SB) * SB)); updR(); });
     q1.addEventListener('click', () => setTo(cur + (pot() + cur - P[ME].bet) / 2));
     q2.addEventListener('click', () => setTo(cur + pot() + cur - P[ME].bet));
     q3.addEventListener('click', () => setTo(1e9));
@@ -7769,13 +7785,13 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
 
     /* ---- sauvegarde ---- */
     const full = () => ({
-      P: P.map((p) => ({ chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, acted: p.acted, show: p.show, sc: p.sc, ag: p.ag, hand: p.hand })),
+      P: P.map((p) => ({ chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, acted: p.acted, cl: p.cl ? 1 : 0, show: p.show, sc: p.sc, ag: p.ag, hand: p.hand })),
       deck, b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, w: win, sb: SB, lv: level
     });
     function restore(d) {
       if (!d || !Array.isArray(d.P) || d.P.length !== 4 || !Array.isArray(d.deck) || !Array.isArray(d.b)) throw new Error('bad');
       const num = (x, lo, hi) => { x = +x; if (!(x >= lo && x <= hi)) throw new Error('bad'); return x | 0; };
-      P = d.P.map((p, i) => ({ n: NAMES[i], hu: i === 0, chips: num(p.chips, 0, 1e6), bet: num(p.bet, 0, 1e6), tot: num(p.tot, 0, 1e6), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, acted: p.acted ? 1 : 0, show: p.show ? 1 : 0, sc: +p.sc || 0, ag: Math.max(.5, Math.min(1.5, +p.ag || 1)), hand: (Array.isArray(p.hand) ? p.hand : []).slice(0, 2).map((x) => num(x, 0, 51)) }));
+      P = d.P.map((p, i) => ({ n: NAMES[i], hu: i === 0, chips: num(p.chips, 0, 1e6), bet: num(p.bet, 0, 1e6), tot: num(p.tot, 0, 1e6), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, acted: p.acted ? 1 : 0, cl: p.cl ? 1 : 0, show: p.show ? 1 : 0, sc: +p.sc || 0, ag: Math.max(.5, Math.min(1.5, +p.ag || 1)), hand: (Array.isArray(p.hand) ? p.hand : []).slice(0, 2).map((x) => num(x, 0, 51)) }));
       deck = d.deck.map((x) => num(x, 0, 51)); board = d.b.slice(0, 5).map((x) => num(x, 0, 51));
       dealer = num(d.d, -1, 3); turn = num(d.t, 0, 3); cur = num(d.c, 0, 1e6); minR = num(d.r, 1, 1e6); phase = num(d.ph, 0, 3);
       st = d.s === 'end' ? 'end' : 'play'; ev = d.e && typeof d.e === 'object' ? d.e : null; ov = null;
@@ -7969,6 +7985,15 @@ function glyph(id, a, b, c) {
     store.set('arcade.cat', CATS[cat].id);
     homeRise = true; renderHome();
   }
+  /* Échappe un texte venant du stockage local (sauvegarde importée, records) avant tout innerHTML */
+  function escH(t) { return String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  /* Confirmation générique (même fenêtre que le défi du jour) */
+  function askYN(title, text, ok, fn) {
+    const m = $('qAsk'); setText($('qAskT'), title); setText($('qAskP'), text); setText($('qAskOk'), ok); m.hidden = false; $('qAskOk').focus();
+    $('qAskOk').onclick = () => { m.hidden = true; fn(); }; $('qAskNo').onclick = () => { m.hidden = true; };
+    m.onclick = (e) => { if (e.target === m) m.hidden = true; };
+  }
+  function newTk() { try { const a = new Uint8Array(12); crypto.getRandomValues(a); return Array.from(a, (b) => b.toString(16).padStart(2, '0')).join(''); } catch (e) { return String(Math.random()).slice(2) + Date.now().toString(36); } }
   function paintEnc() {
     const el = $('encList'); el.textContent = '';
     const l = SAVE.list().filter((x) => gmap[x.id]);
@@ -7979,7 +8004,7 @@ function glyph(id, a, b, c) {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'grow';
       b.style.setProperty('--c1', g.c[0]); b.style.setProperty('--c2', g.c[1]);
       b.setAttribute('aria-label', 'Reprendre ' + g.n + ', ' + x.p);
-      b.innerHTML = '<span class="ti">' + gsvg(x.id, 28, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span class="nm">' + g.n + '<small>' + x.p + (x.t ? ' \u00b7 ' + ago(x.t).replace('il y a ', '').replace("à l'instant", 'maintenant') : '') + '</small></span><span class="pl8">' + PLAY + '</span>';
+      b.innerHTML = '<span class="ti">' + gsvg(x.id, 28, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span class="nm">' + g.n + '<small>' + escH(x.p) + (x.t ? ' \u00b7 ' + ago(x.t).replace('il y a ', '').replace("à l'instant", 'maintenant') : '') + '</small></span><span class="pl8">' + PLAY + '</span>';
       b.addEventListener('click', () => openGame(x.id));
       const c = document.createElement('button'); c.type = 'button'; c.className = 'x'; c.textContent = '\u2715'; c.setAttribute('aria-label', 'Abandonner la partie de ' + g.n);
       let tm = 0;
@@ -8014,7 +8039,7 @@ function glyph(id, a, b, c) {
     h.style.setProperty('--c1', g.c[0]); h.style.setProperty('--c2', g.c[1]);
     h.setAttribute('aria-label', 'Jouer à ' + g.n + (r.banner ? ', ' + r.banner : ''));
     h.innerHTML = '<span class="art">' + gsvg(heroId, 150, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span>'
-      + '<span style="position:relative;display:block"><small>' + (last ? 'Dernier jeu' : 'À la une') + '</small><h2>' + g.n + '</h2><p>' + DESC[heroId] + '</p><span class="rc">' + (r.banner || 'Pas encore de record') + '</span></span>'
+      + '<span style="position:relative;display:block"><small>' + (last ? 'Dernier jeu' : 'À la une') + '</small><h2>' + g.n + '</h2><p>' + DESC[heroId] + '</p><span class="rc">' + escH(r.banner || 'Pas encore de record') + '</span></span>'
       + '<span class="go8">' + PLAY + 'Jouer</span>';
     h.addEventListener('click', () => openGame(heroId));
     heroEl.appendChild(h);
@@ -8026,7 +8051,7 @@ function glyph(id, a, b, c) {
       let detail = rr.banner || 'Pas encore de record';
       if (id === 'snake') detail = 'Murs ' + (+store.get('arcade.snake.best.walls', 0) || 0) + ' \u00b7 Traversables ' + (+store.get('arcade.snake.best.wrap', 0) || 0);
       b.setAttribute('aria-label', gg.n + ', ' + detail);
-      b.innerHTML = '<span class="ti">' + gsvg(id, 30, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span class="nm">' + gg.n + '<small>' + detail + '</small></span><span class="pl8">' + PLAY + '</span>';
+      b.innerHTML = '<span class="ti">' + gsvg(id, 30, '#fff', 'rgba(255,255,255,.7)', '#fff') + '</span><span class="nm">' + gg.n + '<small>' + escH(detail) + '</small></span><span class="pl8">' + PLAY + '</span>';
       b.addEventListener('click', () => openGame(id));
       listEl.appendChild(b);
     });
