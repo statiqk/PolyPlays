@@ -856,13 +856,13 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blnet { margin: 0; text-align: center; font: 600 .74rem var(--font-mono); letter-spacing: .06em; color: var(--muted); cursor: pointer; }
 #gAmi, #blOnB { display: none; }
 #gAmi { position: relative; font-size: calc(18px * var(--u)); line-height: 1; }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) #gAmi { display: grid; }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd { min-width: 0; gap: calc(8px * var(--u)); }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .bk7, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .spk7 { width: calc(38px * var(--u)); height: calc(38px * var(--u)); }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .bk7 svg, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd .spk7 svg { width: calc(20px * var(--u)); height: calc(20px * var(--u)); }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
-#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd h2 { font-size: 1.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.locked[data-fit] #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) #gAmi { display: grid; }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd { min-width: 0; gap: calc(8px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd .bk7, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd .spk7 { width: calc(38px * var(--u)); height: calc(38px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd .bk7 svg, #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd .spk7 svg { width: calc(20px * var(--u)); height: calc(20px * var(--u)); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
+#gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd h2 { font-size: 1.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.locked[data-fit] #gview:has(#panel-belote:not([hidden]), #panel-puis4:not([hidden]), #panel-navale:not([hidden]), #panel-poker:not([hidden])) .ghd > div { transform: translateX(calc(23px * var(--u))); }
 #gview:has(.panel[data-net]:not([data-net=""]):not([hidden])) #gAmi::after { content: ""; position: absolute; top: -2px; right: -2px; width: calc(11px * var(--u)); height: calc(11px * var(--u)); border-radius: 50%; background: #4ADE9C; border: 2px solid #15131C; }
 #gview:has(.panel[data-net="ok"]:not([hidden])) #gAmi { background: #16a36b; }
 #gview:has(.panel[data-net="ko"]:not([hidden])) #gAmi { background: #b8860b; }
@@ -1193,6 +1193,54 @@ button, input, select, textarea { font-family: inherit; }
 .sndov, .dfs, .qs, .mmwin, .du, .tour, .gpb, body.locked[data-fit].showmenu::after { bottom: calc(-1 * var(--sx, 0px)); }
 .sndov, .dfs, .qs, .mmwin, .du { box-sizing: border-box; border-bottom: var(--sx, 0px) solid transparent; }
 .gpop { bottom: calc(-1 * var(--sx, 0px)); border-bottom: var(--sx, 0px) solid var(--surface); }
+/* ---- Poker ---- */
+#panel-poker { --cw: clamp(26px, min(11.5vw, calc((100cqh - 252px) / 4.2)), 58px); }
+.pk { width: 100%; max-width: calc(540px * var(--u)); min-height: calc(430px * var(--u)); height: 100%; margin: 0 auto; box-sizing: border-box; border-radius: 30px; background: radial-gradient(ellipse at 50% 45%, #1f8a5c 0%, #115339 62%, #0a3326 100%); box-shadow: inset 0 0 0 5px #2a1d5e, inset 0 0 0 7px rgba(124, 92, 255, .4); display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px 8px 12px; color: #fff; }
+.pkb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.pks { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 14px; position: relative; font-size: .78rem; text-align: center; min-width: 0; transition: background .2s, opacity .2s; }
+.pks.on { background: rgba(255, 255, 255, .14); box-shadow: 0 0 0 2px var(--amber); }
+.pks.fd { opacity: .42; }
+.pks.wn { box-shadow: 0 0 0 2px #4ADE9C; }
+.pks b { font-weight: 800; font-size: .85rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pks .ch { color: #d6f5e6; font-weight: 600; }
+.pkcs { display: flex; gap: 3px; justify-content: center; min-height: calc(var(--cw) * .82); }
+.pktag { min-height: 1.1em; font-weight: 700; color: var(--amber); font-size: .72rem; }
+.pkbt { background: rgba(0, 0, 0, .4); border-radius: 99px; padding: 1px 9px; font-weight: 800; min-height: 1.3em; font-size: .8rem; }
+.pkbt:empty { visibility: hidden; }
+.pkd { position: absolute; top: 2px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--amber); color: #241a00; font-size: .68rem; font-weight: 800; display: grid; place-items: center; }
+.pkm { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.pkpot { font-weight: 800; background: rgba(0, 0, 0, .4); border-radius: 99px; padding: 3px 16px; }
+.pkbd { display: flex; gap: 5px; justify-content: center; }
+.pkmsg { margin: 0; min-height: 2.6em; font-weight: 600; max-width: 94%; text-wrap: balance; }
+.pkm .blnet { color: #d6f5e6; }
+.pkme { display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; }
+.pkme .pkcs { gap: 8px; }
+.pkme .pkd { position: static; flex: none; }
+.pkme.wn .pkc { outline: 3px solid var(--amber); }
+.pkrow { display: flex; gap: 10px; align-items: center; font-weight: 800; }
+.pkc { width: var(--cw); height: calc(var(--cw) * 1.4); border-radius: 7px; background: #fff; color: #16131f; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: calc(var(--cw) * .42); line-height: 1; box-shadow: 0 2px 6px rgba(0, 0, 0, .4); box-sizing: border-box; }
+.pkc i { font-style: normal; font-size: calc(var(--cw) * .44); }
+.pkc.r { color: #D1242F; }
+.pkc.s { width: calc(var(--cw) * .58); height: calc(var(--cw) * .82); font-size: calc(var(--cw) * .27); border-radius: 5px; }
+.pkc.s i { font-size: calc(var(--cw) * .27); }
+.pkc.l { width: calc(var(--cw) * 1.35); height: calc(var(--cw) * 1.9); font-size: calc(var(--cw) * .6); border-radius: 9px; }
+.pkc.l i { font-size: calc(var(--cw) * .6); }
+.pkc.b { background: repeating-linear-gradient(45deg, #6c4cf1 0 4px, #4a31c0 4px 8px); border: 2px solid rgba(255, 255, 255, .35); }
+.pkc.e { background: none; border: 2px dashed rgba(255, 255, 255, .3); box-shadow: none; }
+@keyframes pkdl { from { transform: translateY(-8px) scale(.9); opacity: 0; } }
+.pkbd .pkc:not(.e) { animation: pkdl .25s ease-out; }
+@media (prefers-reduced-motion: reduce) { .pkbd .pkc { animation: none !important; } }
+.pkact { display: grid; gap: calc(8px * var(--u)); }
+.pkact[hidden] { display: none; }
+.pkr1 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(8px * var(--u)); }
+.pkr2 { display: flex; gap: calc(8px * var(--u)); align-items: center; }
+.pkr2[hidden] { display: none; }
+.pkr2 input { flex: 1; min-width: 0; accent-color: var(--gc1); }
+.pkr2 .btn { min-height: calc(44px * var(--u)); padding: 0 10px; font-size: .8rem; }
+.pkr1 .btn { padding-left: 4px; padding-right: 4px; }
+#panel-poker.ol #pkNew { display: none; }
+body.locked[data-fit] #panel-poker .actions, body.locked[data-fit] #panel-poker .stats { display: none; }
+body.locked[data-fit] #panel-poker .pk { min-height: 0; }
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
 #spl::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0 0,rgba(56,214,255,.25),transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,79,184,.25),transparent 45%)}
@@ -1676,6 +1724,57 @@ button, input, select, textarea { font-family: inherit; }
     <p class="hint">Belote à quatre : toi et Camille contre Hugo et Léa. Après la donne, prends à la couleur retournée ou passe, puis choisis une autre couleur au second tour. Il faut fournir, couper ou surcouper. Le valet d'atout vaut 20 points et le neuf 14. Le contrat est rempli à 82 points sur 162. Roi et dame d'atout : belote-rebelote, 20 points. Touche une carte pour la lever, touche-la encore pour la jouer. Avec « Avec un ami », tu peux jouer en ligne avec quelqu’un qui a aussi PolyPlays (application installée).</p>
   </section>
 
+
+  <section class="panel" id="panel-poker" aria-labelledby="gTitle" hidden>
+    <div class="stats">
+      <div class="stat"><div class="k">Jetons</div><div class="v" id="pkChips">1 000</div></div>
+      <div class="stat"><div class="k">Mains gagnées</div><div class="v" id="pkHands">0</div></div>
+      <div class="stat"><div class="k">Record</div><div class="v" id="pkBest">0</div></div>
+    </div>
+    <div class="fitbox">
+      <div class="pk" role="group" aria-label="Table de poker">
+        <div class="pkb" id="pkBots"></div>
+        <div class="pkm">
+          <div class="pkpot" id="pkPot">Pot 0</div>
+          <div class="pkbd" id="pkBd" role="group" aria-label="Cartes communes"></div>
+          <p class="pkmsg" id="pkMsg" role="status" aria-live="polite"></p>
+        </div>
+        <div class="pkme" id="pkMe"></div>
+      </div>
+    </div>
+    <div class="fitmenu">
+    <div class="row">
+      <span class="k" id="pkBlLab">Blindes</span>
+      <div class="seg" role="group" aria-labelledby="pkBlLab">
+        <button type="button" id="pkBl1" aria-pressed="true">10 / 20</button>
+        <button type="button" id="pkBl2" aria-pressed="false">25 / 50</button>
+      </div>
+      <span class="k" id="pkLvLab">Niveau</span>
+      <div class="seg" role="group" aria-labelledby="pkLvLab">
+        <button type="button" id="pkLE" aria-pressed="false">Facile</button>
+        <button type="button" id="pkLN" aria-pressed="true">Normal</button>
+        <button type="button" id="pkLH" aria-pressed="false">Difficile</button>
+      </div>
+    </div></div>
+    <div class="pkact" id="pkAct">
+      <div class="pkr1">
+        <button type="button" class="btn" id="pkFold">Se coucher</button>
+        <button type="button" class="btn" id="pkCall">Check</button>
+        <button type="button" class="btn primary" id="pkRaise">Relancer</button>
+      </div>
+      <div class="pkr2" id="pkRw2">
+        <input type="range" id="pkSl" min="0" max="0" value="0" aria-label="Montant de la relance">
+        <button type="button" class="btn" id="pkQ1">½ pot</button>
+        <button type="button" class="btn" id="pkQ2">Pot</button>
+        <button type="button" class="btn" id="pkQ3">Tapis</button>
+      </div>
+    </div>
+    <button type="button" class="btn primary" id="pkNext" hidden>Main suivante</button>
+    <div class="actions">
+      <button type="button" class="btn primary" id="pkNew">Nouvelle partie</button>
+    </div>
+    <p class="hint">Tu reçois deux cartes, puis cinq cartes communes sont dévoilées en trois temps : flop, turn, river. Fais la meilleure main de cinq cartes. À ton tour, <b>suis</b>, <b>relance</b> ou <b>couche-toi</b> ; « Tapis » mise tous tes jetons. Les blindes lancent le pot. Avec un ami en ligne, la table réunit deux joueurs et deux bots.</p>
+  </section>
 
   <section class="panel" id="panel-memory" aria-labelledby="gTitle" hidden>
     <div class="stats">
@@ -7360,6 +7459,322 @@ button, input, select, textarea { font-family: inherit; }
   if (window.__arcadeTest) window.__arcadeTest.games = { BL, SL, PD, MM, MP, DT, PB, MN, SD, NV };
   if (window.__arcadeTest) { window.__arcadeTest.ARC = ARC; }
 
+  /* =====================  POKER (Texas Hold'em, solo ou avec un ami en ligne)  ===================== */
+  const PK = (function () {
+    const $r = $('panel-poker');
+    const eChips = $('pkChips'), eHands = $('pkHands'), eBest = $('pkBest');
+    const botsEl = $('pkBots'), bdEl = $('pkBd'), potEl = $('pkPot'), msgEl = $('pkMsg'), meEl = $('pkMe');
+    const actEl = $('pkAct'), bF = $('pkFold'), bC = $('pkCall'), bR = $('pkRaise'), sl = $('pkSl'), rw2 = $('pkRw2');
+    const q1 = $('pkQ1'), q2 = $('pkQ2'), q3 = $('pkQ3'), bNext = $('pkNext'), bNew = $('pkNew');
+    const s1 = $('pkBl1'), s2 = $('pkBl2'), lE = $('pkLE'), lN = $('pkLN'), lH = $('pkLH');
+    const SU = '\u2660\u2665\u2666\u2663', RK = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const HNW = ['une carte haute', 'une paire', 'une double paire', 'un brelan', 'une quinte', 'une couleur', 'un full', 'un carré', 'une quinte flush'];
+    const NAMES = ['Toi', 'Léa', 'Max', 'Zoé'], PH = ['Pré-flop', 'Flop', 'Turn', 'River'];
+    const fm = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
+    const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    let P = [], deck = [], board = [], dealer = -1, cur = 0, minR = 20, phase = 0, turn = 0, st = 'play';
+    let ev = null, ov = null, win = [], SB = 10, BB = 20, cfgSB = 10, level = 'norm', ME = 0, ol = null, pend = false, T = 0, PT = 0, saved = null, mpx = null;
+    let hw = +store.get('arcade.poker.hw', 0) || 0, rBest = +store.get('arcade.poker.best', 0) || 0, tw = +store.get('arcade.poker.wins', 0) || 0;
+
+    /* ---- évaluation des mains ---- */
+    function e5(c) {
+      const r = c.map((x) => x >> 2).sort((a, b) => b - a), fl = c.every((x) => (x & 3) === (c[0] & 3)), n = {};
+      r.forEach((x) => { n[x] = (n[x] || 0) + 1; });
+      const g = Object.keys(n).map(Number).sort((a, b) => n[b] - n[a] || b - a);
+      let s = 0;
+      if (g.length === 5) { if (g[0] - g[4] === 4) s = g[0]; else if (g[0] === 12 && g[1] === 3) s = 3; }
+      const a = n[g[0]], b = n[g[1]];
+      const cat = s && fl ? 8 : a === 4 ? 7 : a === 3 && b === 2 ? 6 : fl ? 5 : s ? 4 : a === 3 ? 3 : a === 2 && b === 2 ? 2 : a === 2 ? 1 : 0;
+      const k = s ? [s] : g; let v = cat;
+      for (let i = 0; i < 5; i++) v = v * 15 + (k[i] || 0);
+      return v;
+    }
+    function bestHand(c) {
+      let m = 0;
+      for (let i = 0; i < c.length; i++) for (let j = i + 1; j < c.length; j++) { const v = e5(c.filter((_, k) => k !== i && k !== j)); if (v > m) m = v; }
+      return m;
+    }
+    const cat7 = (v) => Math.floor(v / 759375);
+    function equity(h, b, N) {
+      const used = new Set(h.concat(b)), d = [...Array(52).keys()].filter((c) => !used.has(c)), need = 7 - b.length; let w = 0;
+      for (let t = 0; t < N; t++) {
+        for (let k = 0; k < need; k++) { const j = k + Math.floor(Math.random() * (d.length - k)), x = d[k]; d[k] = d[j]; d[j] = x; }
+        const bd = b.concat(d.slice(2, need)), x = bestHand(h.concat(bd)), y = bestHand([d[0], d[1]].concat(bd));
+        w += x > y ? 1 : x === y ? .5 : 0;
+      }
+      return w / N;
+    }
+
+    /* ---- moteur (solo ou hôte) ---- */
+    const nx = (i, f) => { f = f || ((p) => !p.out); for (let k = 1; k <= 4; k++) { const j = (i + k) % 4; if (f(P[j])) return j; } return i; };
+    const pay = (p, a) => { a = Math.min(a, p.chips); p.chips -= a; p.bet += a; p.tot += a; if (!p.chips) p.allin = 1; };
+    const pot = () => P.reduce((s, p) => s + p.tot, 0);
+    const fresh = () => NAMES.map((n, i) => ({ n, hu: i === 0 || (!!ol && i === 1), chips: 1000, hand: [], bet: 0, tot: 0, fold: 0, allin: 0, out: 0, acted: 0, show: 0, sc: 0, ag: i ? .8 + Math.random() * .5 : 1 }));
+    const isFresh = () => st === 'play' && phase === 0 && P.every((p) => p.chips + p.tot === 1000 && !p.acted);
+    function init() {
+      clearTimeout(T); clearTimeout(PT); pend = false; SB = cfgSB; BB = SB * 2; ME = ol ? (ol.role === 'host' ? 0 : 1) : 0;
+      ov = null; win = []; ev = null; st = 'play'; board = []; dealer = -1; phase = 0;
+      if (ol && ol.role === 'guest') { P = []; st = 'wait'; render(); return; }
+      P = fresh(); newHand();
+    }
+    function newHand() {
+      clearTimeout(T); pend = false;
+      P.forEach((p) => { if (p.chips <= 0) p.out = 1; });
+      P.forEach((p) => { p.hand = []; p.bet = p.tot = p.allin = p.acted = p.show = p.sc = 0; p.fold = p.out; });
+      deck = [...Array(52).keys()];
+      for (let i = 51; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)), t = deck[i]; deck[i] = deck[j]; deck[j] = t; }
+      board = []; phase = 0; st = 'play'; win = []; ov = null;
+      dealer = nx(dealer);
+      const two = P.filter((p) => !p.out).length === 2, sb = two ? dealer : nx(dealer), bb = nx(sb);
+      pay(P[sb], SB); pay(P[bb], BB); cur = BB; minR = BB;
+      P.forEach((p) => { if (!p.out) p.hand = [deck.pop(), deck.pop()]; });
+      ev = { t: 'new' }; SFX.play('piece'); turn = bb; advance();
+    }
+    function act(i, t, to) {
+      const p = P[i];
+      if (st !== 'play' || turn !== i || !p || p.fold || p.allin) return;
+      clearTimeout(T);
+      const old = cur;
+      if (t === 'raise') {
+        to = Math.floor(+to); const mx = p.chips + p.bet;
+        if (!isFinite(to)) t = 'call';
+        else { to = Math.min(to, mx); if (to < cur + minR && to < mx) to = Math.min(cur + minR, mx); if (to <= cur) t = 'call'; }
+      }
+      if (t === 'fold') { p.fold = 1; ev = { t: 'fold', i }; SFX.play('tick'); }
+      else if (t === 'raise') {
+        if (to - cur >= minR) minR = to - cur;
+        cur = to; P.forEach((q) => { q.acted = 0; });
+        pay(p, to - p.bet); ev = { t: p.allin ? 'allin' : old ? 'raise' : 'bet', i, a: p.bet }; SFX.play('place');
+      } else {
+        const c = Math.min(cur - p.bet, p.chips); pay(p, c);
+        ev = c ? { t: p.allin ? 'allin' : 'call', i, a: p.allin ? p.bet : c } : { t: 'check', i }; SFX.play(c ? 'place' : 'tick');
+      }
+      p.acted = 1; advance();
+    }
+    function advance() {
+      const al = P.filter((p) => !p.fold);
+      if (al.length === 1) return showdown();
+      const can = al.filter((p) => !p.allin);
+      if (can.every((p) => p.acted && p.bet === cur) || (can.length <= 1 && (!can[0] || can[0].bet >= cur))) return nextPhase();
+      turn = nx(turn, (p) => !p.fold && !p.allin);
+      next();
+    }
+    function nextPhase() {
+      P.forEach((p) => { p.bet = 0; p.acted = 0; }); cur = 0; minR = BB; phase++;
+      if (phase > 3) return showdown();
+      for (let k = 0; k < (phase === 1 ? 3 : 1); k++) board.push(deck.pop());
+      SFX.play('piece');
+      const al = P.filter((p) => !p.fold), can = al.filter((p) => !p.allin);
+      if (can.length <= 1) { al.forEach((p) => { p.show = 1; }); render(); T = setTimeout(nextPhase, 1100); return; }
+      turn = nx(dealer, (p) => !p.fold && !p.allin);
+      next();
+    }
+    function next() {
+      render();
+      if (st !== 'play' || !P.length) return;
+      const p = P[turn];
+      if (!p.hu) { T = setTimeout(() => bot(turn), 800 + Math.random() * 500); return; }
+      if (turn !== ME && ol && ol.role === 'host') guard();
+    }
+    function guard() {
+      clearTimeout(T);
+      T = setTimeout(() => { if (st === 'play' && turn === 1 && P[1] && P[1].hu && mpx && !mpx.on) act(1, 'fold'); }, 15000);
+    }
+    function gameEnd() {
+      const lost = P.findIndex((p) => p.hu && p.chips <= 0);
+      if (lost >= 0) return { win: false, i: lost };
+      if (P.filter((p) => p.chips > 0).length < 2) return { win: true };
+      return null;
+    }
+    function showdown() {
+      clearTimeout(T);
+      const al = P.filter((p) => !p.fold), multi = al.length > 1;
+      if (multi) al.forEach((p) => { p.show = 1; p.sc = bestHand(p.hand.concat(board)); });
+      const lv = [...new Set(al.map((p) => p.tot))].sort((a, b) => a - b), won = {}; let prev = 0;
+      lv.forEach((l) => {
+        let amt = 0; P.forEach((p) => { amt += Math.max(0, Math.min(p.tot, l) - prev); });
+        const el = al.filter((p) => p.tot >= l), top = Math.max.apply(null, el.map((p) => p.sc)), ws = el.filter((p) => p.sc === top), sh = Math.floor(amt / ws.length);
+        ws.forEach((p, k) => { const g = sh + (k ? 0 : amt - sh * ws.length), i = P.indexOf(p); p.chips += g; won[i] = (won[i] || 0) + g; });
+        prev = l;
+      });
+      win = Object.keys(won).map(Number);
+      ev = { t: 'end', w: win.map((i) => [i, won[i]]), h: multi ? cat7(Math.max.apply(null, win.map((i) => P[i].sc))) : -1 };
+      P.forEach((p) => { p.bet = 0; p.tot = 0; });
+      ov = gameEnd(); st = ov ? 'over' : 'end';
+      after(); render();
+      if (st === 'end' && ol && ol.role === 'host') T = setTimeout(() => { if (st === 'end') newHand(); }, 7000);
+    }
+    function bot(i) {
+      if (st !== 'play' || turn !== i) return;
+      const p = P[i], call = Math.min(cur - p.bet, p.chips), pt = pot(), opp = P.filter((q) => !q.fold && q !== p).length;
+      const sims = level === 'easy' ? 40 : level === 'hard' ? 200 : 110, slip = level === 'easy' ? .2 : level === 'hard' ? .02 : .07;
+      const eq = Math.pow(equity(p.hand, board, sims), 1 + .4 * (opp - 1)), need = call / (pt + call || 1), r = Math.random();
+      let a = 'call';
+      if (call === 0) { if (eq > .6 * (2 - p.ag) || r < slip * p.ag) a = 'raise'; }
+      else if (eq < need * .9 && r > slip * p.ag) a = 'fold';
+      else if (eq > .7 || (r < .05 * p.ag && eq > .4)) a = 'raise';
+      if (a === 'raise') { const sz = Math.max(BB, Math.round(pt * (.4 + eq * .6) / BB) * BB); act(i, 'raise', Math.max(cur + minR, cur + sz)); } else act(i, a);
+    }
+    function after() {
+      const c = P[ME].chips;
+      if (c > rBest) { rBest = c; store.set('arcade.poker.best', rBest); }
+      if (win.indexOf(ME) >= 0) { hw++; store.set('arcade.poker.hw', hw); }
+      if (st === 'over' && ov && ov.win) { tw++; store.set('arcade.poker.wins', tw); }
+      SFX.play(win.indexOf(ME) >= 0 ? 'win' : P[ME].fold ? 'tick' : 'lose', 200);
+    }
+
+    /* ---- en ligne ---- */
+    const view = (v) => ({
+      P: P.map((p, i) => ({ n: p.n, hu: p.hu, chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, show: p.show, hand: p.hand.length ? (p.show || i === v ? p.hand : [-1, -1]) : [] })),
+      b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, o: ov, w: win, sb: SB
+    });
+    function sync() { if (!ol || ol.role !== 'host' || !mpx || !mpx.on || !P.length) return; mpx.send({ k: 'st', s: view(1) }); }
+    function apply(s) {
+      if (!s || !Array.isArray(s.P) || s.P.length !== 4 || !Array.isArray(s.b)) return;
+      const prev = st, n = (x) => +x | 0;
+      P = s.P.map((p) => ({ n: String(p.n).replace(/[<>]/g, '').slice(0, 12), hu: !!p.hu, chips: n(p.chips), bet: n(p.bet), tot: n(p.tot), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, show: p.show ? 1 : 0, hand: Array.isArray(p.hand) ? p.hand.slice(0, 2).map(n) : [] }));
+      board = s.b.slice(0, 5).map(n); dealer = n(s.d); turn = Math.max(0, Math.min(3, n(s.t))); cur = n(s.c); minR = n(s.r) || 20; phase = n(s.ph);
+      st = s.s === 'end' || s.s === 'over' ? s.s : 'play'; ev = s.e && typeof s.e === 'object' ? s.e : null; ov = s.o && typeof s.o === 'object' ? s.o : null;
+      win = Array.isArray(s.w) ? s.w.map(n) : []; SB = n(s.sb) || 10; BB = SB * 2; pend = false;
+      if ((st === 'end' || st === 'over') && prev !== st) after();
+      render();
+    }
+    function olData(d) {
+      if (!d || typeof d !== 'object' || !ol) return;
+      if (ol.role === 'host') {
+        if (d.k === 'act' && P[1] && P[1].hu && ['fold', 'call', 'raise'].indexOf(d.t) >= 0) act(1, d.t, d.to);
+        else if (d.k === 'rs') sync();
+      } else if (d.k === 'st') apply(d.s);
+    }
+
+    /* ---- interface ---- */
+    const nm = (i) => (i === ME ? 'Toi' : P[i] ? (P[i].hu && mpx ? mpx.peerName : P[i].n) : '');
+    const cd = (c, z) => (c < 0 ? '<span class="pkc b ' + z + '"></span>' : '<span class="pkc ' + ((c & 3) === 1 || (c & 3) === 2 ? 'r ' : '') + z + '"><b>' + RK[c >> 2] + '</b><i>' + SU[c & 3] + '</i></span>');
+    function evText() {
+      const e = ev; if (!e || typeof e !== 'object') return '';
+      const v = (i, a, b) => (i === ME ? 'Tu ' + a : nm(i) + ' ' + b), a = fm(+e.a || 0);
+      switch (e.t) {
+        case 'new': return 'Nouvelle main · blindes ' + SB + '/' + BB + '.';
+        case 'fold': return v(e.i, 'te couches.', 'se couche.');
+        case 'check': return v(e.i, 'checkes.', 'checke.');
+        case 'call': return v(e.i, 'suis ' + a + '.', 'suit ' + a + '.');
+        case 'bet': return v(e.i, 'mises ' + a + '.', 'mise ' + a + '.');
+        case 'raise': return v(e.i, 'relances à ' + a + '.', 'relance à ' + a + '.');
+        case 'allin': return v(e.i, 'fais tapis (' + a + ') !', 'fait tapis (' + a + ') !');
+        case 'end': {
+          const w = Array.isArray(e.w) ? e.w : [];
+          let t = w.map((x) => (x[0] === ME ? 'Tu gagnes ' : nm(x[0]) + ' gagne ') + fm(x[1])).join(' · ');
+          if (e.h >= 0 && HNW[e.h]) t += ' avec ' + HNW[e.h];
+          t += '.';
+          if (st === 'over' && ov) t += ' ' + (ov.win ? 'Bravo, la table est vidée !' : ov.i === ME ? 'Tu n’as plus de jetons.' : nm(ov.i) + ' n’a plus de jetons.');
+          return t;
+        }
+      }
+      return '';
+    }
+    function render() {
+      if (!P.length) { setText(msgEl, 'Connexion à la table…'); bdEl.textContent = ''; botsEl.textContent = ''; meEl.textContent = ''; ui(); return; }
+      const m = P[ME];
+      setText(eChips, fm(m.chips)); setText(eHands, hw); setText(eBest, fm(Math.max(rBest, m.chips)));
+      setText(potEl, st === 'play' ? 'Pot ' + fm(pot()) : 'Pot distribué');
+      botsEl.innerHTML = [1, 2, 3].map((k) => {
+        const i = (ME + k) % 4, p = P[i];
+        const cs = p.out || p.fold || !p.hand.length ? '' : p.hand.map((c) => cd(p.show ? c : -1, 's')).join('');
+        const tg = p.out ? 'Éliminé' : p.fold ? 'Couché' : p.allin ? 'Tapis' : '';
+        return '<div class="pks' + (turn === i && st === 'play' ? ' on' : '') + (p.fold ? ' fd' : '') + (win.indexOf(i) >= 0 && st !== 'play' ? ' wn' : '') + '">' + (dealer === i ? '<span class="pkd">D</span>' : '')
+          + '<b>' + esc(nm(i)) + '</b><span class="ch">' + fm(p.chips) + '</span><div class="pkcs">' + cs + '</div><span class="pktag">' + tg + '</span><span class="pkbt">' + (p.bet ? fm(p.bet) : '') + '</span></div>';
+      }).join('');
+      bdEl.innerHTML = [0, 1, 2, 3, 4].map((i) => (board[i] != null ? cd(board[i], '') : '<span class="pkc e"></span>')).join('');
+      meEl.className = 'pkme' + (win.indexOf(ME) >= 0 && st !== 'play' ? ' wn' : '');
+      meEl.innerHTML = '<div class="pkcs">' + m.hand.map((c) => cd(c, 'l')).join('') + '</div><div class="pkrow">' + (dealer === ME ? '<span class="pkd">D</span>' : '') + '<b>' + (m.out ? 'Éliminé' : m.fold ? 'Couché' : m.allin ? 'Tapis' : 'Toi') + ' · ' + fm(m.chips) + '</b><span class="pkbt">' + (m.bet ? 'Mise ' + fm(m.bet) : '') + '</span></div>';
+      let t = evText();
+      if (st === 'play') {
+        if (turn === ME && !m.fold && !m.allin) { const call = Math.min(cur - m.bet, m.chips); t += (t ? ' ' : '') + (call ? 'À toi : ' + fm(call) + ' pour suivre.' : 'À toi de parler.'); }
+        else if (m.fold && !m.out) t += ' Tu es couché.';
+      }
+      setText(msgEl, t);
+      ui();
+      sync();
+    }
+    function ui() {
+      const m = P[ME], play = st === 'play' && !!m, my = play && turn === ME && !pend && !m.fold && !m.allin;
+      actEl.hidden = !(play || st === 'wait');
+      bNext.hidden = play || st === 'wait' || !!(ol && ol.role === 'guest');
+      setText(bNext, st === 'over' ? 'Rejouer' : 'Main suivante');
+      [bF, bC, bR, sl, q1, q2, q3].forEach((x) => { x.disabled = !my; });
+      if (!m) return;
+      const call = Math.min(cur - m.bet, m.chips), mx = m.chips + m.bet, can = mx > cur, lo = Math.min(cur + minR, mx);
+      setText(bC, call ? 'Suivre ' + fm(call) : 'Check'); rw2.hidden = !can; bR.hidden = !can;
+      if (my && can) {
+        const key = [turn, cur, phase, board.length, m.bet].join(':');
+        if (sl.dataset.k !== key) { sl.dataset.k = key; sl.min = lo; sl.max = mx; sl.step = SB; sl.value = lo; }
+        updR();
+      }
+    }
+    function updR() { const v = +sl.value, mx = +sl.max; setText(bR, v >= mx ? 'Tapis ' + fm(mx) : (cur ? 'Relancer ' : 'Miser ') + fm(v)); }
+    function setTo(v) { sl.value = Math.max(+sl.min, Math.min(+sl.max, Math.round(v / SB) * SB)); updR(); }
+    function human(t, to) {
+      if (st !== 'play' || turn !== ME || pend) return;
+      if (ol && ol.role === 'guest') {
+        pend = true; mpx.send({ k: 'act', t, to }); ui();
+        clearTimeout(PT); PT = setTimeout(() => { if (pend) { pend = false; mpx.send({ k: 'rs' }); ui(); } }, 4000);
+        return;
+      }
+      act(ME, t, to);
+    }
+    function setLevel(l) { level = l; lE.setAttribute('aria-pressed', String(l === 'easy')); lN.setAttribute('aria-pressed', String(l === 'norm')); lH.setAttribute('aria-pressed', String(l === 'hard')); }
+    function setBl(n) { cfgSB = n; s1.setAttribute('aria-pressed', String(n === 10)); s2.setAttribute('aria-pressed', String(n === 25)); }
+    bF.addEventListener('click', () => human('fold'));
+    bC.addEventListener('click', () => human('call'));
+    bR.addEventListener('click', () => human('raise', +sl.value));
+    sl.addEventListener('input', updR);
+    q1.addEventListener('click', () => setTo(cur + (pot() + cur - P[ME].bet) / 2));
+    q2.addEventListener('click', () => setTo(cur + pot() + cur - P[ME].bet));
+    q3.addEventListener('click', () => setTo(1e9));
+    bNext.addEventListener('click', () => { if (ol && ol.role === 'guest') return; if (st === 'over') init(); else if (st === 'end') newHand(); });
+    bNew.addEventListener('click', () => { if (ol && ol.role === 'guest') return; init(); });
+    lE.addEventListener('click', () => setLevel('easy')); lN.addEventListener('click', () => setLevel('norm')); lH.addEventListener('click', () => setLevel('hard'));
+    s1.addEventListener('click', () => setBl(10)); s2.addEventListener('click', () => setBl(25));
+
+    /* ---- sauvegarde ---- */
+    const full = () => ({
+      P: P.map((p) => ({ chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, acted: p.acted, show: p.show, sc: p.sc, ag: p.ag, hand: p.hand })),
+      deck, b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, w: win, sb: SB, lv: level
+    });
+    function restore(d) {
+      if (!d || !Array.isArray(d.P) || d.P.length !== 4 || !Array.isArray(d.deck) || !Array.isArray(d.b)) throw new Error('bad');
+      const num = (x, lo, hi) => { x = +x; if (!(x >= lo && x <= hi)) throw new Error('bad'); return x | 0; };
+      P = d.P.map((p, i) => ({ n: NAMES[i], hu: i === 0, chips: num(p.chips, 0, 1e6), bet: num(p.bet, 0, 1e6), tot: num(p.tot, 0, 1e6), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, acted: p.acted ? 1 : 0, show: p.show ? 1 : 0, sc: +p.sc || 0, ag: Math.max(.5, Math.min(1.5, +p.ag || 1)), hand: (Array.isArray(p.hand) ? p.hand : []).slice(0, 2).map((x) => num(x, 0, 51)) }));
+      deck = d.deck.map((x) => num(x, 0, 51)); board = d.b.slice(0, 5).map((x) => num(x, 0, 51));
+      dealer = num(d.d, -1, 3); turn = num(d.t, 0, 3); cur = num(d.c, 0, 1e6); minR = num(d.r, 1, 1e6); phase = num(d.ph, 0, 3);
+      st = d.s === 'end' ? 'end' : 'play'; ev = d.e && typeof d.e === 'object' ? d.e : null; ov = null;
+      win = Array.isArray(d.w) ? d.w.filter((x) => x >= 0 && x < 4) : [];
+      SB = num(d.sb, 1, 1e5); BB = SB * 2; setBl(SB === 25 ? 25 : 10); setLevel(['easy', 'norm', 'hard'].indexOf(d.lv) >= 0 ? d.lv : 'norm');
+      ME = 0; ol = null; pend = false; render();
+      if (st === 'play' && !P[turn].hu) T = setTimeout(() => bot(turn), 600);
+    }
+    function enter() { if (!P.length) init(); else if (!ol && st === 'play' && P[turn] && !P[turn].hu) next(); }
+    function leave() { if (!ol) clearTimeout(T); }
+
+    mpx = MPX({
+      key: 'poker', prefix: 'polyplays-pk-', game: 'Poker', barBefore: msgEl, btnParents: [],
+      hostStart() { return {}; },
+      onGo(role) { saved = P.length && st !== 'over' && !isFresh() ? full() : null; ol = { role }; $r.classList.add('ol'); init(); },
+      onData: olData,
+      onUp() { if (!ol) return; if (ol.role === 'host') sync(); else mpx.send({ k: 'rs' }); },
+      onDown() { if (!ol) return; if (ol.role === 'host' && st === 'play' && turn === 1) guard(); render(); },
+      onEnd() { clearTimeout(T); clearTimeout(PT); ol = null; ME = 0; $r.classList.remove('ol'); if (saved) { try { restore(saved); } catch (e) { init(); } saved = null; } else init(); },
+      barText() { return ol && P[ME] ? ' · ' + fm(P[ME].chips) + ' jetons' : ''; }
+    });
+    SAVE.reg('poker', {
+      snap() { if (ol) return saved; if (!P.length || st === 'over' || isFresh()) return null; return full(); },
+      load: restore,
+      prog: (d) => (d.s === 'end' ? 'Fin de main' : PH[d.ph | 0] || 'En cours') + ' · ' + fm(d.P[0].chips) + ' jetons',
+      reset() { P = []; init(); }
+    });
+    return { enter, leave, _test: { get P() { return P; }, get st() { return st; }, human, newHand, init } };
+  })();
+
   /* =====================  TABS & KEYS  ===================== */
   const TABS = {
     reflexes: { leave() { RF.stop(); }, enter() {} },
@@ -7375,6 +7790,7 @@ button, input, select, textarea { font-family: inherit; }
     memory: { leave() { MM.deactivate(); }, enter() { MM.activate(); } },
     solitaire: { leave() { SL.deactivate(); }, enter() { SL.activate(); } },
     belote: { leave() { BL.deactivate(); }, enter() { BL.activate(); } },
+    poker: { leave() { PK.leave(); }, enter() { PK.enter(); } },
     flechettes: { leave() {}, enter() {} },
     flipper: { leave() { PB.deactivate(); }, enter() { PB.activate(); } },
     cube: { leave() { CB.deactivate(); }, enter() { CB.activate(); } },
@@ -7395,6 +7811,7 @@ function glyph(id, a, b, c) {
     pendu: `<path d="M7 42h24M13 42V6h22v8" fill="none" stroke="${a}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="35" cy="20" r="5" fill="none" stroke="${c}" stroke-width="3.4"/><path d="M35 25v10M35 29l-5 4M35 29l5 4" fill="none" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>`,
     memory: `<rect x="4" y="9" width="21" height="29" rx="4.5" fill="${b}" opacity=".6"/><rect x="23" y="11" width="21" height="29" rx="4.5" fill="${a}"/><path d="M33.5 19.5l2.2 4.6 5 .7-3.6 3.4.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.4 5-.7z" fill="${c}"/>`,
     belote: `<rect x="5" y="9" width="21" height="29" rx="4.5" fill="${b}" opacity=".6" transform="rotate(-12 16 24)"/><rect x="21" y="9" width="21" height="29" rx="4.5" fill="${a}" transform="rotate(8 31 24)"/><path d="M31 18c3.2 4 6 5.8 6 8.4a3 3 0 0 1-5 2.2l.7 4.4h-3.4l.7-4.4a3 3 0 0 1-5-2.2c0-2.6 2.8-4.4 6-8.4z" fill="${c}" transform="rotate(8 31 24)"/>`,
+    poker: `<rect x="5" y="8" width="21" height="29" rx="4.5" fill="${b}" opacity=".6" transform="rotate(-12 16 24)"/><rect x="20" y="9" width="22" height="30" rx="4.5" fill="${a}" transform="rotate(8 31 24)"/><path d="M31.5 16c3.8 4.6 6.4 6.5 6.4 9.4a3.5 3.5 0 0 1-5.7 2.6c.2 1.7.9 3.2 2.1 4.4h-5.6c1.2-1.2 1.9-2.7 2.1-4.4a3.5 3.5 0 0 1-5.7-2.6c0-2.9 2.6-4.8 6.4-9.4z" fill="#0F5132"/><circle cx="13" cy="38" r="6.8" fill="${c}"/><circle cx="13" cy="38" r="3.6" fill="none" stroke="#0F5132" stroke-width="1.8"/>`,
     solitaire: `<rect x="5" y="9" width="22" height="30" rx="4.5" fill="${b}" opacity=".6" transform="rotate(-9 16 24)"/><rect x="19" y="9" width="22" height="31" rx="4.5" fill="${a}"/><path d="M30 33c-5-3.4-7-5.9-7-8.4a3.6 3.6 0 0 1 7-1.2 3.6 3.6 0 0 1 7 1.2c0 2.5-2 5-7 8.4z" fill="${c}"/>`,
     flechettes: `<circle cx="22" cy="26" r="17" fill="none" stroke="${a}" stroke-width="3.4"/><circle cx="22" cy="26" r="9.5" fill="none" stroke="${b}" stroke-width="3"/><circle cx="22" cy="26" r="3.2" fill="${c}"/><path d="M24 24l15-15" stroke="${a}" stroke-width="3.4" stroke-linecap="round"/><path d="M33 7l8 1-1 8z" fill="${c}"/>`,
     flipper: `<circle cx="18" cy="15" r="7" fill="none" stroke="${a}" stroke-width="3.4"/><circle cx="33" cy="22" r="5" fill="${b}"/><path d="M8 38l13 5M40 38l-13 5" stroke="${a}" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="31" r="3.2" fill="${c}"/>`,
@@ -7419,6 +7836,7 @@ function glyph(id, a, b, c) {
     { id: 'memory', n: 'Memory', c: ['#7DD3FC', '#0EA5E9'], tx: '#fff' },
     { id: 'solitaire', n: 'Solitaire', c: ['#6EE7B7', '#047857'], tx: '#fff' },
     { id: 'belote', n: 'Belote', c: ['#4ADE80', '#15803D'], tx: '#fff' },
+    { id: 'poker', n: 'Poker', c: ['#34D399', '#0F5132'], tx: '#fff' },
     { id: 'flechettes', n: 'Fléchettes', c: ['#FCA5A5', '#DC2626'], tx: '#fff' },
     { id: 'flipper', n: 'Flipper', c: ['#A78BFA', '#4C1D95'], tx: '#fff' },
     { id: 'cube', n: 'Cube', c: ['#3EE0D0', '#0A8FBF'], tx: '#fff' },
@@ -7458,6 +7876,7 @@ function glyph(id, a, b, c) {
     }
     if (id === 'puis4') { const w = wins('arcade.p4.wins'); return { short: w.none ? '—' : w.short, banner: w.banner }; }
     if (id === 'echecs') { const w = wins('arcade.chess.wins'); return { short: w.none ? '—' : w.short, banner: w.banner }; }
+    if (id === 'poker') { const v = +g('arcade.poker.best', 0) || 0; return v ? { short: nf(v), banner: 'Record · ' + nf(v) + ' jetons' } : { short: '—', banner: null }; }
     if (id === 'demineur' || id === 'sudoku') {
       const bs = g(id === 'demineur' ? 'arcade.mines.best' : 'arcade.sudoku.best', {}) || {}, names = { h: 'Difficile', m: 'Moyen', e: 'Facile' };
       const k = ['h', 'm', 'e'].find((x) => bs[x]);
@@ -7492,7 +7911,7 @@ function glyph(id, a, b, c) {
   const CATS = [
     { id: 'arcade', n: 'Arcade', e: '\u{1F579}\uFE0F', g: ['flipper', 'snake', 'briques', 'pong', 'reflexes'] },
     { id: 'plateau', n: 'Plateau', e: '\u265F\uFE0F', g: ['echecs', 'dames', 'puis4', 'morpion'] },
-    { id: 'cartes', n: 'Cartes', e: '\u{1F0CF}', g: ['belote', 'solitaire', 'memory', 'pendu'] },
+    { id: 'cartes', n: 'Cartes', e: '\u{1F0CF}', g: ['belote', 'poker', 'solitaire', 'memory', 'pendu'] },
     { id: 'adresse', n: 'Adresse', e: '\u{1F3AF}', g: ['flechettes', 'cube', 'navale'] },
     { id: 'reflexion', n: 'Réflexion', e: '\u{1F9E0}', g: ['demineur', 'sudoku'] }
   ];
@@ -7500,7 +7919,7 @@ function glyph(id, a, b, c) {
     reflexes: "Le départ de F1\u00a0: appuie dès que les feux s'éteignent.", snake: 'Mange, grandis, évite ta queue.', navale: 'Coule toute la flotte en un minimum de tirs.',
     briques: 'Casse tout le mur sans perdre la balle.', pong: 'Le duel de raquettes mythique.', dames: 'Capture tous les pions adverses.',
     echecs: 'Le roi des jeux de plateau.', puis4: 'Aligne quatre jetons avant ton adversaire.', morpion: 'Trois en ligne, simple et nerveux.',
-    pendu: 'Devine le mot avant la fin du dessin.', memory: 'Retrouve toutes les paires.', solitaire: 'Range toutes les cartes par couleur.', belote: 'Toi et ton partenaire contre deux adversaires.',
+    pendu: 'Devine le mot avant la fin du dessin.', memory: 'Retrouve toutes les paires.', solitaire: 'Range toutes les cartes par couleur.', belote: 'Toi et ton partenaire contre deux adversaires.', poker: 'Texas Hold’em contre trois joueurs, seul ou avec un ami.',
     flechettes: 'Vise juste et enchaîne les volées.', flipper: '3 tables, multiball et records.', cube: 'Résous le cube le plus vite possible.',
     demineur: 'Dévoile le champ sans toucher une mine.', sudoku: 'Remplis la grille sans répéter un chiffre.'
   };
@@ -7580,7 +7999,7 @@ function glyph(id, a, b, c) {
   const LOCK = (function () {
     const btn = $('gLock');
     let on = store.get('arcade.lock', true) !== false, active = false, sentinel = null, cur = null;
-    const FIT = ['flipper', 'snake', 'cube', 'briques', 'pong', 'reflexes', 'echecs', 'dames', 'puis4', 'morpion', 'belote', 'solitaire', 'memory', 'pendu', 'flechettes', 'navale', 'demineur', 'sudoku'], help = $('gHelp'), menu = $('gMenu');
+    const FIT = ['flipper', 'snake', 'cube', 'briques', 'pong', 'reflexes', 'echecs', 'dames', 'puis4', 'morpion', 'belote', 'solitaire', 'memory', 'pendu', 'flechettes', 'navale', 'poker', 'demineur', 'sudoku'], help = $('gHelp'), menu = $('gMenu');
     const SVG_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     const SVG_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 6.7-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     function paint() {
@@ -7789,6 +8208,7 @@ function glyph(id, a, b, c) {
       puis4: ['Touche une colonne pour y faire tomber un jeton rouge.', 'Aligne quatre jetons, en ligne, colonne ou diagonale, avant l’ordinateur.'],
       morpion: ['Touche une case pour poser ta croix. Tu commences.', 'Aligne 3 symboles en 3×3, ou 4 en 5×5.'],
       belote: ['Touche une carte pour la sélectionner, touche-la encore pour la jouer. Fournis la couleur, coupe sinon, et monte à l’atout.', 'Prends à la couleur retournée ou choisis-en une au 2e tour. Il faut 82 points pour remplir le contrat.'],
+      poker: ['Tes deux cartes sont en bas. Les cartes communes arrivent au centre : flop, turn, river.', 'Suis, relance ou couche-toi avec les boutons. La meilleure main de cinq cartes gagne le pot.'],
       solitaire: ['Touche une carte pour la sélectionner, puis sa destination. Une deuxième touche l’envoie toute seule.', 'Monte les 4 piles du haut de l’as au roi. Touche la pioche pour tirer une carte.'],
       memory: ['Touche une carte pour la retourner, puis une deuxième.', 'Si elles sont identiques, la paire reste visible. Trouve toutes les paires en peu de coups.'],
       pendu: ['Touche une lettre pour tenter ta chance.', 'Trouve le mot avant la septième erreur.'],
@@ -8472,10 +8892,10 @@ function glyph(id, a, b, c) {
   DEFI.fromHash();
   $('gAmi').addEventListener('click', () => {
     const vis = (k) => { const p = $('panel-' + k); return p && !p.hidden; };
-    if (vis('belote')) $('blOnB').click(); else if (vis('puis4')) MPREG.puis4.open(); else if (vis('navale')) MPREG.navale.open();
+    if (vis('belote')) $('blOnB').click(); else if (vis('puis4')) MPREG.puis4.open(); else if (vis('navale')) MPREG.navale.open(); else if (vis('poker')) MPREG.poker.open();
   });
   { const sm = /^#salon=([A-Z]{4})$/.exec(location.hash); if (sm) { openGame('belote'); BL.joinLink(sm[1]); } }
-  { const m2 = /^#salon-(puis4|navale)=([A-Z]{4})$/.exec(location.hash); if (m2) { openGame(m2[1]); MPREG[m2[1]].join(m2[2]); } }
+  { const m2 = /^#salon-(puis4|navale|poker)=([A-Z]{4})$/.exec(location.hash); if (m2) { openGame(m2[1]); MPREG[m2[1]].join(m2[2]); } }
 
   const KEYDIR = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
