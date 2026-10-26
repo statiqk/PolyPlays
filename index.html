@@ -3555,7 +3555,8 @@ html.spl main.app { visibility: hidden; }
     const cv = $('pgCv'), ov = $('pgOv'), ovT = $('pgOvT'), ovS = $('pgOvS'), ovB = $('pgOvB');
     const eMe = $('pgMe'), eAi = $('pgAi'), eWins = $('pgWins');
     const bE = $('pgE'), bN = $('pgN'), bH = $('pgH');
-    let diff = 'norm', state = 'ready', me = 0, ai = 0, px = W / 2, ax = W / 2, aiErr = 0, serveAt = 0;
+    let diff = 'norm', state = 'ready', me = 0, ai = 0, px = W / 2, ax = W / 2, aiErr = 0, serveAt = 0, rally = 0, best = 0, lastN = 0;
+    const LOGO = new Image(); LOGO.src = 'icons/icon-192.png';
     const ball = { x: W / 2, y: H / 2, vx: 0, vy: 0 };
     let wins = store.get('arcade.pong.wins', 0);
     const A = makeArena(cv, W, H, draw);
@@ -3566,7 +3567,7 @@ html.spl main.app { visibility: hidden; }
       ball.x = W / 2; ball.y = H / 2;
       const a = (Math.random() * 44 - 22) * Math.PI / 180, s = 4.4;
       ball.vx = Math.sin(a) * s; ball.vy = (down ? 1 : -1) * Math.cos(a) * s;
-      serveAt = performance.now() + 900;
+      serveAt = performance.now() + 2100; rally = 0; lastN = 0;
     }
     function point(meScored) {
       if (meScored) me++; else ai++;
@@ -3580,7 +3581,7 @@ html.spl main.app { visibility: hidden; }
     function bounce(cx, dirY, yy) {
       const rel = Math.max(-1, Math.min(1, (ball.x - cx) / (PW / 2 + R)));
       const s = Math.min(10, Math.hypot(ball.vx, ball.vy) * 1.045), a = rel * 58 * Math.PI / 180;
-      ball.vx = s * Math.sin(a); ball.vy = dirY * s * Math.cos(a); ball.y = yy; SFX.play('paddle');
+      ball.vx = s * Math.sin(a); ball.vy = dirY * s * Math.cos(a); ball.y = yy; SFX.play('paddle'); rally++; if (rally > best) best = rally;
       aiErr = (Math.random() * 2 - 1) * LV[diff].err;
     }
     function step(d) {
@@ -3609,7 +3610,7 @@ html.spl main.app { visibility: hidden; }
       setText(eMe, me); setText(eAi, ai); setText(eWins, wins);
       ov.hidden = !(state === 'paused' || state === 'over');
       if (state === 'paused') { setText(ovT, 'Pause'); setText(ovS, me + ' à ' + ai + '.'); setText(ovB, 'Reprendre'); }
-      else if (state === 'over') { setText(ovT, me > ai ? 'Gagné !' : 'Perdu'); setText(ovS, 'Score final ' + me + ' à ' + ai + '.'); setText(ovB, 'Rejouer'); }
+      else if (state === 'over') { setText(ovT, me > ai ? 'Gagné !' : 'Perdu'); setText(ovS, 'Score final ' + me + ' à ' + ai + '.' + (best >= 2 ? ' Meilleur échange : ' + best + ' touches.' : '')); setText(ovB, 'Rejouer'); }
     }
     function draw() {
       if (!cv.clientWidth) return;
@@ -3623,23 +3624,39 @@ html.spl main.app { visibility: hidden; }
       c.textAlign = 'center'; c.fillStyle = 'rgba(238,240,244,.08)'; c.font = "700 120px 'Instrument Sans', sans-serif";
       c.fillText(String(ai), W / 2, H / 2 - 40);
       c.fillText(String(me), W / 2, H / 2 + 110);
+      { // médaillon PolyPlays, pastilles de points, compte à rebours
+        const mr = 36, cx = W / 2, cy = H / 2, cn = state === 'playing' ? Math.ceil((serveAt - performance.now()) / 700) : 0, cdn = cn >= 1 && cn <= 3;
+        [[ai, '#8E97A8', AY + PH + 22], [me, '#FFC21A', PY - 22]].forEach(([s, col, y]) => { for (let k = 0; k < WIN; k++) { c.fillStyle = k < s ? col : 'rgba(238,240,244,.18)'; c.beginPath(); c.arc(W / 2 + (k - (WIN - 1) / 2) * 18, y, 5, 0, 7); c.fill(); } });
+        c.save(); c.shadowColor = 'rgba(168,85,247,.55)'; c.shadowBlur = 20; c.fillStyle = '#14122a'; c.beginPath(); c.arc(cx, cy, mr, 0, 7); c.fill(); c.restore();
+        c.textAlign = 'center'; c.textBaseline = 'middle';
+        if (cdn) {
+          if (cn !== lastN) { lastN = cn; SFX.play('paddle'); }
+          c.fillStyle = '#fff'; c.font = "700 44px 'Bricolage Grotesque', 'Instrument Sans', sans-serif"; c.fillText(String(cn), cx, cy + 2);
+        } else if (LOGO.complete && LOGO.naturalWidth) { c.save(); c.beginPath(); c.arc(cx, cy, mr - 3, 0, 7); c.clip(); c.drawImage(LOGO, cx - mr, cy - mr, mr * 2, mr * 2); c.restore(); }
+        c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, mr - 1.5, 0, 7); c.stroke();
+        c.fillStyle = 'rgba(255,255,255,.8)'; c.font = "700 17px 'Bricolage Grotesque', 'Instrument Sans', sans-serif"; c.fillText('PolyPlays', cx, cy + mr + 26);
+        c.textBaseline = 'alphabetic';
+      }
       c.fillStyle = '#8E97A8'; rrect(c, ax - PW / 2, AY, PW, PH, 6); c.fill();
       c.fillStyle = '#FFC21A'; rrect(c, px - PW / 2, PY, PW, PH, 6); c.fill();
-      c.save();
-      c.shadowColor = 'rgba(255,255,255,.7)'; c.shadowBlur = 10;
-      c.fillStyle = '#EEF0F4';
-      c.beginPath(); c.arc(ball.x, ball.y, R, 0, Math.PI * 2); c.fill();
-      c.restore();
+      const cnb = state === 'playing' ? Math.ceil((serveAt - performance.now()) / 700) : 0;
+      if (!(cnb >= 1 && cnb <= 3 && Math.hypot(ball.x - W / 2, ball.y - H / 2) < 46)) {
+        c.save();
+        c.shadowColor = 'rgba(255,255,255,.7)'; c.shadowBlur = 10;
+        c.fillStyle = '#EEF0F4';
+        c.beginPath(); c.arc(ball.x, ball.y, R, 0, Math.PI * 2); c.fill();
+        c.restore();
+      }
       if (state === 'ready') {
         c.textAlign = 'center';
         c.fillStyle = '#FFC21A'; c.font = "700 20px 'Instrument Sans', sans-serif";
-        c.fillText('PREMIER À ' + WIN + ' POINTS', W / 2, H * 0.4);
+        c.fillText('PREMIER À ' + WIN + ' POINTS', W / 2, H / 2 - 92);
         c.fillStyle = 'rgba(238,240,244,.85)'; c.font = "600 18px 'Instrument Sans', sans-serif";
-        c.fillText('TOUCHE POUR JOUER', W / 2, H * 0.4 + 26);
+        c.fillText('TOUCHE POUR JOUER', W / 2, H / 2 - 66);
       }
     }
     function startMatch() {
-      me = 0; ai = 0; state = 'playing'; ax = W / 2;
+      me = 0; ai = 0; best = 0; state = 'playing'; ax = W / 2;
       serve(Math.random() < 0.5);
       ui(); draw(); loop.kick();
     }
@@ -3650,7 +3667,7 @@ html.spl main.app { visibility: hidden; }
     }
     function tap() {
       if (state === 'ready' || state === 'over') startMatch();
-      else if (state === 'paused') { state = 'playing'; serveAt = performance.now() + 600; loop.kick(); ui(); }
+      else if (state === 'paused') { state = 'playing'; serveAt = performance.now() + 2100; lastN = 0; loop.kick(); ui(); }
     }
     function toggle() {
       if (state === 'playing') { state = 'paused'; ui(); draw(); }
