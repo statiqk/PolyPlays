@@ -3065,7 +3065,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
     }
     function open() { if (!net.role) mode = ''; show(); }
     bar.addEventListener('click', () => { if (net.role) show(); });
-    const api = { open, join(code) { if (net.role) return; net.code = code; net.st = ''; net.msg = ''; show('join'); }, send(d) { send({ t: 'g', d }); }, leave, ui, get on() { return net.on; }, get role() { return net.role; }, get started() { return net.started; }, get peerName() { return peerName(); } };
+    const api = { open, join(code) { if (net.role) return; net.code = code; net.msg = ''; guestJoin(code); show(); }, send(d) { send({ t: 'g', d }); }, leave, ui, get on() { return net.on; }, get role() { return net.role; }, get started() { return net.started; }, get peerName() { return peerName(); } };
     MPREG[cfg.key] = api;
     return api;
   }
@@ -7682,7 +7682,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
       newGame,
       activate() { active = true; if (net.role) { render(); if (ph === 'mend' && lastDelta) showRes(); return; } if (ph === 'idle') newGame(); else if (ph === 'mend' && lastDelta) showRes(); else if (ph === 'wait') later(endTrick, 400); else if (ph === 'redeal') later(deal, 600); else schedule(); },
       deactivate() { active = false; if (dlEnd) dlEnd(); if (!net.role) { clearTimeout(timer); timer = 0; } resEl.hidden = true; },
-      joinLink(code) { if (net.role) return; net.code = code; net.st = ''; net.msg = ''; showOn('join'); },
+      joinLink(code) { if (net.role) return; net.code = code; net.msg = ''; guestJoin(code); showOn(); },
       _test: {
         get net() { return { role: net.role, on: net.on, g: net.g, paused: net.paused, started: net.started, code: net.code, st: net.st, fname: net.fname, hn: net.hn }; },
         get st() { return { ph, turn, trump, taker, sc: sc.slice(), mn, trick: trick.slice(), hands: hands.map((h) => h.slice()), done, tp: tp.slice(), cnt: cnt.slice(), bt, over, round, dealer, lastDelta, played: played.slice() }; },
