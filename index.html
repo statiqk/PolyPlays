@@ -1291,10 +1291,10 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkme { grid-area: 3 / 1 / 4 / 3; justify-self: start; flex-direction: row; align-items: center; gap: 12px; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkme .pkcs { min-height: 0; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkrow { flex-direction: column; align-items: flex-start; gap: 3px; font-size: .85rem; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats { display: flex; position: absolute; z-index: 5; top: max(22px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); gap: 5px; padding: 0; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stat { padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, .4); display: flex; gap: 5px; align-items: baseline; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .k { font-size: .56rem; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .v { font-size: .78rem; line-height: 1.2; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats { display: flex; position: absolute; z-index: 5; top: calc(max(22px, env(safe-area-inset-top, 0px)) + 4.8px); left: 50%; transform: translateX(-50%); gap: 5px; padding: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stat { padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, .4); display: flex; gap: 5px; align-items: center; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .k { font-size: .56rem; line-height: 1; margin: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .stats .v { font-size: .78rem; line-height: 1; margin: 0; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkact { position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); width: min(52%, 440px); gap: 6px; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr1 .btn, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr2 .btn { border-radius: 99px; min-height: 38px; font-size: .85rem; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkr2 .btn { min-height: 34px; padding: 0 12px; font-size: .78rem; }
