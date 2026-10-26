@@ -8474,6 +8474,33 @@ function glyph(id, a, b, c) {
     return { open, close, paintHome, resLine, dismiss, _test: { off } };
   })();
   if (window.__arcadeTest) window.__arcadeTest.PT = PT;
+  /* Diagnostic d'affichage : 5 touches rapides sur le titre « PolyPlays » affichent les mesures de l'écran */
+  (function () {
+    const h = document.querySelector('.h7 h1'); if (!h) return;
+    let n = 0, t0 = 0;
+    h.addEventListener('click', () => {
+      const now = Date.now(); if (now - t0 > 2500) n = 0; t0 = now; n++;
+      if (n < 5) return; n = 0;
+      let box = document.getElementById('diagBox'); if (box) { box.remove(); return; }
+      const probe = (side) => { const p = document.createElement('div'); p.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding-' + side + ':env(safe-area-inset-' + side + ',0px)'; document.body.appendChild(p); const v = parseFloat(getComputedStyle(p)['padding' + side[0].toUpperCase() + side.slice(1)]) || 0; p.remove(); return v; };
+      const vv = window.visualViewport, root = document.documentElement, fx = document.createElement('div');
+      fx.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:100%;visibility:hidden'; document.body.appendChild(fx); const fh = fx.getBoundingClientRect().height; fx.remove();
+      const L = [
+        'standalone: ' + (navigator.standalone === true) + ' / ' + (matchMedia('(display-mode: standalone)').matches),
+        'screen: ' + screen.width + ' x ' + screen.height + ' (avail ' + screen.availHeight + ')',
+        'innerHeight: ' + window.innerHeight + ' / outer: ' + window.outerHeight,
+        'visualViewport: ' + (vv ? Math.round(vv.width) + ' x ' + Math.round(vv.height) + ' @' + Math.round(vv.offsetTop) : 'n/a'),
+        'clientHeight: ' + root.clientHeight + ' / scrollHeight: ' + root.scrollHeight,
+        'fixed 100%: ' + fh,
+        'safe-area haut/bas: ' + probe('top') + ' / ' + probe('bottom'),
+        '--sx: ' + getComputedStyle(root).getPropertyValue('--sx') + ' / --u: ' + getComputedStyle(root).getPropertyValue('--u'),
+        'catégorie: ' + CATS[cat].id + ' / scrollY: ' + Math.round(window.scrollY)
+      ];
+      box = document.createElement('pre'); box.id = 'diagBox';
+      box.style.cssText = 'position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:100000;margin:0;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.88);color:#9ef;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap;border:1px solid #4f9dff';
+      box.textContent = L.join('\n') + '\n(touche pour fermer)'; box.addEventListener('click', () => box.remove()); document.body.appendChild(box);
+    });
+  })();
 
   /* Feuille « Nouvelle partie » : reprend les réglages du jeu (groupes .seg) et lance la partie */
   const NP = (function () {
