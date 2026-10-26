@@ -1506,6 +1506,8 @@ html.spl main.app { visibility: hidden; }
   try { if (sessionStorage.getItem('splUpd')) { upd = true; sessionStorage.removeItem('splUpd'); } if (sessionStorage.getItem('spl') && !upd) skip = true; sessionStorage.setItem('spl', '1'); } catch (e) { /* ignore */ }
   if (skip) { s.remove(); return; }
   document.documentElement.classList.add('spl');
+  var slog = []; function snap(l) { try { var r = s.getBoundingClientRect(); slog.push(l + ' ih' + window.innerHeight + ' ch' + document.documentElement.clientHeight + ' spl' + Math.round(r.top) + '-' + Math.round(r.bottom)); sessionStorage.setItem('splLog', slog.join(' | ')); } catch (e) { /* ignore */ } }
+  snap('0'); [150, 500, 1200, 2500].forEach(function (ms) { setTimeout(function () { snap(String(ms)); }, ms); });
   try { var tt = s.querySelector('.t'); if (tt) { var tx = tt.textContent; tt.textContent = ''; tx.split('').forEach(function (ch, i) { var sp = document.createElement('span'); sp.textContent = ch; sp.style.setProperty('--i', i); tt.appendChild(sp); }); } } catch (e) { /* ignore */ }
   var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
   try { if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) { w = Math.min(screen.width, screen.height); h = Math.max(screen.width, screen.height); s.classList.add('sa'); } } catch (e) { /* ignore */ }
@@ -8498,11 +8500,12 @@ function glyph(id, a, b, c) {
         'fixed 100%: ' + fh,
         'safe-area haut/bas: ' + probe('top') + ' / ' + probe('bottom'),
         '--sx: ' + getComputedStyle(root).getPropertyValue('--sx') + ' / --u: ' + getComputedStyle(root).getPropertyValue('--u'),
+        'splash: ' + (function () { try { return sessionStorage.getItem('splLog') || '-'; } catch (e) { return '?'; } })(),
         'catégorie: ' + CATS[cat].id + ' / scrollY: ' + Math.round(window.scrollY)
       ];
       box = document.createElement('pre'); box.id = 'diagBox';
       box.style.cssText = 'position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:100000;margin:0;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.88);color:#9ef;font:12px/1.5 ui-monospace,monospace;white-space:pre-wrap;border:1px solid #4f9dff';
-      box.textContent = L.join('\n') + '\n(touche pour fermer)'; box.addEventListener('click', () => box.remove()); document.body.appendChild(box);
+      box.textContent = L.join('\n') + '\n(touche pour fermer)'; if (window.caches) caches.keys().then((k) => { box.textContent = 'cache: ' + k.join(' ') + '\n' + box.textContent; }).catch(() => {}); box.addEventListener('click', () => box.remove()); document.body.appendChild(box);
     });
   })();
 
