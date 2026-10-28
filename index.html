@@ -1526,12 +1526,12 @@ body.fitfree .actions .btn { min-height: calc(54px * var(--u)); padding: calc(6p
 body.fitfree .actions .btn { min-width: 0; white-space: nowrap; }
 body.fitfree #nvPlace .btn, body.fitfree #nvBattle .btn { font-size: .84rem; padding-inline: calc(4px * var(--u)); }
 body.fitfree #pbStatus { display: none; }
-body.fitfree .app { max-width: calc(592px * var(--u)); }
+body.fitfree .app { max-width: calc(592px * var(--u)); padding-left: max(calc(16px * var(--u)), env(safe-area-inset-left, 0px)); padding-right: max(calc(16px * var(--u)), env(safe-area-inset-right, 0px)); }
 body.fitfree #gview:not([hidden]), body.fitfree .gbody, body.fitfree .panel:not([hidden]) { flex: none; min-height: auto; }
 body.fitfree .panel:not([hidden]) .fitbox { flex: none; height: var(--fbh, 62vh); }
 body.fitfree .panel:not([hidden]) > .pbcol { flex: none; }
 body.fitfree #panel-reflexes #rpad, body.fitfree #panel-solitaire .sltab { flex: none; height: var(--fbh, 62vh); }
-body.fitfree .panel:not([hidden])::after, body.fitfree .panel:not([hidden]) .pbcol::after { content: ""; order: 4; flex: none; height: calc(36px * var(--u)); }
+body.fitfree .panel:not([hidden])::after, body.fitfree .panel:not([hidden]) .pbcol::after { content: ""; order: 4; flex: none; height: calc(42px * var(--u)); }
 body.fitfree .fitmenu { display: contents; }
 body.fitfree .fitmenu > * { order: 5; }
 body.fitfree .panel:not([hidden]) .hint { order: 6; }
@@ -8462,9 +8462,14 @@ function glyph(id, a, b, c) {
       els.forEach((e) => { top = Math.min(top, e.getBoundingClientRect().top + window.scrollY); });
       const hasBelow = top < Infinity;
       if (!hasBelow) top = document.getElementById('gview').getBoundingClientRect().bottom + window.scrollY;
-      const h = Math.max(180, Math.round(vh - top - (hasBelow ? 0 : 12 * u)));
+      const raw = Math.round(vh - top - (hasBelow ? 0 : 12 * u));
+      const fe = document.querySelector('.panel:not([hidden]) .fitbox, .panel:not([hidden]) #rpad, .panel:not([hidden]) .sltab');
+      const w = fe ? fe.getBoundingClientRect().width : 0;
+      /* écran trop bas (téléphone en paysage…) : plateau de taille naturelle, la page défile normalement */
+      const min = vh < 500 ? Math.min(w || 420 * u, 420 * u) : 240 * u;
+      const h = Math.round(Math.max(min, raw));
       b.style.setProperty('--fbh', h + 'px'); last = h;
-      pill.hidden = !hasBelow; scrolled();
+      pill.hidden = !hasBelow || raw < min; scrolled();
     }
     function schedule() { if (!raf) raf = requestAnimationFrame(calc); }
     function scrolled() { pill.classList.toggle('gone', window.scrollY > 24); }
