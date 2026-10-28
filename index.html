@@ -1455,6 +1455,90 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .stat { padding: 2px 9px; }
   body.locked[data-fit]:has(#panel-solitaire:not([hidden])) #panel-solitaire .sltop { margin-bottom: 4px; }
 }
+/* Écran déverrouillé : le plateau remplit la hauteur de l'écran, réglages et règles sous le pli */
+body.fitfree .app { display: flex; flex-direction: column; gap: clamp(calc(8px * var(--u)), 1.3vh, calc(12px * var(--u))); padding: calc(env(safe-area-inset-top, 0px) + clamp(calc(14px * var(--u)), 2.6vh, calc(24px * var(--u))) + calc(4px * var(--u))) max(calc(20px * var(--u)), env(safe-area-inset-right, 0px)) calc(max(calc(8px * var(--u)), env(safe-area-inset-bottom, 0px)) + var(--sx, 0px) + calc(6px * var(--u))) max(calc(20px * var(--u)), env(safe-area-inset-left, 0px)); }
+body.fitfree #gview:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(calc(8px * var(--u)), 1.3vh, calc(12px * var(--u))); }
+body.fitfree .ghd { flex: none; padding: calc(6px * var(--u)) calc(8px * var(--u)); gap: calc(8px * var(--u)); border-radius: calc(22px * var(--u)); }
+body.fitfree .ghd h2 { font-size: 1.3rem; }
+body.fitfree .ghd p { display: none; }
+body.fitfree .ghd .bk7, body.fitfree .ghd .spk7 { width: calc(38px * var(--u)); height: calc(38px * var(--u)); }
+body.fitfree .ghd .bk7 svg, body.fitfree .ghd .spk7 svg { width: calc(20px * var(--u)); height: calc(20px * var(--u)); }
+body.fitfree .gbody { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-top: 0; gap: 0; }
+body.fitfree .panel:not([hidden]) { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(calc(8px * var(--u)), 1.3vh, calc(12px * var(--u))); }
+body.fitfree .panel:not([hidden]) > * { flex: none; }
+body.fitfree .panel:not([hidden]) > .fitbox, body.fitfree .panel:not([hidden]) > .pbcol { flex: 1 1 0; min-height: 0; max-width: none; }
+body.fitfree .panel:not([hidden]) .fitbox { display: flex; flex: 1 1 0; min-height: 0; container-type: size; align-items: center; justify-content: center; }
+body.fitfree .pbcol { display: flex; flex-direction: column; gap: calc(8px * var(--u)); width: 100%; }
+body.fitfree .fitbox.sq > * { width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); max-width: none; flex: none; }
+body.fitfree .fitbox.r23 > .board { height: min(100cqh, 150cqw); width: calc(min(100cqh, 150cqw) / 1.5); flex: none; }
+body.fitfree .pbctl { flex: none; width: 100%; max-width: calc(560px * var(--u)); align-self: center; }
+body.fitfree .pbb { height: calc(58px * var(--u)); }
+body.fitfree #panel-cube .status { min-height: 0; font-size: .85rem; line-height: 1.3; }
+body.fitfree #panel-cube .actions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(6px * var(--u)); }
+body.fitfree #panel-cube .actions .btn { padding-inline: calc(4px * var(--u)); min-height: calc(40px * var(--u)); font-size: .84rem; }
+body.fitfree #panel-cube .cbkeys { gap: calc(5px * var(--u)); }
+body.fitfree #panel-cube .cbkey { min-height: calc(36px * var(--u)); padding-block: calc(4px * var(--u)); font-size: .9rem; }
+body.fitfree #panel-cube .row .k { display: none; }
+body.fitfree .stat { padding: calc(5px * var(--u)) calc(12px * var(--u)); }
+body.fitfree .stats .k { font-size: .6rem; }
+body.fitfree .stats .v { font-size: 1.05rem; line-height: 1.2; }
+body.fitfree .status { min-height: 0; padding: calc(4px * var(--u)) calc(8px * var(--u)); font-size: .88rem; line-height: 1.25; }
+body.fitfree .actions { gap: calc(6px * var(--u)); }
+body.fitfree .actions .btn { min-height: calc(44px * var(--u)); padding-block: calc(6px * var(--u)); }
+body.fitfree .fitbox.r34 > .board { height: min(100cqh, 133.33cqw); width: calc(min(100cqh, 133.33cqw) * .75); flex: none; margin: 0; }
+body.fitfree .fitbox.r34 .arena { width: 100%; height: 100%; aspect-ratio: auto; }
+body.fitfree .fitbox.sq > .bd { display: grid; place-items: stretch; }
+body.fitfree .fitbox.sq > .bd > * { width: 100%; height: 100%; }
+body.fitfree .fitbox.sq > .mp, body.fitfree .fitbox.sq > .dtsvg { max-width: none; margin: 0; }
+body.fitfree .fitbox.p4w > .p4 { width: min(100cqw, 116cqh); max-width: none; flex: none; margin: 0; }
+body.fitfree .fitbox.pdf > svg { width: 100%; height: 100%; max-width: none; }
+body.fitfree .fitbox.mmf > .mmgrid { width: 100%; height: 100%; max-width: none; grid-auto-rows: 1fr; flex: none; }
+body.fitfree .fitbox.mmf .mmc { aspect-ratio: auto; min-height: 0; }
+body.fitfree .fitbox.nvf { flex-direction: column; gap: calc(6px * var(--u)); }
+body.fitfree .fitbox.nvf > div { flex: 1 1 0; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+body.fitfree .nv[data-phase="place"] .fitbox.nvf > .enemy,
+body.fitfree .fitbox.nvf > div[hidden], body.fitfree .fitbox.nvf > .enemy:empty { display: none; }
+body.fitfree .fitbox.nvf .bt { flex: none; font-size: .78rem; padding: 0 0 2px; }
+body.fitfree .fitbox.nvf > div { container-type: size; }
+body.fitfree .fitbox.nvf .sea { flex: none; aspect-ratio: 1; max-width: none !important; width: min(100cqw, calc(100cqh - calc(24px * var(--u)))); height: auto; }
+body.fitfree #panel-navale #nvPlace { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.fitfree #panel-navale #nvPlace .btn { padding-inline: 2px; font-size: .8rem; }
+body.fitfree #panel-reflexes #rpad { flex: 1 1 0; min-height: 0; }
+body.fitfree #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
+body.fitfree #panel-belote .blact { min-height: 0; }
+body.fitfree #panel-belote .blact .btn { min-height: calc(44px * var(--u)); }
+body.fitfree #panel-belote .blhand { height: 31cqw; padding-top: 3.4cqw; }
+@media (max-height: 700px) { body.fitfree #panel-belote .blc { width: 17cqw; margin-left: -6.4cqw; } body.fitfree #panel-belote .blhand { height: 26cqw; } }
+body.fitfree .pdkb { gap: calc(4px * var(--u)); }
+body.fitfree .fitbox.rc > .mnb { width: min(100cqw, calc(100cqh * var(--c) / var(--r))); max-width: none; flex: none; }
+body.fitfree .sdpad button { height: calc(46px * var(--u)); }
+body.fitfree #panel-sudoku .status { min-height: 0; }
+body.fitfree .stats .k { font-size: .64rem; letter-spacing: .08em; }
+body.fitfree .stats .v { font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
+body.fitfree .stats.four .v { font-size: clamp(1.1rem, 5.4vw, 1.5rem); }
+body.fitfree .status { align-self: center; width: fit-content; max-width: 100%; box-sizing: border-box; text-align: center; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: calc(999px * var(--u)); padding: calc(6px * var(--u)) calc(16px * var(--u)); }
+body.fitfree .status:empty { display: none; }
+body.fitfree .fitbox.mmf > .mmgrid { width: min(100cqw, calc(100cqh * var(--ar, .7))); height: auto; aspect-ratio: var(--ar, .7); max-height: 100cqh; }
+body.fitfree #gview:not([hidden]) { gap: calc(10px * var(--u)); }
+body.fitfree .panel:not([hidden]) { gap: calc(12px * var(--u)); }
+body.fitfree .actions { gap: calc(10px * var(--u)); }
+body.fitfree .actions .btn { min-height: calc(54px * var(--u)); padding: calc(6px * var(--u)) calc(10px * var(--u)); font-size: .95rem; }
+body.fitfree .actions .btn { min-width: 0; white-space: nowrap; }
+body.fitfree #nvPlace .btn, body.fitfree #nvBattle .btn { font-size: .84rem; padding-inline: calc(4px * var(--u)); }
+body.fitfree #pbStatus { display: none; }
+body.fitfree .app { max-width: calc(592px * var(--u)); }
+body.fitfree #gview:not([hidden]), body.fitfree .gbody, body.fitfree .panel:not([hidden]) { flex: none; min-height: auto; }
+body.fitfree .panel:not([hidden]) .fitbox { flex: none; height: var(--fbh, 62vh); }
+body.fitfree .panel:not([hidden]) > .pbcol { flex: none; }
+body.fitfree #panel-reflexes #rpad, body.fitfree #panel-solitaire .sltab { flex: none; height: var(--fbh, 62vh); }
+body.fitfree .panel:not([hidden])::after, body.fitfree .panel:not([hidden]) .pbcol::after { content: ""; order: 4; flex: none; height: calc(36px * var(--u)); }
+body.fitfree .fitmenu { display: contents; }
+body.fitfree .fitmenu > * { order: 5; }
+body.fitfree .panel:not([hidden]) .hint { order: 6; }
+.fitpill, .fitpill[hidden] { display: none !important; }
+body.fitfree .fitpill:not([hidden]) { display: block !important; }
+body.fitfree .fitpill { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + calc(10px * var(--u))); padding: calc(7px * var(--u)) calc(16px * var(--u)); border-radius: 99px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: inherit; font-size: .8rem; white-space: nowrap; box-shadow: 0 calc(6px * var(--u)) calc(18px * var(--u)) rgba(0, 0, 0, .5); transition: opacity .2s; }
+body.fitfree .fitpill.gone, body.fitfree.showmenu .fitpill { opacity: 0; pointer-events: none; }
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
 /* Pendant le splash, l'accueil reste invisible (sinon ses jeux se devinent dans la bande du bas, que le splash ne couvre pas toujours au lancement sur iPhone) */
@@ -1600,6 +1684,7 @@ html.spl main.app { visibility: hidden; }
     <div class="gpb" id="gPopB" hidden></div>
     <div class="gpop" id="gPop" hidden role="menu" aria-label="Menu du jeu"></div>
     <div class="dfbar" id="dfBar" hidden></div>
+    <button type="button" class="fitpill" id="fitPill">⌄ Réglages et règles en dessous</button>
     <div class="qs" id="qBack" hidden role="dialog" aria-modal="true" aria-labelledby="qBackT"><div class="qc"><h3 id="qBackT">Quitter la partie ?</h3><p id="qBackP"></p><button type="button" class="btn primary" id="qBackStay">Rester dans la partie</button><button type="button" class="btn" id="qBackGo">Retour à l’accueil</button></div></div>
     <div class="qs" id="qRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="qResBody"></div></div>
     <div class="qs" id="blRes" hidden role="dialog" aria-modal="true"><div class="qc qres" id="blResBody"></div></div>
@@ -8357,6 +8442,43 @@ function glyph(id, a, b, c) {
   }
 
   /* Screen lock: freezes page scrolling and keeps the screen awake while a game is open. One toggle (padlock) controls both. */
+  /* Écran déverrouillé : hauteur du plateau = hauteur d'écran moins ce qui est au-dessus du pli */
+  const FREE = (function () {
+    const b = document.body, pill = $('fitPill'), probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+    b.appendChild(probe);
+    let raf = 0, ro = null, last = -1;
+    const below = () => {
+      const p = document.querySelector('.panel:not([hidden])'); if (!p) return [];
+      return Array.prototype.filter.call(p.querySelectorAll('.hint, .fitmenu > *'), (e) => e.getClientRects().length > 0);
+    };
+    function calc() {
+      raf = 0;
+      if (!b.classList.contains('fitfree')) return;
+      const u = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--u')) || 1;
+      const vh = probe.offsetHeight || window.innerHeight;
+      b.style.setProperty('--fbh', '0px');
+      const els = below(); let top = Infinity;
+      els.forEach((e) => { top = Math.min(top, e.getBoundingClientRect().top + window.scrollY); });
+      const hasBelow = top < Infinity;
+      if (!hasBelow) top = document.getElementById('gview').getBoundingClientRect().bottom + window.scrollY;
+      const h = Math.max(180, Math.round(vh - top - (hasBelow ? 0 : 12 * u)));
+      b.style.setProperty('--fbh', h + 'px'); last = h;
+      pill.hidden = !hasBelow; scrolled();
+    }
+    function schedule() { if (!raf) raf = requestAnimationFrame(calc); }
+    function scrolled() { pill.classList.toggle('gone', window.scrollY > 24); }
+    function refresh() {
+      const on = b.classList.contains('fitfree');
+      if (!on) { b.style.removeProperty('--fbh'); pill.hidden = true; if (ro) { ro.disconnect(); ro = null; } return; }
+      if (!ro && window.ResizeObserver) { ro = new ResizeObserver(schedule); ro.observe(document.getElementById('gview')); }
+      schedule();
+    }
+    window.addEventListener('resize', schedule); window.addEventListener('orientationchange', schedule);
+    window.addEventListener('scroll', scrolled, { passive: true });
+    pill.addEventListener('click', () => { const e = below()[0]; if (e) e.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+    return { refresh, schedule };
+  })();
   const LOCK = (function () {
     const btn = $('gLock');
     let on = store.get('arcade.lock', true) !== false, active = false, sentinel = null, cur = null;
@@ -8380,6 +8502,7 @@ function glyph(id, a, b, c) {
     function apply() {
       const locked = active && on, fit = locked && FIT.indexOf(cur) >= 0, b = document.body;
       b.classList.toggle('locked', locked); if (window.__measureSx) window.__measureSx();
+      b.classList.toggle('fitfree', active && !on && FIT.indexOf(cur) >= 0 && cur !== 'poker'); FREE.refresh();
       if (fit) b.dataset.fit = cur; else delete b.dataset.fit;
       help.hidden = !fit; b.classList.remove('showhint'); help.setAttribute('aria-pressed', 'false');
       menu.hidden = !(fit && document.querySelector('#panel-' + cur + ' .fitmenu')); b.classList.remove('showmenu'); menu.setAttribute('aria-expanded', 'false');
