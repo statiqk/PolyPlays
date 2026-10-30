@@ -971,6 +971,11 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qc .btn { min-height: calc(52px * var(--u)); }
 .qs#qRes, .qs#qAsk { z-index: 96; }
 .qs#qNew { z-index: 96; }
+.qs#qInv { z-index: 96; }
+.invcode { font-family: var(--font-mono); letter-spacing: .2em; padding: 1px calc(10px * var(--u)); border-radius: calc(10px * var(--u)); background: rgba(255, 255, 255, .1); color: var(--ink); }
+.qc p.invtip { font-size: .84rem; padding: calc(10px * var(--u)) calc(12px * var(--u)); border-radius: calc(14px * var(--u)); border: 1px dashed rgba(255, 255, 255, .22); }
+.blpaste { margin: 0; text-align: center; color: var(--muted); font-size: .84rem; min-height: 0; }
+.blpaste:empty { display: none; }
 .np .k { display: block; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: calc(4px * var(--u)) 0 calc(4px * var(--u)); text-align: left; }
 .np .seg { display: flex; width: 100%; box-sizing: border-box; }
 .np .seg button { flex: 1; min-width: 0; padding: 0 calc(6px * var(--u)); }
@@ -2961,6 +2966,17 @@ html.spl main.app { visibility: hidden; }
 
   /* =====================  BATAILLE NAVALE  ===================== */
   /* =====================  EN LIGNE : module commun (salon, code, lien, reconnexion)  ===================== */
+  /* Colle un code de salon depuis le presse-papiers (lien d'invitation, message complet ou code seul) */
+  function pasteCode(input, note) {
+    const say = (t) => { if (note) note.textContent = t; };
+    const find = (t) => { const m = /#salon(?:-[a-z0-9]+)?=([A-Za-z]{4,6})/.exec(t) || /\b([A-Z]{4,6})\b/.exec(t); return m ? m[1].toUpperCase() : ''; };
+    if (!navigator.clipboard || !navigator.clipboard.readText) { say('Collage indisponible ici. Tape le code.'); return; }
+    navigator.clipboard.readText().then((t) => {
+      const c = find(String(t || ''));
+      if (!c) { say('Aucun code trouvé dans ce qui est copié.'); return; }
+      input.value = c; input.dispatchEvent(new Event('input')); say('Code collé : ' + c);
+    }).catch(() => say('Collage refusé. Tape le code.'));
+  }
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -3148,7 +3164,8 @@ html.spl main.app { visibility: hidden; }
         add(E('h3', '', 'Rejoindre un salon'));
         const ci = E('input', 'blcode'); ci.type = 'text'; ci.maxLength = 6; ci.value = net.code || ''; ci.autocomplete = 'off'; ci.autocapitalize = 'characters'; ci.placeholder = 'CODE';
         ci.addEventListener('input', () => { ci.value = ci.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6); net.code = ci.value; go.disabled = ci.value.length < 4; });
-        add(fld('Code du salon', ci)); add(nameIn());
+        add(fld('Code du salon', ci));
+        const pn = E('p', 'blpaste'); add(B('Coller le code', '', () => pasteCode(ci, pn))); add(pn); add(nameIn());
         const go = B('Rejoindre', 'primary', () => { if (ci.value.length >= 4) guestJoin(ci.value); }); go.disabled = ci.value.length < 4; add(go);
         add(B('Retour', '', () => { mode = ''; draw(); })); return;
       }
@@ -7713,7 +7730,8 @@ html.spl main.app { visibility: hidden; }
         add(mk('h3', '', 'Rejoindre un salon'));
         const ci = mk('input'); ci.type = 'text'; ci.maxLength = 6; ci.value = net.code || ''; ci.autocomplete = 'off'; ci.autocapitalize = 'characters'; ci.placeholder = 'CODE'; ci.className = 'blcode'; ci.setAttribute('inputmode', 'text');
         ci.addEventListener('input', () => { ci.value = ci.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6); net.code = ci.value; go.disabled = ci.value.length < 4; });
-        add(fld('Code du salon', ci)); add(nameIn());
+        add(fld('Code du salon', ci));
+        const pn = mk('p', 'blpaste'); add(B('Coller le code', '', () => pasteCode(ci, pn))); add(pn); add(nameIn());
         const go = B('Rejoindre', 'primary', () => { if (ci.value.length >= 4) guestJoin(ci.value); }); go.disabled = ci.value.length < 4; add(go);
         add(B('Retour', '', () => { onMode = ''; renderOn(); })); return;
       }
@@ -9430,8 +9448,33 @@ function glyph(id, a, b, c) {
     const vis = (k) => { const p = $('panel-' + k); return p && !p.hidden; };
     if (vis('belote')) $('blOnB').click(); else if (vis('puis4')) MPREG.puis4.open(); else if (vis('navale')) MPREG.navale.open(); else if (vis('poker')) MPREG.poker.open();
   });
-  { const sm = /^#salon=([A-Z]{4,6})$/.exec(location.hash); if (sm) { openGame('belote'); BL.joinLink(sm[1]); } }
-  { const m2 = /^#salon-(puis4|navale|poker)=([A-Z]{4,6})$/.exec(location.hash); if (m2) { openGame(m2[1]); MPREG[m2[1]].join(m2[2]); } }
+  /* Lien d'invitation : dans le navigateur on propose de rejoindre ici ou de copier le code pour l'appli installée */
+  { const sm = /^#salon=([A-Z]{4,6})$/.exec(location.hash), m2 = /^#salon-(puis4|navale|poker)=([A-Z]{4,6})$/.exec(location.hash);
+    const key = sm ? 'belote' : m2 ? m2[1] : '', code = sm ? sm[1] : m2 ? m2[2] : '';
+    if (key) {
+      const go = () => { openGame(key); if (key === 'belote') BL.joinLink(code); else MPREG[key].join(code); };
+      const installed = (window.navigator.standalone === true) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      if (installed || (window.__arcadeTest && !window.__arcadeTest.inv)) go();
+      else {
+        const NAMES = { belote: 'Belote', puis4: 'Puissance 4', navale: 'Bataille navale', poker: 'Poker' };
+        const q = document.createElement('div'); q.className = 'qs'; q.id = 'qInv'; q.setAttribute('role', 'dialog'); q.setAttribute('aria-modal', 'true');
+        const c = document.createElement('div'); c.className = 'qc'; q.appendChild(c);
+        const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
+        const bt = (txt, cls, fn) => { const b = el('button', 'btn ' + cls, txt); b.type = 'button'; b.addEventListener('click', fn); return b; };
+        c.appendChild(el('h3', '', 'Un ami t’invite à jouer'));
+        const p = el('p', '', NAMES[key] + ' en ligne · salon '); p.appendChild(el('b', 'invcode', code)); c.appendChild(p);
+        c.appendChild(bt('Rejoindre ici', 'primary', () => { q.remove(); go(); }));
+        const tip = el('p', 'invtip', 'Pour jouer en plein écran : copie le code, ouvre PolyPlays depuis ton écran d’accueil, touche « Avec un ami », puis « Coller le code ».');
+        const cp = bt('Copier le code pour l’appli', '', () => {
+          const ok = () => { cp.textContent = '✓ Code copié'; tip.textContent = 'Ouvre maintenant PolyPlays depuis ton écran d’accueil, touche « Avec un ami », puis « Rejoindre avec un code » et « Coller le code ».'; };
+          try { navigator.clipboard.writeText(code).then(ok, () => { cp.textContent = 'Code : ' + code; }); } catch (e) { cp.textContent = 'Code : ' + code; }
+        });
+        c.appendChild(cp); c.appendChild(tip);
+        c.appendChild(bt('Plus tard', '', () => { q.remove(); history.replaceState(null, '', location.pathname + location.search); }));
+        document.body.appendChild(q);
+      }
+    }
+  }
 
   const KEYDIR = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
