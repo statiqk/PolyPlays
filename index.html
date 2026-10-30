@@ -971,18 +971,6 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qc .btn { min-height: calc(52px * var(--u)); }
 .qs#qRes, .qs#qAsk { z-index: 96; }
 .qs#qNew { z-index: 96; }
-.invban { display: flex; align-items: center; gap: calc(12px * var(--u)); padding: calc(12px * var(--u)) calc(14px * var(--u)); border-radius: calc(20px * var(--u)); background: var(--surface-2); border: 1px solid rgba(140, 130, 230, .5); }
-.invban[hidden] { display: none; }
-.invban i { font-style: normal; font-size: 1.5rem; }
-.invban div { flex: 1; min-width: 0; font-size: .86rem; line-height: 1.3; color: var(--muted); }
-.invban div b { display: block; font-size: .95rem; color: var(--ink); }
-.invban .btn { min-height: calc(40px * var(--u)); padding: 0 calc(16px * var(--u)); }
-.invban .x { background: transparent; border: 0; color: var(--muted); font-size: 1.3rem; padding: 0 calc(4px * var(--u)); min-height: calc(40px * var(--u)); }
-.qs#qInv { z-index: 96; }
-.invcode { font-family: var(--font-mono); letter-spacing: .2em; padding: 1px calc(10px * var(--u)); border-radius: calc(10px * var(--u)); background: rgba(255, 255, 255, .1); color: var(--ink); }
-.qc p.invtip { font-size: .84rem; padding: calc(10px * var(--u)) calc(12px * var(--u)); border-radius: calc(14px * var(--u)); border: 1px dashed rgba(255, 255, 255, .22); }
-.blpaste { margin: 0; text-align: center; color: var(--muted); font-size: .84rem; min-height: 0; }
-.blpaste:empty { display: none; }
 .np .k { display: block; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: calc(4px * var(--u)) 0 calc(4px * var(--u)); text-align: left; }
 .np .seg { display: flex; width: 100%; box-sizing: border-box; }
 .np .seg button { flex: 1; min-width: 0; padding: 0 calc(6px * var(--u)); }
@@ -1672,7 +1660,6 @@ html.spl main.app { visibility: hidden; }
     <header class="h7">
       <div class="h7top"><div class="ttl"><h1 aria-label="PolyPlays">P<img class="lgo" src="icons/icon-192.png" alt="" aria-hidden="true">lyPlays</h1><button type="button" class="pwr" id="ptLink" aria-label="À propos de PolyTabs">Powered By PolyTabs</button></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hShare" aria-label="Partager PolyPlays" title="Partager PolyPlays"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
-    <div class="invban" id="invBan" hidden><i aria-hidden="true">📋</i><div><b>Tu as reçu une invitation ?</b><span id="invBanT">Touche pour coller le code</span></div><button type="button" class="btn primary" id="invBanGo">Coller</button><button type="button" class="x" id="invBanX" aria-label="Masquer">×</button></div>
     <div class="enc" id="encList"></div>
     <div id="dayCard"></div>
     <div class="dfl" id="dfList"></div>
@@ -2974,17 +2961,6 @@ html.spl main.app { visibility: hidden; }
 
   /* =====================  BATAILLE NAVALE  ===================== */
   /* =====================  EN LIGNE : module commun (salon, code, lien, reconnexion)  ===================== */
-  /* Colle un code de salon depuis le presse-papiers (lien d'invitation, message complet ou code seul) */
-  function pasteCode(input, note) {
-    const say = (t) => { if (note) note.textContent = t; };
-    const find = (t) => { const m = /#salon(?:-[a-z0-9]+)?=([A-Za-z]{4,6})/.exec(t) || /\b([A-Z]{4,6})\b/.exec(t); return m ? m[1].toUpperCase() : ''; };
-    if (!navigator.clipboard || !navigator.clipboard.readText) { say('Collage indisponible ici. Tape le code.'); return; }
-    navigator.clipboard.readText().then((t) => {
-      const c = find(String(t || ''));
-      if (!c) { say('Aucun code trouvé dans ce qui est copié.'); return; }
-      input.value = c; input.dispatchEvent(new Event('input')); say('Code collé : ' + c);
-    }).catch(() => say('Collage refusé. Tape le code.'));
-  }
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -3172,8 +3148,7 @@ html.spl main.app { visibility: hidden; }
         add(E('h3', '', 'Rejoindre un salon'));
         const ci = E('input', 'blcode'); ci.type = 'text'; ci.maxLength = 6; ci.value = net.code || ''; ci.autocomplete = 'off'; ci.autocapitalize = 'characters'; ci.placeholder = 'CODE';
         ci.addEventListener('input', () => { ci.value = ci.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6); net.code = ci.value; go.disabled = ci.value.length < 4; });
-        add(fld('Code du salon', ci));
-        const pn = E('p', 'blpaste'); add(B('Coller le code', '', () => pasteCode(ci, pn))); add(pn); add(nameIn());
+        add(fld('Code du salon', ci)); add(nameIn());
         const go = B('Rejoindre', 'primary', () => { if (ci.value.length >= 4) guestJoin(ci.value); }); go.disabled = ci.value.length < 4; add(go);
         add(B('Retour', '', () => { mode = ''; draw(); })); return;
       }
@@ -7738,8 +7713,7 @@ html.spl main.app { visibility: hidden; }
         add(mk('h3', '', 'Rejoindre un salon'));
         const ci = mk('input'); ci.type = 'text'; ci.maxLength = 6; ci.value = net.code || ''; ci.autocomplete = 'off'; ci.autocapitalize = 'characters'; ci.placeholder = 'CODE'; ci.className = 'blcode'; ci.setAttribute('inputmode', 'text');
         ci.addEventListener('input', () => { ci.value = ci.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6); net.code = ci.value; go.disabled = ci.value.length < 4; });
-        add(fld('Code du salon', ci));
-        const pn = mk('p', 'blpaste'); add(B('Coller le code', '', () => pasteCode(ci, pn))); add(pn); add(nameIn());
+        add(fld('Code du salon', ci)); add(nameIn());
         const go = B('Rejoindre', 'primary', () => { if (ci.value.length >= 4) guestJoin(ci.value); }); go.disabled = ci.value.length < 4; add(go);
         add(B('Retour', '', () => { onMode = ''; renderOn(); })); return;
       }
@@ -9456,57 +9430,8 @@ function glyph(id, a, b, c) {
     const vis = (k) => { const p = $('panel-' + k); return p && !p.hidden; };
     if (vis('belote')) $('blOnB').click(); else if (vis('puis4')) MPREG.puis4.open(); else if (vis('navale')) MPREG.navale.open(); else if (vis('poker')) MPREG.poker.open();
   });
-  /* Invitations : lien (page d'invitation dans le navigateur) et code copié (bandeau dans l'appli installée) */
-  { const NAMES = { belote: 'Belote', puis4: 'Puissance 4', navale: 'Bataille navale', poker: 'Poker' };
-    const go = (key, code) => { openGame(key); if (key === 'belote') BL.joinLink(code); else MPREG[key].join(code); };
-    const installed = (window.navigator.standalone === true) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-    const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
-    const bt = (txt, cls, fn) => { const b = el('button', 'btn ' + cls, txt); b.type = 'button'; b.addEventListener('click', fn); return b; };
-    function sheet(key, code, found) {
-      const old = document.getElementById('qInv'); if (old) old.remove();
-      const q = el('div', 'qs'); q.id = 'qInv'; q.setAttribute('role', 'dialog'); q.setAttribute('aria-modal', 'true');
-      const c = el('div', 'qc'); q.appendChild(c);
-      c.appendChild(el('h3', '', found ? 'Invitation trouvée' : 'Un ami t’invite à jouer'));
-      const p = el('p', '', NAMES[key] + ' en ligne · salon '); p.appendChild(el('b', 'invcode', code)); c.appendChild(p);
-      c.appendChild(bt(found ? 'Rejoindre la partie' : 'Rejoindre ici', 'primary', () => { q.remove(); go(key, code); }));
-      if (!found) {
-        const tip = el('p', 'invtip', 'Pour jouer en plein écran : copie le code, ouvre PolyPlays depuis ton écran d’accueil, puis touche « Tu as reçu une invitation ? » sur l’accueil.');
-        const cp = bt('Copier le code pour l’appli', '', () => {
-          const ok = () => { cp.textContent = '✓ Code copié'; tip.textContent = 'Ouvre maintenant PolyPlays depuis ton écran d’accueil et touche « Coller » dans le bandeau d’invitation.'; };
-          try { navigator.clipboard.writeText(code).then(ok, () => { cp.textContent = 'Code : ' + code; }); } catch (e) { cp.textContent = 'Code : ' + code; }
-        });
-        c.appendChild(cp); c.appendChild(tip);
-      }
-      c.appendChild(bt(found ? 'Ignorer' : 'Plus tard', '', () => { q.remove(); if (!found) history.replaceState(null, '', location.pathname + location.search); }));
-      document.body.appendChild(q);
-    }
-    const sm = /^#salon=([A-Z]{4,6})$/.exec(location.hash), m2 = /^#salon-(puis4|navale|poker)=([A-Z]{4,6})$/.exec(location.hash);
-    const key = sm ? 'belote' : m2 ? m2[1] : '', code = sm ? sm[1] : m2 ? m2[2] : '';
-    if (key) {
-      if (installed || (window.__arcadeTest && !window.__arcadeTest.inv)) go(key, code); else sheet(key, code, false);
-    }
-    const ban = $('invBan'), say = $('invBanT');
-    const BAN_T = 'Touche pour coller le code', hideFor = 12 * 3600 * 1000;
-    if (ban && !key && (installed || (window.__arcadeTest && window.__arcadeTest.inv)) && Date.now() > store.get('arcade.invban', 0)) ban.hidden = false;
-    if (ban) {
-      $('invBanX').addEventListener('click', () => { ban.hidden = true; store.set('arcade.invban', Date.now() + hideFor); });
-      $('invBanGo').addEventListener('click', () => {
-        if (!navigator.clipboard || !navigator.clipboard.readText) { say.textContent = 'Collage indisponible ici.'; return; }
-        navigator.clipboard.readText().then((t) => {
-          t = String(t || '');
-          let k = '', c = '', m = /#salon=([A-Za-z]{4,6})\b/.exec(t);
-          if (m) { k = 'belote'; c = m[1]; }
-          else if ((m = /#salon-(puis4|navale|poker)=([A-Za-z]{4,6})\b/.exec(t))) { k = m[1]; c = m[2]; }
-          else if ((m = /\b([A-Z]{4,6})\b/.exec(t))) {
-            c = m[1]; k = /belote/i.test(t) ? 'belote' : /puissance\s*4/i.test(t) ? 'puis4' : /navale/i.test(t) ? 'navale' : /poker/i.test(t) ? 'poker' : '';
-          }
-          if (k && c) { sheet(k, c.toUpperCase(), true); say.textContent = BAN_T; }
-          else if (c) say.textContent = 'Code ' + c.toUpperCase() + ' trouvé, mais pas le jeu. Ouvre le jeu › Avec un ami.';
-          else say.textContent = 'Aucune invitation dans ce qui est copié.';
-        }).catch(() => { say.textContent = 'Collage refusé. Réessaie.'; });
-      });
-    }
-  }
+  { const sm = /^#salon=([A-Z]{4,6})$/.exec(location.hash); if (sm) { openGame('belote'); BL.joinLink(sm[1]); } }
+  { const m2 = /^#salon-(puis4|navale|poker)=([A-Z]{4,6})$/.exec(location.hash); if (m2) { openGame(m2[1]); MPREG[m2[1]].join(m2[2]); } }
 
   const KEYDIR = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
