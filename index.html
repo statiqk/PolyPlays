@@ -973,12 +973,12 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qs#qNew { z-index: 96; }
 .rrow { display: flex; align-items: center; justify-content: center; gap: calc(8px * var(--u)); min-width: 0; }
 .rrow .blnet { min-width: 0; }
-.rbtn { flex: none; width: calc(40px * var(--u)); height: calc(40px * var(--u)); border-radius: 50%; border: 1px solid rgba(140, 130, 230, .55); background: var(--surface-2); color: var(--ink); font-size: 1.15rem; line-height: 1; display: grid; place-items: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rbtn { flex: none; margin-block: calc(-9px * var(--u)); width: calc(40px * var(--u)); height: calc(40px * var(--u)); border-radius: 50%; border: 1px solid rgba(140, 130, 230, .55); background: var(--surface-2); color: var(--ink); font-size: 1.15rem; line-height: 1; display: grid; place-items: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .rbtn[hidden] { display: none; }
 .rbtn:active { background: #4338ca; }
-#panel-poker .rbtn { width: calc(34px * var(--u)); height: calc(34px * var(--u)); font-size: 1rem; }
+#panel-poker .rbtn { width: calc(34px * var(--u)); height: calc(34px * var(--u)); margin-block: calc(-8px * var(--u)); font-size: 1rem; }
 body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .rrow { display: contents; }
-body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .rbtn { position: absolute; z-index: 5; right: calc(8px * var(--u)); bottom: calc(2px * var(--u)); width: calc(34px * var(--u)); height: calc(34px * var(--u)); }
+body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .rbtn { position: absolute; z-index: 5; margin: 0; right: max(calc(10px * var(--u)), calc(env(safe-area-inset-right, 0px) + 6px)); bottom: max(calc(10px * var(--u)), env(safe-area-inset-bottom, 0px)); width: calc(34px * var(--u)); height: calc(34px * var(--u)); }
 .rbk { position: fixed; inset: 0; z-index: 93; background: transparent; }
 .rbk[hidden], .rtray[hidden] { display: none; }
 .rtray { position: fixed; z-index: 94; left: calc(12px * var(--u)); right: calc(12px * var(--u)); bottom: calc(12px * var(--u) + env(safe-area-inset-bottom, 0px)); max-width: calc(520px * var(--u)); margin-inline: auto; padding: calc(12px * var(--u)); border-radius: calc(24px * var(--u)); background: #221e30; border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 calc(14px * var(--u)) calc(40px * var(--u)) rgba(0, 0, 0, .6); display: grid; gap: calc(10px * var(--u)); }
@@ -1424,7 +1424,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .su { min-height: 44px; font-size: 1.4rem; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bltoast { left: auto; right: calc(50% + 46px - 50vw); bottom: 56px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { right: calc(50% + 46px - 50vw); bottom: 108px; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blnet { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); z-index: 5; margin: 0; font-size: .62rem; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blnet { position: absolute; bottom: max(10px, env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 5; margin: 0; font-size: .62rem; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .hint { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .actions { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote[data-ph="idle"] .actions, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote[data-ph="over"] .actions { display: grid; position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); width: min(300px, 40vw); grid-template-columns: 1fr; gap: 8px; }
