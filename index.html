@@ -2979,6 +2979,19 @@ html.spl main.app { visibility: hidden; }
     }
     return { load, opts() { return list ? { debug: 0, config: { iceServers: list.concat(DEF) } } : { debug: 0 }; }, get on() { return !!list; } };
   })();
+  /* Détecte si la connexion passe par un relais TURN (pour l'indiquer dans la barre d'état) */
+  function relayProbe(conn, done) {
+    const pc = conn && conn.peerConnection; if (!pc || !pc.getStats) return;
+    setTimeout(() => {
+      pc.getStats().then((rep) => {
+        let sel = null;
+        rep.forEach((r) => { if (r.type === 'transport' && r.selectedCandidatePairId) sel = rep.get(r.selectedCandidatePairId); });
+        if (!sel) rep.forEach((r) => { if (!sel && r.type === 'candidate-pair' && (r.selected || (r.nominated && r.state === 'succeeded'))) sel = r; });
+        const l = sel && rep.get(sel.localCandidateId), m = sel && rep.get(sel.remoteCandidateId);
+        done(!!((l && l.candidateType === 'relay') || (m && m.candidateType === 'relay')));
+      }).catch(() => {});
+    }, 2000);
+  }
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -3006,6 +3019,7 @@ html.spl main.app { visibility: hidden; }
     }
     function startHb() {
       clearInterval(net.hb);
+      { const cn = net.conn; net.relay = false; relayProbe(cn, (r) => { if (cn === net.conn && r !== net.relay) { net.relay = r; ui(); } }); }
       net.hb = setInterval(() => {
         if (!net.role) return;
         send({ t: 'p' });
@@ -3127,7 +3141,7 @@ html.spl main.app { visibility: hidden; }
     /* écrans */
     function ui() {
       let t = '', c = '';
-      const x = cfg.barText ? cfg.barText() : '';
+      const x = (cfg.barText ? cfg.barText() : '') + (net.relay ? ' · par relais' : '');
       if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' + x : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
       else if (net.role === 'host' && net.st === 'salon') { t = '● Salon ' + net.code + (net.on ? ' · ' + net.fname + ' est là' : ' · en attente d’un ami'); c = net.on ? 'ok' : ''; }
       else if (net.role === 'guest') {
@@ -7534,6 +7548,7 @@ html.spl main.app { visibility: hidden; }
     }
     function startHb() {
       clearInterval(net.hb);
+      { const cn = net.conn; net.relay = false; relayProbe(cn, (r) => { if (cn === net.conn && r !== net.relay) { net.relay = r; netUi(); } }); }
       net.hb = setInterval(() => {
         if (!net.role) return;
         send({ t: 'p' });
@@ -7685,11 +7700,11 @@ html.spl main.app { visibility: hidden; }
     /* écrans */
     function netUi() {
       let t = '', c = '';
-      if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
+      if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' + (net.relay ? ' · par relais' : '') : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
       else if (net.role === 'host' && net.st === 'salon') { t = '● Salon ' + net.code + (net.on ? ' · ' + net.fname + ' est là' : ' · en attente d’un ami'); c = net.on ? 'ok' : ''; }
       else if (net.role === 'guest') {
         if (net.st === 'gone') { t = '● ' + net.hn + ' a quitté la partie'; c = 'ko'; }
-        else if (net.st === 'game') { t = net.on ? '● Connecté à ' + net.hn : '● Connexion perdue · on réessaie…'; c = net.on ? 'ok' : 'ko'; }
+        else if (net.st === 'game') { t = net.on ? '● Connecté à ' + net.hn + (net.relay ? ' · par relais' : '') : '● Connexion perdue · on réessaie…'; c = net.on ? 'ok' : 'ko'; }
         else if (net.st === 'salon') { t = '● Salon de ' + net.hn + ' · en attente du lancement'; c = 'ok'; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
