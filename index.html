@@ -2961,37 +2961,6 @@ html.spl main.app { visibility: hidden; }
 
   /* =====================  BATAILLE NAVALE  ===================== */
   /* =====================  EN LIGNE : module commun (salon, code, lien, reconnexion)  ===================== */
-  /* Relais TURN Cloudflare : identifiants de courte durée fournis par un petit Worker (voir turn-worker.js). Vide = serveurs PeerJS par défaut. */
-  const ICE = (function () {
-    const TURN_URL = '';
-    const DEF = [{ urls: 'stun:stun.l.google.com:19302' }, { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' }];
-    let list = null, at = 0, pend = null;
-    function load() {
-      if (!TURN_URL) return Promise.resolve();
-      if (list && Date.now() - at < 6 * 3600 * 1000) return Promise.resolve();
-      if (pend) return pend;
-      const ctl = window.AbortController ? new AbortController() : null, t = setTimeout(() => { if (ctl) ctl.abort(); }, 3500);
-      pend = fetch(TURN_URL, { cache: 'no-store', signal: ctl ? ctl.signal : undefined }).then((r) => (r.ok ? r.json() : null)).then((j) => {
-        const a = j && Array.isArray(j.iceServers) ? j.iceServers.filter((x) => x && x.urls) : [];
-        if (a.length) { list = a; at = Date.now(); }
-      }).catch(() => {}).then(() => { clearTimeout(t); pend = null; });
-      return pend;
-    }
-    return { load, opts() { return list ? { debug: 0, config: { iceServers: list.concat(DEF) } } : { debug: 0 }; }, get on() { return !!list; } };
-  })();
-  /* Détecte si la connexion passe par un relais TURN (pour l'indiquer dans la barre d'état) */
-  function relayProbe(conn, done) {
-    const pc = conn && conn.peerConnection; if (!pc || !pc.getStats) return;
-    setTimeout(() => {
-      pc.getStats().then((rep) => {
-        let sel = null;
-        rep.forEach((r) => { if (r.type === 'transport' && r.selectedCandidatePairId) sel = rep.get(r.selectedCandidatePairId); });
-        if (!sel) rep.forEach((r) => { if (!sel && r.type === 'candidate-pair' && (r.selected || (r.nominated && r.state === 'succeeded'))) sel = r; });
-        const l = sel && rep.get(sel.localCandidateId), m = sel && rep.get(sel.remoteCandidateId);
-        done(!!((l && l.candidateType === 'relay') || (m && m.candidateType === 'relay')));
-      }).catch(() => {});
-    }, 2000);
-  }
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -3008,8 +2977,7 @@ html.spl main.app { visibility: hidden; }
     const peerName = () => (net.role === 'host' ? net.fname : net.hn) || 'Ton ami';
     const deep = () => location.href.split('#')[0] + '#salon-' + cfg.key + '=' + net.code;
     const invite = () => '\u{1F3AE} ' + clean(myName, 'Un ami') + ' t’invite à une partie de ' + cfg.game + ' en ligne sur PolyPlays !\nOuvre ce lien : ' + deep() + '\nOu entre le code ' + net.code + ' dans ' + cfg.game + ' › Avec un ami.\nLe salon reste ouvert tant que je garde l’app ouverte.';
-    function loadPeer() { return loadPeer0().then((r) => ICE.load().then(() => r)); }
-    function loadPeer0() {
+    function loadPeer() {
       return new Promise((ok, ko) => {
         if (window.Peer) { ok(); return; }
         const s = document.createElement('script'); s.src = 'peerjs.min.js';
@@ -3019,7 +2987,6 @@ html.spl main.app { visibility: hidden; }
     }
     function startHb() {
       clearInterval(net.hb);
-      { const cn = net.conn; net.relay = false; relayProbe(cn, (r) => { if (cn === net.conn && r !== net.relay) { net.relay = r; ui(); } }); }
       net.hb = setInterval(() => {
         if (!net.role) return;
         send({ t: 'p' });
@@ -3029,7 +2996,7 @@ html.spl main.app { visibility: hidden; }
     /* hôte */
     function hostOpen(tries) {
       net.code = Array.from({ length: 6 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
-      const pe = new window.Peer(PFX + net.code, ICE.opts()); net.peer = pe;
+      const pe = new window.Peer(PFX + net.code, { debug: 0 }); net.peer = pe;
       pe.on('open', () => { if (net.peer !== pe) return; net.st = 'salon'; draw(); });
       pe.on('connection', (c) => hostAccept(c));
       pe.on('error', (e) => {
@@ -3082,7 +3049,7 @@ html.spl main.app { visibility: hidden; }
       net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
-        const pe = new window.Peer(ICE.opts()); net.peer = pe;
+        const pe = new window.Peer({ debug: 0 }); net.peer = pe;
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
@@ -3141,7 +3108,7 @@ html.spl main.app { visibility: hidden; }
     /* écrans */
     function ui() {
       let t = '', c = '';
-      const x = (cfg.barText ? cfg.barText() : '') + (net.relay ? ' · par relais' : '');
+      const x = cfg.barText ? cfg.barText() : '';
       if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' + x : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
       else if (net.role === 'host' && net.st === 'salon') { t = '● Salon ' + net.code + (net.on ? ' · ' + net.fname + ' est là' : ' · en attente d’un ami'); c = net.on ? 'ok' : ''; }
       else if (net.role === 'guest') {
@@ -7500,8 +7467,7 @@ html.spl main.app { visibility: hidden; }
     let myName = String(store.get('arcade.belote.name', '') || '').slice(0, 12);
     const cleanN = (v, d) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, 12) : '') || d;
     const send = (m) => { try { if (net.conn && net.conn.open) net.conn.send(m); } catch (e) { /* ignore */ } };
-    function loadPeer() { return loadPeer0().then((r) => ICE.load().then(() => r)); }
-    function loadPeer0() {
+    function loadPeer() {
       return new Promise((ok, ko) => {
         if (window.Peer) { ok(); return; }
         const sc2 = document.createElement('script'); sc2.src = 'peerjs.min.js';
@@ -7548,7 +7514,6 @@ html.spl main.app { visibility: hidden; }
     }
     function startHb() {
       clearInterval(net.hb);
-      { const cn = net.conn; net.relay = false; relayProbe(cn, (r) => { if (cn === net.conn && r !== net.relay) { net.relay = r; netUi(); } }); }
       net.hb = setInterval(() => {
         if (!net.role) return;
         send({ t: 'p' });
@@ -7558,7 +7523,7 @@ html.spl main.app { visibility: hidden; }
     /* hôte */
     function hostOpen(tries) {
       net.code = Array.from({ length: 6 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
-      const pe = new window.Peer(PFX + net.code, ICE.opts()); net.peer = pe;
+      const pe = new window.Peer(PFX + net.code, { debug: 0 }); net.peer = pe;
       pe.on('open', () => { if (net.peer !== pe) return; net.st = 'salon'; renderOn(); });
       pe.on('connection', (c) => hostAccept(c));
       pe.on('error', (e) => {
@@ -7616,7 +7581,7 @@ html.spl main.app { visibility: hidden; }
       clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
-        const pe = new window.Peer(ICE.opts()); net.peer = pe;
+        const pe = new window.Peer({ debug: 0 }); net.peer = pe;
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
@@ -7700,11 +7665,11 @@ html.spl main.app { visibility: hidden; }
     /* écrans */
     function netUi() {
       let t = '', c = '';
-      if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' + (net.relay ? ' · par relais' : '') : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
+      if (net.role === 'host' && net.started) { t = net.on ? '● ' + net.fname + ' connecté' : '● ' + net.fname + ' déconnecté · partie en pause'; c = net.on ? 'ok' : 'ko'; }
       else if (net.role === 'host' && net.st === 'salon') { t = '● Salon ' + net.code + (net.on ? ' · ' + net.fname + ' est là' : ' · en attente d’un ami'); c = net.on ? 'ok' : ''; }
       else if (net.role === 'guest') {
         if (net.st === 'gone') { t = '● ' + net.hn + ' a quitté la partie'; c = 'ko'; }
-        else if (net.st === 'game') { t = net.on ? '● Connecté à ' + net.hn + (net.relay ? ' · par relais' : '') : '● Connexion perdue · on réessaie…'; c = net.on ? 'ok' : 'ko'; }
+        else if (net.st === 'game') { t = net.on ? '● Connecté à ' + net.hn : '● Connexion perdue · on réessaie…'; c = net.on ? 'ok' : 'ko'; }
         else if (net.st === 'salon') { t = '● Salon de ' + net.hn + ' · en attente du lancement'; c = 'ok'; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
