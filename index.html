@@ -971,31 +971,6 @@ body.locked[data-fit] #panel-sudoku .status { min-height: 0; }
 .qc .btn { min-height: calc(52px * var(--u)); }
 .qs#qRes, .qs#qAsk { z-index: 96; }
 .qs#qNew { z-index: 96; }
-.rrow { display: flex; align-items: center; justify-content: center; gap: calc(8px * var(--u)); min-width: 0; }
-.rrow .blnet { min-width: 0; }
-.rbtn { flex: none; margin-block: calc(-9px * var(--u)); width: calc(40px * var(--u)); height: calc(40px * var(--u)); border-radius: 50%; border: 1px solid rgba(140, 130, 230, .55); background: var(--surface-2); color: var(--ink); font-size: 1.15rem; line-height: 1; display: grid; place-items: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.rbtn[hidden] { display: none; }
-.rbtn:active { background: #4338ca; }
-#panel-poker .rbtn { width: calc(34px * var(--u)); height: calc(34px * var(--u)); margin-block: calc(-8px * var(--u)); font-size: 1rem; }
-body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .rrow { display: contents; }
-body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .rbtn { position: absolute; z-index: 5; margin: 0; right: max(calc(10px * var(--u)), calc(env(safe-area-inset-right, 0px) + 6px)); bottom: max(calc(10px * var(--u)), env(safe-area-inset-bottom, 0px)); width: calc(34px * var(--u)); height: calc(34px * var(--u)); }
-.rbk { position: fixed; inset: 0; z-index: 93; background: transparent; }
-.rbk[hidden], .rtray[hidden] { display: none; }
-.rtray { position: fixed; z-index: 94; left: calc(12px * var(--u)); right: calc(12px * var(--u)); bottom: calc(12px * var(--u) + env(safe-area-inset-bottom, 0px)); max-width: calc(520px * var(--u)); margin-inline: auto; padding: calc(12px * var(--u)); border-radius: calc(24px * var(--u)); background: #221e30; border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 calc(14px * var(--u)) calc(40px * var(--u)) rgba(0, 0, 0, .6); display: grid; gap: calc(10px * var(--u)); }
-.rtray .rt { display: flex; justify-content: space-between; align-items: center; font: 600 .68rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 0 calc(4px * var(--u)); }
-.rtray .re { display: grid; grid-template-columns: repeat(8, 1fr); gap: calc(5px * var(--u)); }
-.rtray .re button { aspect-ratio: 1; border: 0; border-radius: calc(12px * var(--u)); background: #2e2a3b; font-size: 1.35rem; padding: 0; cursor: pointer; }
-.rtray .rp { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(6px * var(--u)); }
-.rtray .rp button { border: 0; border-radius: 99px; background: #2e2a3b; color: var(--ink); font: 600 .78rem var(--font-body, inherit); padding: calc(9px * var(--u)) 0; cursor: pointer; }
-.rtray .ro { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: .76rem; cursor: pointer; padding: 0; text-decoration: underline; }
-.rtray button:disabled { opacity: .4; }
-.rfx { position: fixed; z-index: 92; pointer-events: none; display: grid; justify-items: center; gap: 3px; transform: translate(-50%, 0); animation: rfloat 2.3s ease-out forwards; }
-.rfx b { display: grid; place-items: center; width: calc(58px * var(--u)); height: calc(58px * var(--u)); border-radius: 50%; background: #2b2740; border: 2px solid #7a70f0; box-shadow: 0 calc(8px * var(--u)) calc(24px * var(--u)) rgba(0, 0, 0, .6); font-size: 1.9rem; font-weight: 400; }
-.rfx span { font-size: .72rem; font-weight: 700; padding: 1px calc(9px * var(--u)); border-radius: 99px; background: #14121c; border: 1px solid #38344a; color: #d6cff0; }
-@keyframes rfloat { 0% { opacity: 0; transform: translate(-50%, 8px) scale(.6); } 12% { opacity: 1; transform: translate(-50%, 0) scale(1.08); } 20% { transform: translate(-50%, -4px) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
-.rtoast { position: fixed; z-index: 92; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 72px * var(--u)); transform: translateX(-50%); pointer-events: none; padding: calc(8px * var(--u)) calc(16px * var(--u)); border-radius: 99px; background: #2b2740; border: 1px solid #5b52a8; color: #e7e2f6; font-size: .86rem; font-weight: 600; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; animation: rtoast 2.8s ease-out forwards; }
-@keyframes rtoast { 0% { opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .rfx { animation: rfade 2.3s linear forwards; } @keyframes rfade { 0%, 80% { opacity: 1; } 100% { opacity: 0; } } }
 .np .k { display: block; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: calc(4px * var(--u)) 0 calc(4px * var(--u)); text-align: left; }
 .np .seg { display: flex; width: 100%; box-sizing: border-box; }
 .np .seg button { flex: 1; min-width: 0; padding: 0 calc(6px * var(--u)); }
@@ -2988,52 +2963,6 @@ html.spl main.app { visibility: hidden; }
 
   /* =====================  BATAILLE NAVALE  ===================== */
   /* =====================  EN LIGNE : module commun (salon, code, lien, reconnexion)  ===================== */
-  /* Réactions entre joueurs en ligne : émojis et phrases prédéfinies (pas de texte libre) */
-  const REACT = (function () {
-    const EM = ['👍', '👏', '😂', '😮', '😅', '😡', '🔥', '🤝'], PH = ['Bien joué !', 'Oups…', 'Revanche ?', 'À toi !'];
-    let off = store.get('arcade.react.off', false) === true, cur = null, lastSend = 0, lastRecv = 0, tray = null, bk = null, optB = null, btns = [];
-    const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
-    function close() { if (tray) tray.hidden = true; if (bk) bk.hidden = true; }
-    function build() {
-      if (tray) return;
-      bk = el('div', 'rbk'); bk.hidden = true; bk.addEventListener('click', close);
-      tray = el('div', 'rtray'); tray.hidden = true; tray.setAttribute('role', 'dialog'); tray.setAttribute('aria-label', 'Réactions');
-      const top = el('div', 'rt'); top.appendChild(el('span', '', 'Réactions')); top.appendChild(el('span', '', 'Touche pour envoyer')); tray.appendChild(top);
-      const re = el('div', 're'); EM.forEach((e, i) => { const b = el('button', '', e); b.type = 'button'; b.setAttribute('aria-label', 'Réaction ' + e); b.addEventListener('click', () => send({ t: 'emo', i })); re.appendChild(b); }); tray.appendChild(re);
-      const rp = el('div', 'rp'); PH.forEach((t, i) => { const b = el('button', '', t); b.type = 'button'; b.addEventListener('click', () => send({ t: 'emo', p: i })); rp.appendChild(b); }); tray.appendChild(rp);
-      optB = el('button', 'ro'); optB.type = 'button'; optB.addEventListener('click', () => { off = !off; store.set('arcade.react.off', off); paint(); }); tray.appendChild(optB);
-      paint(); document.body.appendChild(bk); document.body.appendChild(tray);
-    }
-    function paint() { if (optB) optB.textContent = off ? 'Réactions des autres coupées · réactiver' : 'Couper les réactions des autres'; }
-    function send(m) {
-      if (!cur || Date.now() - lastSend < 2000) return;
-      lastSend = Date.now(); cur(m); close();
-      tray && tray.querySelectorAll('button').forEach((b) => { if (!b.classList.contains('ro')) { b.disabled = true; setTimeout(() => { b.disabled = false; }, 2000); } });
-    }
-    function row(bar, sender) {
-      const wrap = el('div', 'rrow'); bar.parentNode.insertBefore(wrap, bar); wrap.appendChild(bar);
-      const btn = el('button', 'rbtn', '😊'); btn.type = 'button'; btn.hidden = true; btn.setAttribute('aria-label', 'Envoyer une réaction');
-      btn.addEventListener('click', () => { build(); cur = sender; paint(); tray.hidden = false; bk.hidden = false; });
-      wrap.appendChild(btn); btns.push(btn);
-      return { btn, show(v) { btn.hidden = !v; if (!v && cur === sender) close(); } };
-    }
-    function recv(d, name, btn) {
-      if (off || !d || typeof d !== 'object' || Date.now() - lastRecv < 700) return;
-      const i = Number.isInteger(d.i) ? d.i : -1, p = Number.isInteger(d.p) ? d.p : -1, who = String(name || 'Ton ami').replace(/[<>]/g, '').slice(0, 12);
-      if (i >= 0 && i < EM.length) {
-        lastRecv = Date.now();
-        const r = btn && btn.getClientRects().length ? btn.getBoundingClientRect() : null;
-        const f = el('div', 'rfx'); f.appendChild(el('b', '', EM[i])); f.appendChild(el('span', '', who));
-        f.style.left = (r ? r.left + r.width / 2 : window.innerWidth / 2) + 'px'; f.style.top = (r ? Math.max(70, r.top - 78) : 140) + 'px';
-        document.body.appendChild(f); setTimeout(() => f.remove(), 2400);
-      } else if (p >= 0 && p < PH.length) {
-        lastRecv = Date.now();
-        document.querySelectorAll('.rtoast').forEach((x) => x.remove());
-        const t = el('div', 'rtoast', who + ' : « ' + PH[p] + ' »'); document.body.appendChild(t); setTimeout(() => t.remove(), 2900);
-      }
-    }
-    return { row, recv };
-  })();
   const MPREG = {};
   function MPX(cfg) {
     const PFX = cfg.prefix, ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -3045,7 +2974,6 @@ html.spl main.app { visibility: hidden; }
     const sheet = E('div', 'qs'); sheet.hidden = true; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', cfg.game + ' en ligne'); sheet.style.zIndex = '96';
     const body = E('div', 'qc blon'); sheet.appendChild(body); document.body.appendChild(sheet);
     const bar = E('p', 'blnet'); bar.hidden = true; cfg.barBefore.parentNode.insertBefore(bar, cfg.barBefore);
-    const rx = REACT.row(bar, (m) => send(m));
     const btns = [];
     const send = (m) => { try { if (net.conn && net.conn.open) net.conn.send(m); } catch (e) { /* ignore */ } };
     const peerName = () => (net.role === 'host' ? net.fname : net.hn) || 'Ton ami';
@@ -3095,7 +3023,6 @@ html.spl main.app { visibility: hidden; }
         if (c !== net.conn) return;
         net.last = Date.now();
         if (d.t === 'bye') { lostConn(); return; }
-        if (d.t === 'emo') { REACT.recv(d, net.fname, rx.btn); return; }
         if (d.t === 'g' && net.started) cfg.onData(d.d);
       });
       c.on('close', () => { if (c === net.conn) lostConn(); });
@@ -3154,8 +3081,7 @@ html.spl main.app { visibility: hidden; }
         ui(); draw();
       } else if (d.t === 'go') {
         net.started = true; net.on = true; net.st = 'game'; sheet.hidden = true; cfg.onGo('guest', d.p); ui();
-      } else if (d.t === 'emo') REACT.recv(d, net.hn, rx.btn);
-      else if (d.t === 'g' && net.started) cfg.onData(d.d);
+      } else if (d.t === 'g' && net.started) cfg.onData(d.d);
       else if (d.t === 'full') { leave(true); net.msg = 'Ce salon a déjà son joueur.'; mode = 'err'; show(); }
       else if (d.t === 'bye') { net.st = 'gone'; net.on = false; clearTimeout(net.rt); if (cfg.onDown) cfg.onDown(); ui(); draw(); }
     }
@@ -3194,7 +3120,6 @@ html.spl main.app { visibility: hidden; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
       bar.textContent = t; bar.hidden = !t; bar.className = 'blnet' + (c ? ' ' + c : '');
-      rx.show(!!(net.on && net.started));
       { const pn = bar.closest('.panel'); if (pn) pn.dataset.net = net.role ? (c === 'ko' ? 'ko' : 'ok') : ''; }
       btns.forEach((b) => { b.textContent = net.role ? '\u{1F465} En ligne' : '\u{1F465} Avec un ami'; });
     }
@@ -7544,7 +7469,6 @@ html.spl main.app { visibility: hidden; }
     let myName = String(store.get('arcade.belote.name', '') || '').slice(0, 12);
     const cleanN = (v, d) => (typeof v === 'string' ? v.replace(/[<>]/g, '').trim().slice(0, 12) : '') || d;
     const send = (m) => { try { if (net.conn && net.conn.open) net.conn.send(m); } catch (e) { /* ignore */ } };
-    let rx = null;
     function loadPeer() {
       return new Promise((ok, ko) => {
         if (window.Peer) { ok(); return; }
@@ -7624,7 +7548,6 @@ html.spl main.app { visibility: hidden; }
         if (c !== net.conn) return;
         net.last = Date.now();
         if (d.t === 'bye') { lostConn(); return; }
-        if (d.t === 'emo') { REACT.recv(d, net.fname, rx && rx.btn); return; }
         if (!net.on || !net.started || net.paused) return;
         const g = net.g;
         if (d.t === 'take' && ph === 'bid' && turn === g && typeof d.s === 'string' && (round === 1 ? d.s === su(turned) : SUITS.indexOf(d.s) >= 0 && d.s !== su(turned))) take(g, d.s);
@@ -7712,8 +7635,7 @@ html.spl main.app { visibility: hidden; }
         if (!okView(v)) return;
         net.on = true; if (net.st !== 'game') { net.st = 'game'; onEl.hidden = true; }
         applySt(v);
-      } else if (d.t === 'emo') REACT.recv(d, net.hn, rx && rx.btn);
-      else if (d.t === 'ev' && net.st === 'game') evShow(d.k, d.p, d.x);
+      } else if (d.t === 'ev' && net.st === 'game') evShow(d.k, d.p, d.x);
       else if (d.t === 'full') { net.msg = 'Ce salon a déjà son joueur.'; netLeave(true); net.st = 'err'; showOn('err'); }
       else if (d.t === 'bye') { net.st = 'gone'; net.on = false; clearTimeout(net.rt); netUi(); renderOn(); render(); }
     }
@@ -7754,8 +7676,6 @@ html.spl main.app { visibility: hidden; }
         else if (net.st === 'conn') t = '● Connexion en cours…';
       }
       setText(netEl, t); netEl.hidden = !t; netEl.className = 'blnet' + (c ? ' ' + c : '');
-      if (!rx) rx = REACT.row(netEl, (m) => send(m));
-      rx.show(!!(net.on && net.st === 'game'));
       { const pn = $e('panel-belote'); if (pn) pn.dataset.net = net.role ? (c === 'ko' ? 'ko' : 'ok') : ''; }
       setText(bOn, net.role ? '👥 En ligne' : '👥 Avec un ami');
       bNew.hidden = net.role === 'guest';
