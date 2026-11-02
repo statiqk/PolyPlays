@@ -1595,16 +1595,33 @@ html.spl main.app { visibility: hidden; }
 (function () {
   if (window.__arcadeTest) return;
   var s0 = document.getElementById('spl'), tpl = s0 ? s0.cloneNode(true) : null, ov = null, cur = 'normal', timer = 0, busy = false;
-  function clear() { if (ov) { ov.remove(); ov = null; } document.documentElement.classList.remove('spl'); }
-  function showDev(j) {
-    if (!tpl) return showMt(j);
+  function clear() { clearInterval(devK); if (ov) { clearInterval(ov.__tick); ov.remove(); ov = null; } document.documentElement.classList.remove('spl'); }
+  var devT = 0, devK = 0;
+  function devBuild(j) {
     var s = tpl.cloneNode(true); s.id = 'spl'; s.className = 'fr'; s.style.zIndex = '100000';
     var tt = s.querySelector('.t'); if (tt) { var tx = tt.textContent; tt.textContent = ''; tx.split('').forEach(function (ch, i) { var sp = document.createElement('span'); sp.textContent = ch; sp.style.setProperty('--i', i); tt.appendChild(sp); }); }
     var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
     s.style.setProperty('--k', String(Math.max(.8, Math.min(1.65, Math.min(w / 390, h / 844)))));
     var a = s.querySelector('.s'), l = s.querySelector('.l'), b = s.querySelector('.b u');
-    if (a) a.textContent = 'En développement'; if (l) l.textContent = (j && j.message) ? String(j.message).slice(0, 60) : 'Ouverture prochainement'; if (b) b.style.width = '38%';
-    document.documentElement.classList.add('spl'); document.body.appendChild(s); ov = s;
+    if (a) a.textContent = 'En développement';
+    var fixed = (j && j.message) ? String(j.message).slice(0, 60) : '', t0 = Date.now();
+    function step() {
+      var p = Math.min(100, 12 + (Date.now() - t0) / 60);
+      if (b) b.style.width = p + '%';
+      if (l) l.textContent = fixed || (p < 40 ? 'Préparation…' : p < 90 ? 'Les jeux arrivent…' : 'Bientôt !');
+    }
+    step(); s.__tick = setInterval(step, 120);
+    return s;
+  }
+  function devSwap(j) {
+    var n = devBuild(j), old = ov;
+    document.documentElement.classList.add('spl'); document.body.appendChild(n); ov = n;
+    if (old) { clearInterval(old.__tick); old.remove(); }
+  }
+  function showDev(j) {
+    if (!tpl) return showMt(j);
+    devSwap(j); clearInterval(devK);
+    devK = setInterval(function () { if (ov && ov.id === 'spl') devSwap(j); }, 7000);
   }
   function showMt(j) {
     var d = document.createElement('div'); d.id = 'etatMt'; d.setAttribute('role', 'alert');
