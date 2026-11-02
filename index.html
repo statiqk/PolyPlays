@@ -3273,7 +3273,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
       if (!second && net.st === 'conn') { clearTimeout(net.d2); net.d2 = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn' && net.peer) dial(true); }, 8000); }
-      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive quand l’un est en wifi et l’autre en 4G.'; net.ek = 'net'; net.st = 'err'; draw(); } }, 15000); }
+      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive souvent quand vous êtes tous les deux sur le même wifi.'; net.ek = 'net'; net.st = 'err'; draw(); } }, 15000); }
     }
     function guestData(d) {
       if (!d || typeof d !== 'object') return;
@@ -3369,7 +3369,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       if (net.st === 'err') {
         const g = net.role === 'guest' && !!net.code, k = net.ek;
         add(E('h3', '', k === 'net' ? 'Connexion impossible' : k === 'room' ? 'Salon introuvable' : k === 'lost' ? 'Connexion perdue' : 'Oups')); add(E('p', '', net.msg || 'Connexion impossible.'));
-        if (k === 'net') { ['• Mettez-vous tous les deux en wifi, ou tous les deux en 4G', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = E('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
+        if (k === 'net') { ['• Passez l’un des deux en réseau mobile (coupez le wifi)', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = E('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
         if (g) add(B('Réessayer', 'primary', rejoin));
         add(B('Quitter', g ? '' : 'primary', () => { leave(); mode = ''; })); return;
       }
@@ -7848,7 +7848,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
       if (!second && net.st === 'conn') { clearTimeout(net.d2); net.d2 = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn' && net.peer) dial(true); }, 8000); }
-      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive quand l’un est en wifi et l’autre en 4G.'; net.ek = 'net'; net.st = 'err'; renderOn(); } }, 15000); }
+      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive souvent quand vous êtes tous les deux sur le même wifi.'; net.ek = 'net'; net.st = 'err'; renderOn(); } }, 15000); }
     }
     /* Valide l'état envoyé par l'hôte avant de l'appliquer (formes, cartes, indices) */
     const CARD_RE = /^(7|8|9|10|J|Q|K|A)[SHDC]$/;
@@ -7998,7 +7998,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       if (net.st === 'err') {
         const g = net.role === 'guest' && !!net.code, k = net.ek;
         add(mk('h3', '', k === 'net' ? 'Connexion impossible' : k === 'room' ? 'Salon introuvable' : k === 'lost' ? 'Connexion perdue' : 'Oups')); add(mk('p', '', net.msg || 'Connexion impossible.'));
-        if (k === 'net') { ['• Mettez-vous tous les deux en wifi, ou tous les deux en 4G', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = mk('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
+        if (k === 'net') { ['• Passez l’un des deux en réseau mobile (coupez le wifi)', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = mk('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
         if (g) add(B('Réessayer', 'primary', rejoin));
         add(B('Quitter', g ? '' : 'primary', () => { netLeave(); onMode = ''; })); return;
       }
