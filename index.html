@@ -1474,8 +1474,8 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox { position: absolute; inset: 0; container-type: normal; display: block; aspect-ratio: auto; width: auto; height: auto; border-radius: 0; background: radial-gradient(ellipse at 50% 48%, #1f8a5c 0%, #115339 62%, #0a3326 100%); box-shadow: inset 0 0 0 5px #2a1d5e, inset 0 0 0 7px rgba(124, 92, 255, .4); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::before, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::after { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); --sq: calc(100dvh - 68px); width: var(--sq); height: var(--sq); aspect-ratio: auto; max-width: none; margin: 0; background: none; border: 0; box-shadow: none; border-radius: 0; overflow: visible; flex: none; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-l { left: calc(50% + 58px - 50vw); top: 46%; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-r { left: auto; right: calc(50% + 58px - 50vw); top: 46%; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-l { left: calc(50% - 29vw); top: 40%; transform: translate(-50%, -50%); }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-r { left: calc(50% + 29vw); right: auto; top: 40%; transform: translate(-50%, -50%); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t { top: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn { width: 56cqw; padding: 2.4cqw 2.4cqw 2cqw; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn .lg { width: 46cqw; height: 44cqw; margin-top: 4cqw; }
@@ -1483,7 +1483,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn .lw { margin-bottom: .6cqw; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox { background: radial-gradient(ellipse at 50% 42%, #23996a 0%, #13603f 58%, #0a3a28 100%); box-shadow: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox::after { content: ''; position: absolute; inset: 10px; border: 1px solid rgba(245,185,58,.4); pointer-events: none; z-index: 0; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::after { display: block; width: 88cqw; height: 88cqw; border: 1.5px dashed rgba(255,255,255,.2); background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%); }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::after { display: block; width: 74cqw; height: 74cqw; border: 1.5px dashed rgba(255,255,255,.2); background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blat { left: calc(50% - 50vw + 34px); top: 8px; z-index: 5; grid-template-columns: auto auto; grid-template-areas: 'sy al' 'sy an'; justify-items: start; align-items: center; column-gap: 12px; background: rgba(0,0,0,.34); border-radius: 99px; padding: 6px 18px 6px 6px; line-height: 1.15; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blat b { grid-area: sy; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #F4F2FA; color: #1B1530; font-size: 20px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote #blAtS,   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote #blAtS.on { display: none !important; }
@@ -1500,16 +1500,16 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bls b { font-size: 4cqw; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t { grid-template-columns: auto auto; grid-template-areas: 'av nm' 'av fan'; justify-items: start; align-items: center; column-gap: 2cqw; row-gap: .6cqw; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t .av { grid-area: av; }   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t .nrow { grid-area: nm; }   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t .blfan { grid-area: fan; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blhw { position: absolute; z-index: 4; left: max(52px, calc(env(safe-area-inset-left, 0px) + 36px)); bottom: 16px; width: clamp(230px, 38vw, 330px); max-width: none; margin: 0; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .status { position: absolute; z-index: 4; left: var(--hwr); transform: none; top: calc(56px + (100% - 68px) * .8 - 12px); margin: 0; min-height: 0; padding: 3px 14px; border-radius: 99px; background: rgba(0, 0, 0, .38); color: #eafff4; font-size: .8rem; font-weight: 600; white-space: nowrap; border: 0; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blhw { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); bottom: 16px; width: clamp(230px, 38vw, 330px); max-width: none; margin: 0; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .status { position: absolute; z-index: 4; left: auto; right: calc(50% + var(--hh, 150px) + 10px); transform: none; top: calc(56px + (100% - 68px) * .8 - 12px); width: max-content; max-width: calc(50vw - var(--hh, 150px) - 44px); white-space: normal; line-height: 1.2; margin: 0; min-height: 0; padding: 3px 14px; border-radius: 99px; background: rgba(0, 0, 0, .38); color: #eafff4; font-size: .8rem; font-weight: 600; white-space: nowrap; border: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote[data-ph="idle"] .status, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote[data-ph="over"] .status { left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1rem; padding: 6px 18px; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact { position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); width: min(300px, 40vw); min-height: 0; gap: 8px; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact { position: absolute; z-index: 5; right: max(46px, calc(env(safe-area-inset-right, 0px) + 20px)); bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px)); width: min(220px, 27vw); min-height: 0; gap: 8px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .btn { min-height: 40px; border-radius: 99px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .su { min-height: 44px; font-size: 1.4rem; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bltoast { left: auto; right: calc(50% + 46px - 50vw); bottom: 56px; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { right: calc(50% + 46px - 50vw); bottom: 96px; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { right: calc(50% + 46px - 50vw); bottom: 22px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blnet { position: absolute; bottom: max(10px, env(safe-area-inset-bottom, 0px)); left: var(--hwr); transform: none; z-index: 5; margin: 0; font-size: .62rem; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote:not([hidden]) { --hwr: calc(max(52px, calc(env(safe-area-inset-left, 0px) + 36px)) + clamp(230px, 38vw, 330px) + 8px); }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote:not([hidden]) { --hwr: max(52px, calc(env(safe-area-inset-left, 0px) + 36px)); --hh: clamp(115px, 19vw, 165px); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote[data-ph="bid"]:has(#blAct > .blast) .status { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .blast { display: block; grid-column: 1 / -1; justify-self: center; margin: 0; padding: 3px 14px; border-radius: 99px; background: rgba(0, 0, 0, .38); color: #eafff4; font-size: .8rem; font-weight: 600; text-align: center; white-space: nowrap; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blcap { top: 63% !important; width: 100px; white-space: normal; text-align: center; line-height: 1.2; font-size: .64rem; }
@@ -1526,13 +1526,13 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .stat { padding: 2px 9px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt { top: 46px; --sq: calc(100dvh - 54px); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blhw { bottom: 10px; width: clamp(200px, 36vw, 260px); }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote:not([hidden]) { --hwr: calc(max(52px, calc(env(safe-area-inset-left, 0px) + 36px)) + clamp(200px, 36vw, 260px) + 8px); }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote:not([hidden]) { --hwr: max(52px, calc(env(safe-area-inset-left, 0px) + 36px)); --hh: clamp(100px, 18vw, 130px); }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .blast { font-size: .7rem; padding: 2px 10px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .status { font-size: .7rem; padding: 2px 10px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .actions { bottom: 12px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .btn, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .actions .btn { min-height: 34px; font-size: .8rem; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blact .su { min-height: 36px; font-size: 1.15rem; }
-  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { bottom: 62px; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bllb { bottom: 18px; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bltoast { bottom: 50px; }
 }
 /* Solitaire en paysage (téléphone) : table verte plein écran, colonnes sur toute la largeur */
