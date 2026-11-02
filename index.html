@@ -856,9 +856,21 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .bltoast { position: absolute; left: 3cqw; bottom: 3cqw; background: var(--amber); color: #1a1200; font-weight: 800; border-radius: 99px; padding: 1.2cqw 4cqw; font-size: 4.2cqw; animation: blin2 .25s ease-out both; }
 @keyframes blin2 { from { opacity: 0; transform: translateY(2cqw); } to { opacity: 1; transform: none; } }
 .bllb { position: absolute; right: 3cqw; bottom: 3cqw; border: 0; border-radius: 99px; background: rgba(0, 0, 0, .38); color: #E4F4EB; font: 500 3.2cqw var(--font-mono); padding: 1.4cqw 3cqw; cursor: pointer; }
-.bllast { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: rgba(8, 20, 14, .92); border-radius: 4cqw; padding: 3cqw; display: flex; gap: 1.6cqw; align-items: flex-end; z-index: 4; }
-.bllast .blpc { position: relative; transform: none; width: 14cqw; animation: none; }
-.bllast > div > span { display: block; text-align: center; font: 500 2.6cqw var(--font-mono); color: #CFEBDB; margin-top: 1cqw; }
+.bllast { position: absolute; inset: 0; display: grid; place-items: center; z-index: 7; cursor: pointer; background: rgba(5, 14, 10, .55); box-shadow: 0 0 0 100vmax rgba(5, 14, 10, .55); }
+#panel-belote:has(#blLast:not([hidden])) .blact, #panel-belote:has(#blLast:not([hidden])) #blStatus { visibility: hidden; }
+.bllast[hidden] { display: none; }
+.lpn { width: 62cqw; background: rgba(10, 24, 17, .96); border: 1px solid rgba(255, 214, 107, .35); border-radius: 5cqw; padding: 3.2cqw 3cqw 2.8cqw; text-align: center; box-shadow: 0 3cqw 8cqw rgba(0, 0, 0, .55); }
+.lpn h4 { margin: 0; font: 500 2.4cqw var(--font-mono); letter-spacing: .16em; color: #9fd9bd; }
+.lpn .lw { font: 700 4.2cqw var(--font-body); color: #FFD66B; margin: .6cqw 0 1.4cqw; }
+.lpn .lg { position: relative; width: 52cqw; height: 54cqw; margin: 0 auto; }
+.lpn .lc { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 1cqw; }
+.lpn .lc .blpc { position: relative; left: auto; top: auto; width: 11cqw; transform: rotate(var(--r, 0deg)); animation: none; }
+.lpn .lc > span { font: 500 2.4cqw var(--font-mono); color: #CFEBDB; white-space: nowrap; }
+.lpn .lc.w > span { color: #FFD66B; }
+.lpn .lf { margin-top: 1.6cqw; display: flex; justify-content: center; align-items: center; gap: 2cqw; font: 500 2.6cqw var(--font-mono); color: #CFEBDB; }
+.lpn .lf b { background: rgba(74, 222, 156, .18); color: #4ADE9C; border-radius: 99px; padding: .5cqw 2cqw; font-weight: 500; }
+.lpn .lf b.eux { background: rgba(255, 123, 142, .18); color: #FF7B8E; }
+.lpn .lx { margin-top: 1.2cqw; font: 400 2.1cqw var(--font-mono); opacity: .6; color: #CFEBDB; }
 .blact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(8px * var(--u)); min-height: calc(50px * var(--u)); }
 .blact:empty { display: none; }
 .blact .btn { min-height: calc(50px * var(--u)); }
@@ -1465,6 +1477,10 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-l { left: calc(50% + 58px - 50vw); top: 46%; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-r { left: auto; right: calc(50% + 58px - 50vw); top: 46%; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .bl-t { top: 0; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn { width: 56cqw; padding: 2.4cqw 2.4cqw 2cqw; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn .lg { width: 46cqw; height: 44cqw; margin-top: 4cqw; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn .lc .blpc { width: 9.4cqw; }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .lpn .lw { margin-bottom: .6cqw; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox { background: radial-gradient(ellipse at 50% 42%, #23996a 0%, #13603f 58%, #0a3a28 100%); box-shadow: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox::after { content: ''; position: absolute; inset: 10px; border: 1px solid rgba(245,185,58,.4); pointer-events: none; z-index: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::after { display: block; width: 88cqw; height: 88cqw; border: 1.5px dashed rgba(255,255,255,.2); background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%); }
@@ -7739,7 +7755,15 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       }
       eLb.hidden = !(last && (ph === 'play' || ph === 'wait'));
       eLast.hidden = !(showLast && last); eLast.textContent = '';
-      if (showLast && last) last.cards.forEach((x) => { const w = mk('div'); w.appendChild(cardFace(x.c, 'blpc')); w.appendChild(mk('span', '', NAMES[x.p])); eLast.appendChild(w); });
+      if (showLast && last) {
+        const lp = mk('div', 'lpn'), LPOS = [[50, 80], [83, 47], [50, 17], [17, 47]], LR = [3, 4, -3, -4];
+        let lsum = 0; last.cards.forEach((x) => { lsum += pts(x.c, trump); });
+        lp.appendChild(mk('h4', '', 'DERNIER PLI')); lp.appendChild(mk('div', 'lw', last.w === 0 ? 'Tu l’emportes' : NAMES[last.w] + ' l’emporte'));
+        const lg = mk('div', 'lg'); last.cards.forEach((x) => { const w = mk('div', 'lc' + (x.p === last.w ? ' w' : '')), c = cardFace(x.c, 'blpc' + (x.p === last.w ? ' win' : '')); c.style.setProperty('--r', LR[x.p] + 'deg'); w.style.left = LPOS[x.p][0] + '%'; w.style.top = LPOS[x.p][1] + '%'; w.appendChild(c); w.appendChild(mk('span', '', NAMES[x.p])); lg.appendChild(w); });
+        lp.appendChild(lg);
+        const lf = mk('div', 'lf'); lf.appendChild(mk('b', team(last.w) === 0 ? '' : 'eux', (team(last.w) === 0 ? 'NOUS +' : 'EUX +') + lsum)); lf.appendChild(mk('span', '', 'manche ' + Math.max(1, mn))); lp.appendChild(lf);
+        lp.appendChild(mk('div', 'lx', 'touche pour fermer')); eLast.appendChild(lp);
+      }
       // statut
       setText(eSt, statusText());
       { const oc = eSt.querySelector('.blcr'); if (oc) oc.remove(); if (master === 0) eSt.insertBefore(crown(), eSt.firstChild); }
