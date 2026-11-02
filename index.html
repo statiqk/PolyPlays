@@ -3168,9 +3168,15 @@ html.spl main.app { visibility: hidden; }
       send({ t: 'go', p }); cfg.onGo('host', p); ui();
     }
     /* invité */
+    function rejoin() {
+      const code = net.code; clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearTimeout(net.d2); clearInterval(net.hb);
+      const pe = net.peer, c = net.conn; net.peer = null; net.conn = null;
+      try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ }
+      guestJoin(code);
+    }
     document.addEventListener('visibilitychange', () => { if (document.hidden) return; try { const pe = net.peer; if (net.role && pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } });
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.ek = ''; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
         const pe = new window.Peer({ debug: 0 }); net.peer = pe;
@@ -3178,12 +3184,12 @@ html.spl main.app { visibility: hidden; }
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
           if (net.st === 'conn' && e && e.type === 'peer-unavailable' && Date.now() - net.t0 < 30000) { clearTimeout(net.pu); net.pu = setTimeout(() => { if (net.role === 'guest' && net.peer === pe && net.st === 'conn' && !net.on) dial(); }, 2500); return; }
-          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); draw(); }
+          if (net.st === 'conn') { net.ek = e && e.type === 'peer-unavailable' ? 'room' : 'svc'; net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); draw(); }
         });
         pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
       }).catch(() => { leave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; mode = 'err'; show(); });
     }
-    function dial() {
+    function dial(second) {
       if (net.role !== 'guest' || !net.peer) return;
       if (net.conn) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
       let c; try { c = net.peer.connect(PFX + net.code, { reliable: true, serialization: 'json' }); } catch (e) { return; }
@@ -3192,7 +3198,8 @@ html.spl main.app { visibility: hidden; }
       c.on('data', (d) => { if (net.conn === c) guestData(d); });
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
-      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Impossible de joindre ton ami. Le réseau bloque peut-être la connexion directe : essaie en wifi ou en 4G.'; net.st = 'err'; draw(); } }, 15000); }
+      if (!second && net.st === 'conn') { clearTimeout(net.d2); net.d2 = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn' && net.peer) dial(true); }, 8000); }
+      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive quand l’un est en wifi et l’autre en 4G.'; net.ek = 'net'; net.st = 'err'; draw(); } }, 15000); }
     }
     function guestData(d) {
       if (!d || typeof d !== 'object') return;
@@ -3218,13 +3225,13 @@ html.spl main.app { visibility: hidden; }
     function retry() {
       clearTimeout(net.rt);
       if (net.role !== 'guest' || net.on || net.st === 'gone') return;
-      if (net.retry++ > 20) { net.msg = 'Connexion perdue. Quitte puis rejoins avec le code.'; net.st = 'err'; draw(); return; }
+      if (net.retry++ > 20) { net.msg = 'La connexion avec ton ami est perdue.'; net.ek = 'lost'; net.st = 'err'; draw(); return; }
       net.rt = setTimeout(() => { if (net.role !== 'guest' || net.on) return; try { const pe = net.peer; if (pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } dial(); retry(); }, 5000);
     }
     function leave(quiet) {
       if (!net.role) return;
       send({ t: 'bye' }); const pe = net.peer, c = net.conn, was = net.started;
-      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearInterval(net.au);
+      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearTimeout(net.d2); clearInterval(net.au);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
       net.role = null; net.peer = null; net.conn = null; net.on = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.hn = '';
       sheet.hidden = true; ui();
@@ -3281,7 +3288,13 @@ html.spl main.app { visibility: hidden; }
         add(E('h3', '', net.st === 'open' ? 'Création du salon…' : 'Connexion…')); add(E('p', '', net.st === 'open' ? 'Un instant.' : 'On rejoint le salon ' + net.code + '.'));
         add(B('Annuler', '', () => { leave(true); mode = ''; draw(); })); return;
       }
-      if (net.st === 'err') { add(E('h3', '', 'Oups')); add(E('p', '', net.msg || 'Connexion impossible.')); add(B('Quitter', 'primary', () => { leave(); mode = ''; })); return; }
+      if (net.st === 'err') {
+        const g = net.role === 'guest' && !!net.code, k = net.ek;
+        add(E('h3', '', k === 'net' ? 'Connexion impossible' : k === 'room' ? 'Salon introuvable' : k === 'lost' ? 'Connexion perdue' : 'Oups')); add(E('p', '', net.msg || 'Connexion impossible.'));
+        if (k === 'net') { ['• Mettez-vous tous les deux en wifi, ou tous les deux en 4G', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = E('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
+        if (g) add(B('Réessayer', 'primary', rejoin));
+        add(B('Quitter', g ? '' : 'primary', () => { leave(); mode = ''; })); return;
+      }
       if (net.role === 'host' && !net.started) {
         add(E('h3', '', 'Ton salon')); add(E('div', 'blcodebig', net.code)); add(E('p', '', 'Donne ce code à ton ami, ou envoie-lui le lien.'));
         const row = E('div', 'blrow2');
@@ -7714,9 +7727,15 @@ html.spl main.app { visibility: hidden; }
       newGame();
     }
     /* invité */
+    function rejoin() {
+      const code = net.code; clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearTimeout(net.d2); clearInterval(net.hb);
+      const pe = net.peer, c = net.conn; net.peer = null; net.conn = null;
+      try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ }
+      guestJoin(code);
+    }
     document.addEventListener('visibilitychange', () => { if (document.hidden) return; try { const pe = net.peer; if (net.role && pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } });
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false;
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.ek = ''; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false;
       clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
@@ -7725,12 +7744,12 @@ html.spl main.app { visibility: hidden; }
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
           if (net.st === 'conn' && e && e.type === 'peer-unavailable' && Date.now() - net.t0 < 30000) { clearTimeout(net.pu); net.pu = setTimeout(() => { if (net.role === 'guest' && net.peer === pe && net.st === 'conn' && !net.on) dial(); }, 2500); return; }
-          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); renderOn(); }
+          if (net.st === 'conn') { net.ek = e && e.type === 'peer-unavailable' ? 'room' : 'svc'; net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); renderOn(); }
         });
         pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
       }).catch(() => { netLeave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; net.st = 'err'; showOn('err'); });
     }
-    function dial() {
+    function dial(second) {
       if (net.role !== 'guest' || !net.peer) return;
       if (net.conn) { const o = net.conn; net.conn = null; try { o.close(); } catch (e) { /* ignore */ } }
       let c; try { c = net.peer.connect(PFX + net.code, { reliable: true, serialization: 'json' }); } catch (e) { return; }
@@ -7739,7 +7758,8 @@ html.spl main.app { visibility: hidden; }
       c.on('data', (d) => { if (net.conn === c) guestData(d); });
       c.on('close', () => { if (net.conn === c) guestLost(); });
       c.on('error', () => { if (net.conn === c) guestLost(); });
-      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Impossible de joindre ton ami. Le réseau bloque peut-être la connexion directe : essaie en wifi ou en 4G.'; net.st = 'err'; renderOn(); } }, 15000); }
+      if (!second && net.st === 'conn') { clearTimeout(net.d2); net.d2 = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn' && net.peer) dial(true); }, 8000); }
+      if (net.st === 'conn') { clearTimeout(net.ct); net.ct = setTimeout(() => { if (net.role === 'guest' && !net.on && net.st === 'conn') { net.msg = 'Vos deux téléphones n’arrivent pas à se joindre. Ça arrive quand l’un est en wifi et l’autre en 4G.'; net.ek = 'net'; net.st = 'err'; renderOn(); } }, 15000); }
     }
     /* Valide l'état envoyé par l'hôte avant de l'appliquer (formes, cartes, indices) */
     const CARD_RE = /^(7|8|9|10|J|Q|K|A)[SHDC]$/;
@@ -7786,13 +7806,13 @@ html.spl main.app { visibility: hidden; }
     function retry() {
       clearTimeout(net.rt);
       if (net.role !== 'guest' || net.on || net.st === 'gone') return;
-      if (net.retry++ > 20) { net.msg = 'Connexion perdue. Quitte puis rejoins avec le code.'; net.st = 'err'; renderOn(); return; }
+      if (net.retry++ > 20) { net.msg = 'La connexion avec ton ami est perdue.'; net.ek = 'lost'; net.st = 'err'; renderOn(); return; }
       net.rt = setTimeout(() => { if (net.role !== 'guest' || net.on) return; try { const pe = net.peer; if (pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } dial(); retry(); }, 5000);
     }
     function netLeave(quiet) {
       if (!net.role) return;
       send({ t: 'bye' }); const pe = net.peer, c = net.conn;
-      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearInterval(net.au);
+      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu); clearTimeout(net.d2); clearInterval(net.au);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
       net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.sent = '';
       NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]);
@@ -7862,8 +7882,11 @@ html.spl main.app { visibility: hidden; }
         add(mk('p', '', net.st === 'open' ? 'Un instant.' : 'On rejoint le salon ' + net.code + '.')); add(B('Annuler', '', () => { netLeave(true); onMode = ''; renderOn(); })); return;
       }
       if (net.st === 'err') {
-        add(mk('h3', '', 'Oups')); add(mk('p', '', net.msg || 'Connexion impossible.'));
-        add(B('Quitter', 'primary', () => { netLeave(); onMode = ''; })); return;
+        const g = net.role === 'guest' && !!net.code, k = net.ek;
+        add(mk('h3', '', k === 'net' ? 'Connexion impossible' : k === 'room' ? 'Salon introuvable' : k === 'lost' ? 'Connexion perdue' : 'Oups')); add(mk('p', '', net.msg || 'Connexion impossible.'));
+        if (k === 'net') { ['• Mettez-vous tous les deux en wifi, ou tous les deux en 4G', '• Ton ami doit rester sur l’appli', '• Coupe le VPN s’il y en a un'].forEach((t) => { const l = mk('p', '', t); l.style.textAlign = 'left'; l.style.margin = '2px 0'; add(l); }); }
+        if (g) add(B('Réessayer', 'primary', rejoin));
+        add(B('Quitter', g ? '' : 'primary', () => { netLeave(); onMode = ''; })); return;
       }
       if (net.role === 'host' && !net.started) {
         add(mk('h3', '', 'Ton salon'));
