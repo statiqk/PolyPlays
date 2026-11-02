@@ -3156,15 +3156,17 @@ html.spl main.app { visibility: hidden; }
       send({ t: 'go', p }); cfg.onGo('host', p); ui();
     }
     /* invité */
+    document.addEventListener('visibilitychange', () => { if (document.hidden) return; try { const pe = net.peer; if (net.role && pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } });
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
         const pe = new window.Peer({ debug: 0 }); net.peer = pe;
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
-          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); draw(); }
+          if (net.st === 'conn' && e && e.type === 'peer-unavailable' && Date.now() - net.t0 < 30000) { clearTimeout(net.pu); net.pu = setTimeout(() => { if (net.role === 'guest' && net.peer === pe && net.st === 'conn' && !net.on) dial(); }, 2500); return; }
+          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); draw(); }
         });
         pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
       }).catch(() => { leave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; mode = 'err'; show(); });
@@ -3210,7 +3212,7 @@ html.spl main.app { visibility: hidden; }
     function leave(quiet) {
       if (!net.role) return;
       send({ t: 'bye' }); const pe = net.peer, c = net.conn, was = net.started;
-      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct);
+      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
       net.role = null; net.peer = null; net.conn = null; net.on = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.hn = '';
       sheet.hidden = true; ui();
@@ -7687,8 +7689,9 @@ html.spl main.app { visibility: hidden; }
       newGame();
     }
     /* invité */
+    document.addEventListener('visibilitychange', () => { if (document.hidden) return; try { const pe = net.peer; if (net.role && pe && pe.disconnected && !pe.destroyed) pe.reconnect(); } catch (e) { /* ignore */ } });
     function guestJoin(code) {
-      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.msg = ''; net.retry = 0; net.on = false; net.started = false;
+      net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false;
       clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
@@ -7696,7 +7699,8 @@ html.spl main.app { visibility: hidden; }
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
-          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); renderOn(); }
+          if (net.st === 'conn' && e && e.type === 'peer-unavailable' && Date.now() - net.t0 < 30000) { clearTimeout(net.pu); net.pu = setTimeout(() => { if (net.role === 'guest' && net.peer === pe && net.st === 'conn' && !net.on) dial(); }, 2500); return; }
+          if (net.st === 'conn') { net.msg = e && e.type === 'peer-unavailable' ? 'Salon introuvable. Vérifie le code, et que ton ami a bien créé le salon et reste sur l’appli.' : 'Le service de mise en relation ne répond pas. Réessaie dans un moment.'; net.st = 'err'; clearTimeout(net.ct); renderOn(); }
         });
         pe.on('disconnected', () => { setTimeout(() => { try { if (net.peer === pe && !pe.destroyed) pe.reconnect(); } catch (x) { /* ignore */ } }, 1500); });
       }).catch(() => { netLeave(true); net.msg = 'Indisponible ici. Ouvre PolyPlays installée (polyplays.polytabs.fr).'; net.st = 'err'; showOn('err'); });
@@ -7763,7 +7767,7 @@ html.spl main.app { visibility: hidden; }
     function netLeave(quiet) {
       if (!net.role) return;
       send({ t: 'bye' }); const pe = net.peer, c = net.conn;
-      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct);
+      clearInterval(net.hb); clearTimeout(net.rt); clearTimeout(net.ct); clearTimeout(net.pu);
       setTimeout(() => { try { if (c) c.close(); } catch (e) { /* ignore */ } try { if (pe) pe.destroy(); } catch (e) { /* ignore */ } }, 200);
       net.role = null; net.peer = null; net.conn = null; net.on = false; net.paused = false; net.started = false; net.st = ''; net.fname = ''; net.ftk = ''; net.tk = ''; net.sent = '';
       NAMES.splice(0, 4, NM0[0], NM0[1], NM0[2], NM0[3]);
