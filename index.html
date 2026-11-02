@@ -822,7 +822,11 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blpc .rk, .blc .rk { position: absolute; left: 10%; top: 5%; font-weight: 700; font-size: 30cqw; line-height: 1; display: grid; justify-items: start; }
 .blpc .rk i, .blc .rk i { font-style: normal; font-size: 26cqw; }
 .blpc .bg, .blc .bg { position: absolute; right: 8%; bottom: 3%; font-size: 52cqw; line-height: 1; opacity: .2; }
-.blpc.win { box-shadow: 0 0 0 .7cqw var(--amber), 0 .6cqw 1.6cqw rgba(0, 0, 0, .5); }
+.blpc.win { box-shadow: 0 0 0 .7cqw var(--amber), 0 0 3cqw .9cqw rgba(245, 185, 58, .5), 0 .6cqw 1.6cqw rgba(0, 0, 0, .5); }
+.blcr { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(160deg, #FFD66B, #E39A1B); box-shadow: 0 0 0 2px rgba(245, 185, 58, .4); }
+.blcr svg { width: 15px; height: 15px; display: block; }
+.nmr { display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+#blStatus:has(.blcr) { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .blpc.dim { filter: brightness(.7); }
 .blgain { position: absolute; transform: translate(-50%, -50%); font: 800 6cqw var(--font-mono); color: var(--amber); text-shadow: 0 .4cqw 1cqw rgba(0, 0, 0, .7); animation: blgain .9s ease-out both; pointer-events: none; z-index: 6; }
 @keyframes blgain { 0% { opacity: 0; margin-top: 0; } 25% { opacity: 1; } 100% { opacity: 0; margin-top: -9cqw; } }
@@ -7619,12 +7623,16 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       if (L.length === hands[0].length && trick.length && team(winner(trick, trump).p) === 0 && su(trick[0].c) !== trump) return 'Ton partenaire est maître : joue ce que tu veux.';
       return 'Défausse-toi.';
     }
+    const CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.5h18l1.2-9.5-4.9 3.7L12 5 6.7 11.7 1.8 8z" fill="#fff8e0"/><circle cx="12" cy="4.6" r="1.5" fill="#fff8e0"/><circle cx="2.2" cy="7.6" r="1.3" fill="#fff8e0"/><circle cx="21.8" cy="7.6" r="1.3" fill="#fff8e0"/><rect x="3" y="19" width="18" height="2.4" rx="1.2" fill="#fff8e0"/><circle cx="12" cy="13.6" r="1.4" fill="#C8590B"/></svg>';
+    const crown = () => { const c = mk('span', 'blcr'); c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'Maître du pli'); c.innerHTML = CROWN; return c; };
     function render() {
+      const master = (ph === 'play' || ph === 'wait') && trick.length > 0 ? winner(trick, trump).p : -1;
       setText(eNous, sc[0]); setText(eEux, sc[1]); setText(eMn, Math.max(1, mn));
       // sièges
       [1, 2, 3].forEach((p) => {
         const el = seatEl[p]; el.textContent = '';
-        const nm = mk('b', '', NAMES[p]); el.classList.toggle('on', (ph === 'bid' || ph === 'play') && turn === p); el.appendChild(nm);
+        const nm = mk('b', '', NAMES[p]); el.classList.toggle('on', (ph === 'bid' || ph === 'play') && turn === p);
+        if (master === p) { const r = mk('div', 'nmr'); r.appendChild(nm); r.appendChild(crown()); el.appendChild(r); } else el.appendChild(nm);
         el.appendChild(fanOf(ph === 'idle' || dealing ? 0 : hands[p].length));
         if (ph === 'bid' && turn !== p && passes > 0 && ((p - (dealer + 1) + 4) % 4) < passes) el.appendChild(mk('span', 'ps', 'passe'));
       });
@@ -7643,7 +7651,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
         const c = cardFace(turned, 'blpc turned'); c.style.left = '50%'; c.style.top = '50%'; if (round === 2 || ph === 'redeal') c.classList.add('dim'); eMid.appendChild(c);
         const cap = mk('div', 'blcap', round === 2 ? 'personne n’a pris au 1er tour' : 'carte retournée'); cap.style.top = '72%'; eMid.appendChild(cap);
       } else if (ph === 'play' || ph === 'wait') {
-        const w = trick.length === 4 ? winner(trick, trump).p : -1;
+        const w = master;
         trick.forEach((x, i) => { const c = cardFace(x.c, 'blpc'); const s = slot(x.p); c.style.left = s.x + '%'; c.style.top = s.y + '%'; c.style.zIndex = String(i + 1); if (w === x.p) c.classList.add('win'); eMid.appendChild(c); });
       }
       eLb.hidden = !(last && (ph === 'play' || ph === 'wait'));
@@ -7651,6 +7659,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       if (showLast && last) last.cards.forEach((x) => { const w = mk('div'); w.appendChild(cardFace(x.c, 'blpc')); w.appendChild(mk('span', '', NAMES[x.p])); eLast.appendChild(w); });
       // statut
       setText(eSt, statusText());
+      { const oc = eSt.querySelector('.blcr'); if (oc) oc.remove(); if (master === 0) eSt.insertBefore(crown(), eSt.firstChild); }
       // actions
       eAct.textContent = ''; eAct.className = 'blact';
       if (ph === 'bid' && turn === 0 && !dealing && !(net.role === 'guest' && !net.on)) {
