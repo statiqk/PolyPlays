@@ -1557,6 +1557,8 @@ html.spl main.app { visibility: hidden; }
 #spl .pw{position:absolute;left:0;right:0;bottom:calc(64px*var(--k));display:flex;align-items:center;justify-content:center;gap:calc(8px*var(--k));font:500 calc(11px*var(--k))/1 'Geist Mono',ui-monospace,monospace;letter-spacing:.08em;color:#9A94AE}
 #spl .pw i{width:calc(20px*var(--k));height:calc(20px*var(--k));border-radius:25%;background:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%3E%3Crect%20width=%2224%22%20height=%2224%22%20rx=%226%22%20fill=%22%230f1115%22/%3E%3Cg%20transform=%22translate%283%203%29%20scale%28.75%29%22%3E%3Crect%20x=%222%22%20y=%223%22%20width=%2212%22%20height=%229%22%20rx=%222.2%22%20fill=%22%234f9dff%22/%3E%3Crect%20x=%2216%22%20y=%223%22%20width=%226%22%20height=%229%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.55%22/%3E%3Crect%20x=%222%22%20y=%2214%22%20width=%227%22%20height=%227%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.55%22/%3E%3Crect%20x=%2211%22%20y=%2214%22%20width=%2211%22%20height=%227%22%20rx=%222.2%22%20fill=%22%234f9dff%22%20opacity=%22.8%22/%3E%3C/g%3E%3C/svg%3E") center/cover}
 #spl .cp{position:absolute;left:0;right:0;bottom:calc(38px*var(--k));text-align:center;font:500 calc(8.5px*var(--k))/1 'Geist Mono',ui-monospace,monospace;letter-spacing:.12em;color:#7d7791;text-transform:uppercase}
+#spl.ea .pw b{position:relative}
+#spl.ea .pw b::after{content:"";position:absolute;inset:-16px -12px}
 #spl .rt{margin-top:calc(26px*var(--k));display:flex;gap:calc(9px*var(--k));align-items:center;padding:calc(8px*var(--k)) calc(16px*var(--k));border-radius:99px;background:rgba(255,194,26,.14);border:1px solid rgba(255,194,26,.5);color:#FFC21A;font:600 calc(11px*var(--k))/1 'Geist Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase}
 #spl .rt i{width:calc(7px*var(--k));height:calc(7px*var(--k));border-radius:50%;background:#FFC21A;box-shadow:0 0 10px #FFC21A}
 #spl .rb{margin-top:calc(16px*var(--k));border:1.5px solid rgba(201,160,255,.55);background:rgba(109,94,252,.2);color:#fff;border-radius:99px;font:700 calc(14px*var(--k)) 'Instrument Sans',system-ui,sans-serif;padding:calc(10px*var(--k)) calc(30px*var(--k));cursor:pointer}
@@ -1600,10 +1602,37 @@ html.spl main.app { visibility: hidden; }
   if (window.__arcadeTest) return;
   var s0 = document.getElementById('spl'), tpl = s0 ? s0.cloneNode(true) : null, ov = null, cur = 'normal', timer = 0, busy = false;
   function clear() { clearInterval(devK); if (ov) { clearInterval(ov.__tick); ov.remove(); ov = null; } document.documentElement.classList.remove('spl'); }
-  var devK = 0, devMode = 'dev';
+  var devK = 0, devMode = 'dev', pill = null;
+  function byp() { try { return sessionStorage.getItem('etatBypass') === '1'; } catch (e) { return false; } }
+  function setByp(v) { try { if (v) sessionStorage.setItem('etatBypass', '1'); else sessionStorage.removeItem('etatBypass'); } catch (e) { /* ignore */ } }
+  function vib(n) { try { if (navigator.vibrate) navigator.vibrate(n); } catch (e) { /* ignore */ } }
+  function hidePill() { if (pill) { pill.remove(); pill = null; } }
+  function showPill() {
+    if (pill) return;
+    pill = document.createElement('button'); pill.type = 'button'; pill.textContent = '● Mode dev · quitter';
+    pill.style.cssText = 'position:fixed;z-index:100000;top:calc(env(safe-area-inset-top,0px) + 3px);left:50%;transform:translateX(-50%);background:rgba(40,30,8,.92);border:1px solid rgba(255,194,26,.6);color:#FFC21A;border-radius:99px;padding:4px 11px;font:600 10px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;cursor:pointer';
+    pill.addEventListener('click', function () { setByp(false); location.reload(); });
+    document.body.appendChild(pill);
+  }
+  function enter(sp) {
+    setByp(true); vib([20, 40, 20]);
+    var t = document.createElement('div'); t.textContent = 'Accès développeur activé';
+    t.style.cssText = 'position:absolute;left:50%;transform:translateX(-50%);bottom:calc(112px*var(--k,1));background:rgba(20,18,32,.92);border:1px solid rgba(255,194,26,.6);color:#FFC21A;border-radius:99px;padding:9px 18px;font:600 12px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;white-space:nowrap';
+    sp.appendChild(t);
+    setTimeout(function () { clear(); showPill(); }, 900);
+  }
+  function armTaps(sp) {
+    var b = sp.querySelector('.pw b'); if (!b) return;
+    var n = 0, t0 = 0;
+    b.addEventListener('click', function (e) {
+      e.preventDefault(); var now = Date.now();
+      if (now - t0 > 1500) n = 0; if (n === 0) t0 = now; n++; vib(8);
+      if (n >= 3) { n = 0; enter(sp); }
+    });
+  }
   function devBuild(j) {
     var mt = devMode === 'mt';
-    var s = tpl.cloneNode(true); s.id = 'spl'; s.className = 'fr'; s.style.zIndex = '100000';
+    var s = tpl.cloneNode(true); s.id = 'spl'; s.className = 'fr ea'; s.style.zIndex = '100000'; armTaps(s);
     var tt = s.querySelector('.t'); if (tt) { var tx = tt.textContent; tt.textContent = ''; tx.split('').forEach(function (ch, i) { var sp = document.createElement('span'); sp.textContent = ch; sp.style.setProperty('--i', i); tt.appendChild(sp); }); }
     var vv = window.visualViewport, w = (vv && vv.width) || window.innerWidth, h = (vv && vv.height) || window.innerHeight;
     s.style.setProperty('--k', String(Math.max(.8, Math.min(1.65, Math.min(w / 390, h / 844)))));
@@ -1653,7 +1682,8 @@ html.spl main.app { visibility: hidden; }
   }
   function apply(j) {
     var m = j && j.mode; if (m !== 'maintenance' && m !== 'dev') m = 'normal';
-    if (m === 'normal') { if (cur !== 'normal') { cur = 'normal'; clearInterval(timer); timer = 0; location.reload(); } return; }
+    if (m === 'normal') { hidePill(); if (cur !== 'normal') { cur = 'normal'; clearInterval(timer); timer = 0; location.reload(); } return; }
+    if (byp()) { cur = m; if (ov) clear(); showPill(); if (!timer) timer = setInterval(function () { check(false); }, 30000); return; }
     if (m !== cur || !ov) { cur = m; clear(); if (m === 'dev') showDev(j); else showMt(j); }
     if (!timer) timer = setInterval(function () { check(false); }, 30000);
   }
