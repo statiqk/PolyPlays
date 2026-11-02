@@ -796,8 +796,16 @@ body.locked[data-fit] #panel-navale #nvPlace .btn { padding-inline: 2px; font-si
 body.locked[data-fit] #panel-reflexes #rpad { flex: 1 1 0; min-height: 0; }
 body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 /* Belote */
-.blt { position: relative; width: 100%; aspect-ratio: 1; max-width: min(100%, 62vh); margin-inline: auto; container-type: size; border-radius: calc(26px * var(--u)); background: radial-gradient(circle at 50% 45%, #1F7A4D, #0F4D31); border: 1px solid var(--line); overflow: hidden; box-shadow: inset 0 0 0 calc(3px * var(--u)) rgba(255, 255, 255, .05), 0 calc(14px * var(--u)) calc(24px * var(--u)) rgba(0, 0, 0, .35); }
-.bls { position: absolute; text-align: center; font: 500 3.5cqw var(--font-mono); color: #CFEBDB; display: grid; justify-items: center; gap: 1.2cqw; }
+.blt { position: relative; width: 100%; aspect-ratio: 1; max-width: min(100%, 62vh); margin-inline: auto; container-type: size; border-radius: calc(26px * var(--u)); border: calc(7px * var(--u)) solid transparent; background: repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px) padding-box, radial-gradient(circle at 50% 45%, #1F7A4D, #0F4D31) padding-box, linear-gradient(135deg, #8a5a2e, #5a3819 50%, #7a4d25) border-box; overflow: hidden; box-shadow: inset 0 0 calc(18px * var(--u)) rgba(0,0,0,.35), 0 calc(14px * var(--u)) calc(24px * var(--u)) rgba(0, 0, 0, .35); }
+.blt::before { content: ''; position: absolute; inset: 1.6cqw; border: 1px solid rgba(245,185,58,.35); border-radius: 4cqw; pointer-events: none; }
+.blt::after { content: ''; position: absolute; left: 50%; top: 50%; width: 38cqw; height: 38cqw; transform: translate(-50%,-50%); border: 1px dashed rgba(255,255,255,.2); border-radius: 50%; pointer-events: none; }
+.bls .av { position: relative; width: 6.4cqw; height: 6.4cqw; border-radius: 50%; display: grid; place-items: center; font: 700 3.4cqw var(--font-body); color: #fff; background: #1a3f30; box-shadow: 0 0 0 .55cqw var(--tc, #4ADE9C); }
+.bls.eux { --tc: #FF7B8E; }
+.bls.on .av { box-shadow: 0 0 0 .55cqw var(--amber), 0 0 3cqw .8cqw rgba(245,185,58,.55); }
+.bls .tg { font-size: 2cqw; line-height: .9; margin-top: -.6cqw; letter-spacing: .08em; color: var(--tc, #4ADE9C); opacity: .9; }
+.bls .dl { position: absolute; right: -2cqw; bottom: -.8cqw; width: 3.6cqw; height: 3.6cqw; border-radius: 50%; display: grid; place-items: center; font: 700 2.1cqw/1 var(--font-body); font-style: normal; background: linear-gradient(160deg, #FFD66B, #E39A1B); color: #3a2200; }
+.blat { text-align: center; }
+.bls { position: absolute; text-align: center; font: 500 3.5cqw var(--font-mono); color: #CFEBDB; display: grid; justify-items: center; gap: .9cqw; }
 .bls b { font-weight: 500; letter-spacing: .04em; }
 .bls.on b { color: var(--amber); }
 .bls .ps { background: rgba(0, 0, 0, .38); border-radius: 99px; padding: .4cqw 2.4cqw; font-size: 3cqw; }
@@ -836,7 +844,7 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 .blpc.turned { width: 18cqw; }
 .blcap { position: absolute; left: 50%; transform: translateX(-50%); font: 500 3.2cqw var(--font-mono); color: #CFEBDB; white-space: nowrap; }
 .blat { position: absolute; left: 3cqw; top: 3cqw; background: rgba(0, 0, 0, .34); border-radius: 3cqw; padding: 1.4cqw 2.6cqw; font: 500 3cqw var(--font-mono); color: #CFEBDB; letter-spacing: .05em; line-height: 1.25; }
-.blat b { font-size: 6cqw; font-family: var(--font-body); vertical-align: -.4cqw; }
+.blat b { font-size: 8cqw; line-height: 1; font-family: var(--font-body); vertical-align: -.4cqw; }
 .blat b.red { color: #FF7B8E; }
 .bltoast { position: absolute; left: 3cqw; bottom: 3cqw; background: var(--amber); color: #1a1200; font-weight: 800; border-radius: 99px; padding: 1.2cqw 4cqw; font-size: 4.2cqw; animation: blin2 .25s ease-out both; }
 @keyframes blin2 { from { opacity: 0; transform: translateY(2cqw); } to { opacity: 1; transform: none; } }
@@ -1445,6 +1453,7 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .stats .k { font-size: .56rem; line-height: 1; margin: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .stats .v { font-size: .78rem; line-height: 1; margin: 0; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox { position: absolute; inset: 0; container-type: normal; display: block; aspect-ratio: auto; width: auto; height: auto; border-radius: 0; background: radial-gradient(ellipse at 50% 48%, #1f8a5c 0%, #115339 62%, #0a3326 100%); box-shadow: inset 0 0 0 5px #2a1d5e, inset 0 0 0 7px rgba(124, 92, 255, .4); }
+  body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::before, body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt::after { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .fitbox.sq > .blt { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); --sq: calc(100dvh - 68px); width: var(--sq); height: var(--sq); aspect-ratio: auto; max-width: none; margin: 0; background: none; border: 0; box-shadow: none; border-radius: 0; overflow: visible; flex: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote .blat { display: none; }
   body.locked[data-fit]:has(#panel-belote:not([hidden])) #panel-belote #blAtS.on { display: flex; }
@@ -7678,16 +7687,18 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       // sièges
       [1, 2, 3].forEach((p) => {
         const el = seatEl[p]; el.textContent = '';
-        const nm = mk('b', '', NAMES[p]); el.classList.toggle('on', (ph === 'bid' || ph === 'play') && turn === p);
+        const nm = mk('b', '', NAMES[p]); el.classList.toggle('on', (ph === 'bid' || ph === 'play') && turn === p); el.classList.toggle('eux', team(p) === 1);
+        const av = mk('div', 'av', (NAMES[p] || '?').trim().charAt(0).toUpperCase()); if (dealer === p) av.appendChild(mk('i', 'dl', 'D')); el.appendChild(av);
         if (master === p) { const r = mk('div', 'nmr'); r.appendChild(nm); r.appendChild(crown()); el.appendChild(r); } else el.appendChild(nm);
+        el.appendChild(mk('span', 'tg', team(p) === 0 ? 'NOUS' : 'EUX'));
         el.appendChild(fanOf(ph === 'idle' || dealing ? 0 : hands[p].length));
         if (ph === 'bid' && turn !== p && passes > 0 && ((p - (dealer + 1) + 4) % 4) < passes) el.appendChild(mk('span', 'ps', 'passe'));
       });
       // atout
       if (trump && ph !== 'idle') {
         eAt.hidden = false; eAt.textContent = '';
-        eAt.appendChild(document.createTextNode('ATOUT ')); const b = mk('b', red(trump) ? 'red' : '', SY[trump]); eAt.appendChild(b);
-        eAt.appendChild(mk('br')); eAt.appendChild(document.createTextNode('pris par ' + (taker === 0 ? 'toi' : NAMES[taker])));
+        eAt.appendChild(document.createTextNode('ATOUT')); eAt.appendChild(mk('br')); const b = mk('b', red(trump) ? 'red' : '', SY[trump]); eAt.appendChild(b);
+        eAt.appendChild(mk('br')); eAt.appendChild(document.createTextNode(taker === 0 ? 'toi' : NAMES[taker]));
       } else eAt.hidden = true;
       { const aS = $e('blAtS'), aV = $e('blAtV'); if (trump && ph !== 'idle') { aV.textContent = SY[trump] + ' ' + (taker === 0 ? 'toi' : NAMES[taker]); aV.className = 'v' + (red(trump) ? ' red' : ''); aS.classList.add('on'); } else aS.classList.remove('on'); }
       $e('panel-belote').dataset.ph = ph;
