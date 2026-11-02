@@ -1,4 +1,4 @@
-const V = 'polyplays-c2b9ea6d1e';
+const V = 'polyplays-ed876d63a7';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 const OPT = ['peerjs.min.js',
   'fonts/instrument-sans-latin-400-normal.woff2', 'fonts/instrument-sans-latin-500-normal.woff2', 'fonts/instrument-sans-latin-600-normal.woff2', 'fonts/instrument-sans-latin-700-normal.woff2',
@@ -14,6 +14,7 @@ self.addEventListener('message', (e) => { if (e.data === 'SKIP_WAITING') self.sk
 self.addEventListener('fetch', (e) => {
   const r = e.request;
   if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
+  if (new URL(r.url).pathname.slice(-10) === '/etat.json') return;
   e.respondWith(caches.open(V).then((c) => c.match(r, { ignoreSearch: true }).then((hit) => {
     if (hit) return hit;
     return fetch(r).then((res) => { if (res.ok) c.put(r, res.clone()); return res; })
