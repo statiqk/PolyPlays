@@ -3094,6 +3094,12 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     try { const c = window.crypto; if (c && c.getRandomValues) { const a = new Uint32Array(1), lim = Math.floor(4294967296 / n) * n; do { c.getRandomValues(a); } while (a[0] >= lim); return a[0] % n; } } catch (e) { /* ignore */ }
     return Math.floor(Math.random() * n);
   }
+  const BOTN = ['Léa', 'Hugo', 'Camille', 'Maxime', 'Zoé', 'Inès', 'Théo', 'Lucas', 'Jade', 'Nathan', 'Manon', 'Louis', 'Chloé', 'Arthur', 'Sarah', 'Paul', 'Emma', 'Tom', 'Lina', 'Noé', 'Clara', 'Jules', 'Alice', 'Gabin'];
+  function pickNames(ex) {
+    const bad = (ex || []).map((x) => String(x || '').trim().toLowerCase()), a = BOTN.filter((n) => bad.indexOf(n.toLowerCase()) < 0);
+    for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a.slice(0, 3);
+  }
   function qrSvg(text) {
     const q = QRG(0, 'M'); q.addData(text); q.make();
     const n = q.getModuleCount(), m = 2; let d = '';
@@ -7309,12 +7315,6 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     let trick = [], last = null, cnt = [0, 0], tp = [0, 0], played = [], pl = {}, bt = -1, done = 0, lastDelta = null;
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
     const NM0 = NAMES.slice();
-    const BOTN = ['Léa', 'Hugo', 'Camille', 'Maxime', 'Zoé', 'Inès', 'Théo', 'Lucas', 'Jade', 'Nathan', 'Manon', 'Louis', 'Chloé', 'Arthur', 'Sarah', 'Paul', 'Emma', 'Tom', 'Lina', 'Noé', 'Clara', 'Jules', 'Alice', 'Gabin'];
-    function pickNames(ex) {
-      const bad = (ex || []).map((x) => String(x || '').trim().toLowerCase()), a = BOTN.filter((n) => bad.indexOf(n.toLowerCase()) < 0);
-      for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; }
-      return a.slice(0, 3);
-    }
     let dealing = false, dlEnd = null;
     const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', ftk: '', tk: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
 
@@ -8189,6 +8189,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       clearTimeout(T); clearTimeout(PT); pend = false; SB = cfgSB; BB = SB * 2; ME = ol ? (ol.role === 'host' ? 0 : 1) : 0;
       ov = null; win = []; ev = null; st = 'play'; board = []; dealer = -1; phase = 0;
       if (ol && ol.role === 'guest') { P = []; st = 'wait'; render(); return; }
+      { const pn = pickNames([mpx && mpx.peerName]); let k = 0; for (let q = 1; q < 4; q++) if (!(ol && q === 1)) NAMES[q] = pn[k++]; }
       P = fresh(); newHand();
     }
     function newHand() {
@@ -8431,12 +8432,13 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     /* ---- sauvegarde ---- */
     const full = () => ({
       P: P.map((p) => ({ chips: p.chips, bet: p.bet, tot: p.tot, fold: p.fold, allin: p.allin, out: p.out, acted: p.acted, cl: p.cl ? 1 : 0, show: p.show, sc: p.sc, ag: p.ag, hand: p.hand })),
-      deck, b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, w: win, sb: SB, lv: level
+      deck, b: board, d: dealer, t: turn, c: cur, r: minR, ph: phase, s: st, e: ev, w: win, sb: SB, lv: level, nm: NAMES.slice(1)
     });
     function restore(d) {
       hAct = 1;
       if (!d || !Array.isArray(d.P) || d.P.length !== 4 || !Array.isArray(d.deck) || !Array.isArray(d.b)) throw new Error('bad');
       const num = (x, lo, hi) => { x = +x; if (!(x >= lo && x <= hi)) throw new Error('bad'); return x | 0; };
+      if (Array.isArray(d.nm) && d.nm.length === 3 && d.nm.every((n) => typeof n === 'string' && n.trim())) NAMES.splice(1, 3, d.nm[0].slice(0, 12), d.nm[1].slice(0, 12), d.nm[2].slice(0, 12));
       P = d.P.map((p, i) => ({ n: NAMES[i], hu: i === 0, chips: num(p.chips, 0, 1e6), bet: num(p.bet, 0, 1e6), tot: num(p.tot, 0, 1e6), fold: p.fold ? 1 : 0, allin: p.allin ? 1 : 0, out: p.out ? 1 : 0, acted: p.acted ? 1 : 0, cl: p.cl ? 1 : 0, show: p.show ? 1 : 0, sc: +p.sc || 0, ag: Math.max(.5, Math.min(1.5, +p.ag || 1)), hand: (Array.isArray(p.hand) ? p.hand : []).slice(0, 2).map((x) => num(x, 0, 51)) }));
       deck = d.deck.map((x) => num(x, 0, 51)); board = d.b.slice(0, 5).map((x) => num(x, 0, 51));
       dealer = num(d.d, -1, 3); turn = num(d.t, 0, 3); cur = num(d.c, 0, 1e6); minR = num(d.r, 1, 1e6); phase = num(d.ph, 0, 3);
