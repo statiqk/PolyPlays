@@ -7309,6 +7309,12 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     let trick = [], last = null, cnt = [0, 0], tp = [0, 0], played = [], pl = {}, bt = -1, done = 0, lastDelta = null;
     let sel = '', active = false, timer = 0, toastT = 0, showLast = false, auto = false, over = false;
     const NM0 = NAMES.slice();
+    const BOTN = ['Léa', 'Hugo', 'Camille', 'Maxime', 'Zoé', 'Inès', 'Théo', 'Lucas', 'Jade', 'Nathan', 'Manon', 'Louis', 'Chloé', 'Arthur', 'Sarah', 'Paul', 'Emma', 'Tom', 'Lina', 'Noé', 'Clara', 'Jules', 'Alice', 'Gabin'];
+    function pickNames(ex) {
+      const bad = (ex || []).map((x) => String(x || '').trim().toLowerCase()), a = BOTN.filter((n) => bad.indexOf(n.toLowerCase()) < 0);
+      for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a.slice(0, 3);
+    }
     let dealing = false, dlEnd = null;
     const net = { role: null, peer: null, conn: null, code: '', g: 2, mode: 'together', on: false, paused: false, started: false, last: 0, hb: 0, rt: 0, ct: 0, retry: 0, fname: '', ftk: '', tk: '', hn: '', hp: 0, st: '', msg: '', sent: '' };
 
@@ -8067,6 +8073,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     function newGame() {
       if (net.role === 'guest') return;
       if (dlEnd) dlEnd();
+      { const pn = pickNames([myName, net.fname]); let k = 0; for (let q = 1; q < 4; q++) if (!(net.role === 'host' && q === net.g)) NAMES[q] = pn[k++]; }
       clearTimeout(timer); resEl.hidden = true; over = false; G = { t: opt.t, lv: opt.lv }; sc = [0, 0]; mn = 0; dealer = Math.floor(Math.random() * 4); last = null;
       SFX.play('flip'); deal();
     }
@@ -8074,7 +8081,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     SAVE.reg('belote', {
       snap() {
         if (net.role || ph === 'idle' || ph === 'over' || ph === 'redeal' || (ph === 'mend' && over)) return null;
-        return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: G.t, lv: G.lv, vd };
+        return { sc, mn, dealer, turn, ph: ph === 'wait' ? 'play' : ph, round, passes, hands, turned, rest, trump, taker, trick, last, cnt, tp, played, pl, bt, done, t: G.t, lv: G.lv, vd, nm: NAMES.slice(1) };
       },
       load(d) {
         const okH = Array.isArray(d.hands) && d.hands.length === 4 && d.hands.every((h) => Array.isArray(h) && h.every((c) => typeof c === 'string' && /^(7|8|9|10|J|Q|K|A)[SHDC]$/.test(c)));
@@ -8083,6 +8090,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
         hands = d.hands; turned = d.turned; rest = Array.isArray(d.rest) ? d.rest : []; trump = d.trump || ''; taker = typeof d.taker === 'number' ? d.taker : -1;
         trick = d.trick; last = d.last || null; cnt = d.cnt || [0, 0]; tp = d.tp || [0, 0]; played = d.played || []; pl = d.pl || {}; bt = typeof d.bt === 'number' ? d.bt : -1; done = +d.done || 0; over = false; sel = '';
         G = { t: [1, 501, 1000].indexOf(+d.t) >= 0 ? +d.t : opt.t, lv: ['e', 'n', 'h'].indexOf(d.lv) >= 0 ? d.lv : opt.lv };
+        if (Array.isArray(d.nm) && d.nm.length === 3 && d.nm.every((n) => typeof n === 'string' && n.trim())) NAMES.splice(1, 3, d.nm[0].slice(0, 12), d.nm[1].slice(0, 12), d.nm[2].slice(0, 12));
         vd = Array.isArray(d.vd) && d.vd.length === 4 ? d.vd : [{}, {}, {}, {}];
         if (ph === 'mend') { dealer = (dealer + 1) % 4; deal(); return; }
         if (trick.length === 4) { ph = 'wait'; render(); later(endTrick, 400); return; }
