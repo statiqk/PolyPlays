@@ -788,6 +788,8 @@ body.locked[data-fit] .fitbox.mmf .mmc { aspect-ratio: auto; min-height: 0; }
 /* Navale : flotte, stats compactes, bataille et paysage */
 .nvfl { display: flex; justify-content: center; gap: calc(6px * var(--u)); flex-wrap: wrap; }
 .nvfl i { display: flex; gap: 2px; padding: calc(5px * var(--u)) calc(8px * var(--u)); border-radius: 12px; background: var(--card, #1d1d2b); border: 1px solid var(--line); font-style: normal; }
+.nvfl i span { display: none; }
+.nvfl i em { display: flex; gap: 2px; font-style: normal; }
 .nvfl u { width: calc(8px * var(--u)); height: calc(8px * var(--u)); border-radius: 2px; background: #7D8CAB; display: block; }
 .nvfl i.on { border-color: #5BBCFF; box-shadow: 0 0 0 2px rgba(91, 188, 255, .35); background: rgba(91, 188, 255, .12); }
 .nvfl i.ok { opacity: .5; }
@@ -803,19 +805,31 @@ body.locked[data-fit] .nv:not([data-phase="place"]) .fitbox.nvf > .enemy { flex:
 .nv .cell { min-height: 0; min-width: 0; font-size: 0; line-height: 0; padding: 0; }
 .nv:not([data-phase="place"]) .mine .cell { min-height: 0; min-width: 0; font-size: 0; line-height: 0; padding: 0; }
 @media (orientation: landscape) and (max-height: 560px) {
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) .app { max-width: none; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([hidden]) { justify-content: center; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(5, auto); align-content: center; align-items: center; column-gap: 16px; row-gap: 6px; --S: calc(100dvh - 104px); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) { --nG: calc(100dvh - 24px); --nW: calc(var(--nG) + 14px + 310px); --nL: max(8px, calc(50vw - var(--nW) / 2)); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .app { max-width: none; padding: 0; display: block; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #gview:not([hidden]), body.locked[data-fit]:has(#panel-navale:not([hidden])) .gbody { display: block; padding: 0; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd { position: fixed; z-index: 6; top: 12px; left: calc(var(--nL) + var(--nG) + 14px); width: 310px; margin: 0; height: 36px; padding: 3px 5px; border-radius: 18px; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd h2 { font-size: 1rem; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd .bk7, body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd .spk7, body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd > button { width: 28px; height: 28px; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd .bk7 svg, body.locked[data-fit]:has(#panel-navale:not([hidden])) .ghd .spk7 svg { width: 16px; height: 16px; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([hidden]) { position: fixed; z-index: 1; top: 12px; bottom: 12px; left: var(--nL); width: var(--nW); display: grid; grid-template-columns: var(--nG) 100px minmax(0, 1fr); grid-template-rows: 36px auto auto auto 1fr auto; column-gap: 14px; row-gap: 8px; align-items: start; padding: 0; }
   body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .fitbox { display: contents; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .stats { grid-column: 2; grid-row: 1; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .nvfl { grid-column: 2; grid-row: 2; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .status { grid-column: 2; grid-row: 3; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .actions { grid-column: 2; grid-row: 5; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .stats { grid-column: 2 / 4; grid-row: 2; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .status { grid-column: 2 / 4; grid-row: 3; justify-self: stretch; text-align: left; padding: 6px 10px; border-radius: 16px; font-size: .8rem; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .nvfl { grid-column: 2 / 4; grid-row: 4; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .actions { grid-column: 2 / 4; grid-row: 6; align-self: end; }
   body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .hint { display: none; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .fitbox > div { grid-column: 1; grid-row: 1 / 6; width: var(--S); height: var(--S); }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .nv .fitbox > div, body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale[data-phase="place"] .enemy { }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine { grid-column: 2; grid-row: 4; width: 100%; height: auto; container-type: normal; justify-self: center; }
-  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine .sea { width: min(25vh, 100%); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .fitbox > div { position: absolute; left: 0; top: 0; width: var(--nG); height: var(--nG); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine { position: static; grid-column: 2; grid-row: 4; width: 100px; height: auto; container-type: normal; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine .bt { display: block; font-size: .6rem; text-align: left; margin: 0 0 3px; padding: 0; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine .sea { width: 100px; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .nvfl { grid-column: 3; flex-direction: column; flex-wrap: nowrap; gap: 4px; justify-content: flex-start; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .nvfl i { justify-content: space-between; align-items: center; padding: 3px 7px; border-radius: 9px; font-size: .62rem; color: var(--muted); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .nvfl i span { display: inline; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .nvfl i.dead span { text-decoration: line-through; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .nvfl i em { display: flex; gap: 2px; font-style: normal; }
   body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale #nvPlace { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .stats.four { gap: 8px; justify-content: space-between; border: 0; background: none; padding: 0 2px; }
 }
 body.locked[data-fit] .fitbox.nvf { flex-direction: column; gap: calc(6px * var(--u)); }
 body.locked[data-fit] .fitbox.nvf > div { flex: 1 1 0; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
@@ -3628,7 +3642,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
         let c = '';
         if (pl) c = i < n ? 'ok' : (i === n ? 'on' : '');
         else if (foe.ships[i] && foe.ships[i].sunk) c = 'dead';
-        h += '<i class="' + c + '">' + '<u></u>'.repeat(d.l) + '</i>';
+        h += '<i class="' + c + '"><span>' + d.n + '</span><em>' + '<u></u>'.repeat(d.l) + '</em></i>';
       });
       nvFleet.innerHTML = h;
     }
