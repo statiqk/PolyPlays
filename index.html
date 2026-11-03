@@ -1035,6 +1035,34 @@ body.locked[data-fit] #panel-belote .blact { min-height: 0; }
 body.locked[data-fit] #panel-belote .blact .btn { min-height: calc(44px * var(--u)); }
 body.locked[data-fit] #panel-belote .blhand { height: 31cqw; padding-top: 3.4cqw; }
 @media (max-height: 700px) { body.locked[data-fit] #panel-belote .blc { width: 17cqw; margin-left: -6.4cqw; } body.locked[data-fit] #panel-belote .blhand { height: 26cqw; } }
+/* Belote en portrait : table pleine hauteur façon poker, main dans la table */
+@media (orientation: portrait) {
+  body.locked[data-fit] #panel-belote:not([hidden]) { position: relative; gap: 0; --bh: calc(min(100vw - 40px, 420px) * .31); }
+  body.locked[data-fit] #panel-belote .stats { position: absolute; z-index: 5; top: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; padding: 0; border: 0; background: none; box-shadow: none; width: auto; }
+  body.locked[data-fit] #panel-belote .stat { padding: 3px 10px; border: 0 !important; border-radius: 99px; background: rgba(0, 0, 0, .4); display: flex; gap: 5px; align-items: baseline; }
+  body.locked[data-fit] #panel-belote .stats .k { font-size: .56rem; line-height: 1; margin: 0; color: #CFEBDB; }
+  body.locked[data-fit] #panel-belote .stats .v { font-size: .8rem; line-height: 1; margin: 0; color: #fff; }
+  body.locked[data-fit] #panel-belote .fitbox.sq { order: 1; }
+  body.locked[data-fit] #panel-belote .fitbox.sq > .blt { width: 100%; height: 100%; max-width: none; aspect-ratio: auto; margin: 0; }
+  body.locked[data-fit] #panel-belote .blmid, body.locked[data-fit] #panel-belote .bldl, body.locked[data-fit] #panel-belote .bllast { inset: auto; left: 0; width: 100%; height: auto; aspect-ratio: 1; top: 50%; transform: translateY(-50%); }
+  body.locked[data-fit] #panel-belote .bl-t { top: 13cqw; }
+  body.locked[data-fit] #panel-belote #blAtS { display: none; }
+  body.locked[data-fit] #panel-belote .blnet { order: 2; }
+  body.locked[data-fit] #panel-belote .status { order: 3; align-self: center; position: relative; z-index: 4; margin-top: calc(-1 * (var(--bh) + 56px)); height: 26px; min-height: 0; padding: 0 14px; display: grid; place-items: center; border-radius: 99px; background: rgba(0, 0, 0, .4); color: #E4F4EB; font-size: .76rem; max-width: calc(100% - 40px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.locked[data-fit] #panel-belote .status:empty { background: none; }
+  body.locked[data-fit] #panel-belote .status span { display: inline; }
+  body.locked[data-fit] #panel-belote .blhw { order: 4; position: relative; z-index: 4; margin-bottom: 8px; }
+  body.locked[data-fit] #panel-belote .blhand { height: var(--bh); padding-top: 0; }
+  body.locked[data-fit] #panel-belote .blhw::after { content: 'Toi · NOUS'; display: block; height: 22px; line-height: 22px; text-align: center; font: 600 .78rem var(--font-body); color: #CFEBDB; }
+  body.locked[data-fit] #panel-belote .blact { order: 5; margin-top: 10px; min-height: calc(50px * var(--u)); }
+  body.locked[data-fit] #panel-belote .blact:empty { display: block; }
+  body.locked[data-fit] #panel-belote .actions { display: none; order: 6; margin-top: 10px; }
+  body.locked[data-fit] #panel-belote[data-ph="idle"] .actions, body.locked[data-fit] #panel-belote[data-ph="over"] .actions { display: grid; }
+  body.locked[data-fit] #panel-belote .fitmenu, body.locked[data-fit] #panel-belote .hint { display: none; }
+  body.locked[data-fit] #panel-belote .bllb { bottom: auto; top: 46px; right: 14px; }
+  body.locked[data-fit] #panel-belote .bltoast { bottom: calc(var(--bh) + 100px); }
+}
+@media (orientation: portrait) and (max-height: 700px) { body.locked[data-fit] #panel-belote:not([hidden]) { --bh: calc(min(100vw - 40px, 420px) * .26); } }
 
 body.locked[data-fit] .pdkb { gap: calc(4px * var(--u)); }
 body.locked[data-fit="flipper"] .app { padding-left: max(calc(20px * var(--u)), env(safe-area-inset-left, 0px)); padding-right: max(calc(20px * var(--u)), env(safe-area-inset-right, 0px)); }
