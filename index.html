@@ -785,6 +785,38 @@ body.locked[data-fit] .fitbox.p4w > .p4 { width: min(100cqw, 116cqh); max-width:
 body.locked[data-fit] .fitbox.pdf > svg { width: 100%; height: 100%; max-width: none; }
 body.locked[data-fit] .fitbox.mmf > .mmgrid { width: 100%; height: 100%; max-width: none; grid-auto-rows: 1fr; flex: none; }
 body.locked[data-fit] .fitbox.mmf .mmc { aspect-ratio: auto; min-height: 0; }
+/* Navale : flotte, stats compactes, bataille et paysage */
+.nvfl { display: flex; justify-content: center; gap: calc(6px * var(--u)); flex-wrap: wrap; }
+.nvfl i { display: flex; gap: 2px; padding: calc(5px * var(--u)) calc(8px * var(--u)); border-radius: 12px; background: var(--card, #1d1d2b); border: 1px solid var(--line); font-style: normal; }
+.nvfl u { width: calc(8px * var(--u)); height: calc(8px * var(--u)); border-radius: 2px; background: #7D8CAB; display: block; }
+.nvfl i.on { border-color: #5BBCFF; box-shadow: 0 0 0 2px rgba(91, 188, 255, .35); background: rgba(91, 188, 255, .12); }
+.nvfl i.ok { opacity: .5; }
+.nvfl i.dead { opacity: .75; border-color: #E5484D; }
+.nvfl i.dead u { background: #E5484D; }
+#panel-navale .stats.four { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: calc(16px * var(--u)); padding: calc(6px * var(--u)) calc(10px * var(--u)); }
+#panel-navale .stats.four .stat { display: flex; gap: 6px; align-items: baseline; padding: 0; border: 0; }
+#panel-navale .stats.four .k { margin: 0; }
+#panel-navale .status { text-align: center; }
+body.locked[data-fit] .nv:not([data-phase="place"]) .fitbox.nvf > .enemy { flex: 1.6 1 0; }
+.nv:not([data-phase="place"]) .mine .lbl, .nv:not([data-phase="place"]) .mine .bt { display: none; }
+.nv:not([data-phase="place"]) .mine .sea { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.nv .cell { min-height: 0; min-width: 0; font-size: 0; line-height: 0; padding: 0; }
+.nv:not([data-phase="place"]) .mine .cell { min-height: 0; min-width: 0; font-size: 0; line-height: 0; padding: 0; }
+@media (orientation: landscape) and (max-height: 560px) {
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) .app { max-width: none; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([hidden]) { justify-content: center; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(5, auto); align-content: center; align-items: center; column-gap: 16px; row-gap: 6px; --S: calc(100dvh - 104px); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .fitbox { display: contents; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .stats { grid-column: 2; grid-row: 1; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .nvfl { grid-column: 2; grid-row: 2; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .status { grid-column: 2; grid-row: 3; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .actions { grid-column: 2; grid-row: 5; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .hint { display: none; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .fitbox > div { grid-column: 1; grid-row: 1 / 6; width: var(--S); height: var(--S); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale .nv .fitbox > div, body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale[data-phase="place"] .enemy { }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine { grid-column: 2; grid-row: 4; width: 100%; height: auto; container-type: normal; justify-self: center; }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale:not([data-phase="place"]) .mine .sea { width: min(25vh, 100%); }
+  body.locked[data-fit]:has(#panel-navale:not([hidden])) #panel-navale #nvPlace { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 body.locked[data-fit] .fitbox.nvf { flex-direction: column; gap: calc(6px * var(--u)); }
 body.locked[data-fit] .fitbox.nvf > div { flex: 1 1 0; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
 body.locked[data-fit] .nv[data-phase="place"] .fitbox.nvf > .enemy,
@@ -2055,6 +2087,7 @@ html.spl main.app { visibility: hidden; }
       <div class="stat"><div class="k">Record</div><div class="v" id="nvBest">—</div></div>
     </div>
     <p class="status" aria-live="polite"><span id="nvA"></span><span id="nvB"></span></p>
+    <div class="nvfl" id="nvFleet" aria-hidden="true"></div>
     <div class="fitbox nvf">
     <div class="enemy"><div class="bt">Flotte ennemie</div><div class="sea" id="seaE"></div></div>
     <div class="mine"><div class="bt">Ma flotte</div><div class="sea" id="seaM"></div></div></div>
@@ -3587,6 +3620,18 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     let mine, foe;
     const eCells = [], mCells = [];
 
+    const nvFleet = $('nvFleet');
+    function fleetUI() {
+      const n = mine.ships.length, pl = phase === 'place';
+      let h = '';
+      FLEET.forEach((d, i) => {
+        let c = '';
+        if (pl) c = i < n ? 'ok' : (i === n ? 'on' : '');
+        else if (foe.ships[i] && foe.ships[i].sunk) c = 'dead';
+        h += '<i class="' + c + '">' + '<u></u>'.repeat(d.l) + '</i>';
+      });
+      nvFleet.innerHTML = h;
+    }
     const cname = (i) => LET[i % SZ] + (Math.floor(i / SZ) + 1);
     const say = (a, b) => { nvA.textContent = a; nvB.textContent = b || ''; };
     function emptyBoard() { return { ships: [], at: new Array(SZ * SZ).fill(-1), shot: new Array(SZ * SZ).fill(0) }; }
@@ -3660,6 +3705,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       setText(sFoe, alive(foe));
       setText(sMine, alive(mine));
       setText(sBest, best === null ? '—' : best);
+      fleetUI();
       if (mpx) mpx.ui();
     }
     function updatePlaceUI() {
@@ -3668,7 +3714,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       const rdy = !!(ol && ol.ready);
       bUndo.disabled = n === 0 || rdy; bRand.disabled = rdy; bOri.disabled = rdy;
       bGo.disabled = n < FLEET.length || rdy;
-      if (n < FLEET.length) say('Place ton ' + FLEET[n].n.toLowerCase() + ' (' + FLEET[n].l + ' cases). Touche une case de ta grille.', 'Le bouton d\'orientation change le sens.');
+      if (n < FLEET.length) say('Place ton ' + FLEET[n].n.toLowerCase() + ' (' + FLEET[n].l + ' cases) sur ta grille.', '');
       else say('Flotte en place.', ol ? 'Touche Prêt pour commencer.' : 'Touche Commencer pour lancer la bataille.');
       if (rdy) say('Flotte prête.', 'En attente de ' + mpx.peerName + '…');
     }
