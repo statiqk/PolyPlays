@@ -891,20 +891,26 @@ body.locked[data-fit] #panel-solitaire .sltab { flex: 1 1 0; min-height: 0; }
 @media (prefers-reduced-motion: reduce) { .blc, .blpc, .bltoast, .blgain, .blbub { transition: none; animation: none; } }
 .rs{display:grid;gap:12px;text-align:left}
 .rs *{box-sizing:border-box}
-.rs-hero{position:relative;border-radius:22px;padding:16px 14px 14px;text-align:center;background:radial-gradient(120% 140% at 50% 0%,rgba(74,222,156,.28),rgba(74,222,156,.05) 60%),rgba(255,255,255,.04);border:1px solid rgba(74,222,156,.35)}
-.rs-hero.ko{background:radial-gradient(120% 140% at 50% 0%,rgba(255,123,142,.28),rgba(255,123,142,.05) 60%),rgba(255,255,255,.04);border-color:rgba(255,123,142,.35)}
+.rs-hero{position:relative;border-radius:0;padding:2px 2px 0;text-align:left;background:none;border:0}
+.rs-hero.ko{background:none}
+.rs-hero .rs-k{text-align:center}
+.rs-hh{display:flex;gap:12px;align-items:center;margin:10px 0 12px}
+.rs-tx{min-width:0}
+.rs-nm{font:500 .72rem var(--font-ui,inherit);color:var(--muted);margin:2px 0 6px}
+.rs-wait{background:var(--surface-2,#2a2738);color:var(--muted);box-shadow:none;opacity:1}
+.rs-wait[disabled]{opacity:1;cursor:default}
 .rs-k{font:600 .66rem var(--font-mono);letter-spacing:.16em;color:var(--muted)}
-.rs-ic{width:52px;height:52px;border-radius:50%;margin:8px auto 8px;display:grid;place-items:center;background:linear-gradient(160deg,#6EF0B4,#1FAF75);box-shadow:0 6px 18px rgba(31,175,117,.45)}
+.rs-ic{flex:none;width:46px;height:46px;border-radius:50%;margin:0;display:grid;place-items:center;font-size:1.35rem;color:#fff;background:linear-gradient(160deg,#6EF0B4,#1FAF75);box-shadow:0 6px 18px rgba(31,175,117,.45)}
 .ko .rs-ic{background:linear-gradient(160deg,#FF9AA9,#E5484D);box-shadow:0 6px 18px rgba(229,72,77,.45)}
-.rs-hero h3{margin:0;font-size:1.35rem}
-.rs-hero p{margin:4px 0 0;font-size:.86rem;color:var(--muted)}
-.rs-g{display:grid;gap:6px;margin-top:12px}
+.rs-hero h3{margin:0;font-size:1.15rem;line-height:1.15}
+.rs-hero p{margin:3px 0 0;font-size:.78rem;color:var(--muted)}
+.rs-g{display:grid;gap:6px;margin:0 4px}
 .rs-gt{position:relative;height:10px;border-radius:99px;background:rgba(255,255,255,.12)}
 .rs-gt i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#1FAF75,#6EF0B4)}
 .ko .rs-gt i{background:linear-gradient(90deg,#E5484D,#FF9AA9)}
 .rs-gt b{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;border-radius:2px}
-.rs-gl{display:flex;justify-content:space-between;font:600 .68rem var(--font-mono);color:var(--muted)}
-.rs-gl em{font-style:normal;color:#fff}
+.rs-gl{display:flex;justify-content:space-between;position:relative;font:600 .62rem var(--font-mono);color:var(--muted)}
+.rs-gl em{font-style:normal;color:#fff;position:absolute;transform:translateX(-50%);white-space:nowrap}
 .rs-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .rs-c{border-radius:18px;padding:10px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .rs-c.w{border-color:var(--amber);box-shadow:0 0 0 1px rgba(245,185,58,.35),0 6px 18px rgba(245,185,58,.14)}
@@ -7665,18 +7671,19 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       const d = lastDelta, r = d.rows; resBody.textContent = '';
       const mine = d.T === 0, ok = d.made, good = ok === mine, box = mk('div', 'rs'); resBody.appendChild(box);
       const hero = mk('div', 'rs-hero' + (good ? '' : ' ko')); box.appendChild(hero);
-      const k = mk('div', 'rs-k', over ? (sc[0] > sc[1] ? 'PARTIE GAGNÉE' : 'PARTIE PERDUE') : 'MANCHE ' + mn); if (over) k.style.color = 'var(--amber)'; hero.appendChild(k);
-      const ic = mk('div', 'rs-ic'); ic.innerHTML = ok ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'; hero.appendChild(ic);
-      hero.appendChild(mk('h3', '', ok ? (taker === 0 ? 'Contrat rempli !' : mine ? 'Contrat de ' + NAMES[taker] + ' rempli' : 'Ils ont réussi leur contrat') : (taker === 0 ? 'Contrat chuté' : mine ? 'Contrat de ' + NAMES[taker] + ' chuté' : 'Ils ont chuté !')));
-      hero.appendChild(mk('p', '', (taker === 0 ? 'Tu avais pris à ' : NAMES[taker] + ' avait pris à ') + SY[trump] + ' · il fallait 82 points'));
+      const k = mk('div', 'rs-k', 'MANCHE ' + mn + (over ? ' · ' + (sc[0] > sc[1] ? 'PARTIE GAGNÉE' : 'PARTIE PERDUE') : ' · TERMINÉE')); if (over) k.style.color = 'var(--amber)'; hero.appendChild(k);
+      const hh = mk('div', 'rs-hh'), ic = mk('div', 'rs-ic', SY[trump]), tx = mk('div', 'rs-tx'); hh.appendChild(ic); hh.appendChild(tx); hero.appendChild(hh);
+      tx.appendChild(mk('h3', '', ok ? (taker === 0 ? 'Contrat rempli !' : mine ? 'Contrat de ' + NAMES[taker] + ' rempli' : 'Ils ont réussi leur contrat') : (taker === 0 ? 'Contrat chuté' : mine ? 'Contrat de ' + NAMES[taker] + ' chuté' : 'Ils ont chuté !')));
+      tx.appendChild(mk('p', '', (taker === 0 ? 'Tu avais pris à ' : NAMES[taker] + ' avait pris à ') + SY[trump] + ' · il fallait 82 points'));
       const g = mk('div', 'rs-g'), gt = mk('div', 'rs-gt'), gi = mk('i'), gm = mk('b'); gi.style.width = Math.min(100, d.got / 162 * 100) + '%'; gm.style.left = (82 / 162 * 100) + '%'; gt.appendChild(gi); gt.appendChild(gm); g.appendChild(gt);
-      const gl = mk('div', 'rs-gl'), gc = mk('span'); gc.appendChild(mk('em', '', String(d.got))); gc.appendChild(document.createTextNode(' / 82'));
+      const gl = mk('div', 'rs-gl'), gc = mk('em', '', '82 requis · ' + d.got); gc.style.left = (82 / 162 * 100) + '%';
       gl.appendChild(mk('span', '', '0')); gl.appendChild(gc); gl.appendChild(mk('span', '', '162')); g.appendChild(gl); hero.appendChild(g);
       const cols = mk('div', 'rs-cols'); box.appendChild(cols);
       const f = (v) => (v > 0 ? '+' + v : v < 0 ? '−' + (-v) : '');
       [0, 1].forEach((t) => {
         const win = d.res[t] > d.res[1 - t], c = mk('div', 'rs-c ' + (t === 0 ? 'n' : 'e') + (win ? ' w' : '')); cols.appendChild(c);
         const ch = mk('div', 'rs-ch'); ch.appendChild(mk('span', '', t === 0 ? 'NOUS' : 'EUX')); ch.appendChild(mk('span', '', win ? '+' + d.res[t] : '')); c.appendChild(ch);
+        const pn2 = (q) => (q === 0 ? 'Toi' : NAMES[q]); c.appendChild(mk('div', 'rs-nm', pn2(t) + ' · ' + pn2(t + 2)));
         const l = mk('div', 'rs-l'); c.appendChild(l);
         const line = (lab, v) => { const row = mk('div'); row.appendChild(mk('span', '', lab)); row.appendChild(mk('b', '', v ? String(v) : '—')); l.appendChild(row); };
         line('Cartes', r.cards[t]); line('Dix de der', r.der[t]);
@@ -7689,7 +7696,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       const pl = mk('div', 'rs-pl'); pl.appendChild(mk('span', '', G.t === 1 ? 'Une manche' : 'Partie en ' + G.t)); pl.appendChild(mk('span', '', G.t === 1 ? '' : 'objectif ' + G.t)); pr.appendChild(pl);
       const pb = mk('div', 'rs-pb'), a = mk('u'), b = mk('s'); a.style.width = Math.min(100, sc[0] / tot * 100) + '%'; b.style.width = Math.min(100 - Math.min(100, sc[0] / tot * 100), sc[1] / tot * 100) + '%'; pb.appendChild(a); pb.appendChild(b); pr.appendChild(pb);
       const pn = mk('div', 'rs-pn'); pn.appendChild(mk('span', '', 'Nous ' + sc[0])); pn.appendChild(mk('span', '', 'Eux ' + sc[1])); pr.appendChild(pn); box.appendChild(pr);
-      if (net.role === 'guest') { const w = mk('p', '', 'En attente de ' + NAMES[net.hp] + '…'); w.style.gridColumn = '1 / -1'; w.style.gridArea = 'go'; box.appendChild(w); resEl.hidden = false; return; }
+      if (net.role === 'guest') { const w = mk('button', 'btn rs-go rs-wait', 'En attente de ' + NAMES[net.hp] + '…'); w.type = 'button'; w.disabled = true; box.appendChild(w); resEl.hidden = false; return; }
       const go = mk('button', 'btn primary rs-go', over ? 'Voir le résultat' : 'Manche suivante'); go.type = 'button'; go.addEventListener('click', nextManche); box.appendChild(go);
       resEl.hidden = false; try { go.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
     }
