@@ -1346,19 +1346,29 @@ button, input, select, textarea { font-family: inherit; }
 .gpop { bottom: calc(-1 * var(--sx, 0px)); border-bottom: var(--sx, 0px) solid var(--surface); }
 /* ---- Poker ---- */
 #panel-poker { --cw: clamp(26px, min(11.5vw, calc((100cqh - 252px) / 4.2)), 58px); }
-.pk { width: 100%; max-width: calc(540px * var(--u)); min-height: calc(430px * var(--u)); height: 100%; margin: 0 auto; box-sizing: border-box; border-radius: 30px; background: radial-gradient(ellipse at 50% 45%, #1f8a5c 0%, #115339 62%, #0a3326 100%); box-shadow: inset 0 0 0 5px #2a1d5e, inset 0 0 0 7px rgba(124, 92, 255, .4); display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px 8px 12px; color: #fff; }
+.pk { width: 100%; max-width: calc(540px * var(--u)); min-height: calc(430px * var(--u)); height: 100%; margin: 0 auto; box-sizing: border-box; border-radius: 30px; background: radial-gradient(ellipse at 50% 45%, #1f8a5c 0%, #115339 62%, #0a3326 100%); isolation: isolate; position: relative; border: 7px solid transparent; background: repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px) padding-box, radial-gradient(ellipse at 50% 45%, #1f8a5c 0%, #115339 62%, #0a3326 100%) padding-box, linear-gradient(135deg, #8a5a2e, #5a3819 50%, #7a4d25) border-box; box-shadow: inset 0 0 18px rgba(0,0,0,.35); display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px 8px 12px; color: #fff; }
 .pkb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.pk::before { content: ''; position: absolute; inset: 9px; border: 1px solid rgba(245,185,58,.35); border-radius: 22px; pointer-events: none; z-index: -1; }
+.pk::after { content: ''; position: absolute; left: 50%; top: 46%; width: 66%; aspect-ratio: 1; transform: translate(-50%, -50%); border: 1px dashed rgba(255,255,255,.2); border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%); pointer-events: none; z-index: -1; }
+.pkav { position: relative; width: 34px; height: 34px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #2a2563; color: #fff; font-weight: 800; font-size: .95rem; box-shadow: 0 0 0 2.5px #FF7B8E; }
+.pkav .pkd { position: absolute; top: auto; bottom: -4px; right: -7px; width: 16px; height: 16px; font-size: .6rem; }
+.pks.on .pkav, .pkme.on .pkav { box-shadow: 0 0 0 2.5px var(--amber), 0 0 0 6px rgba(245,185,58,.3); }
+.pks.wn .pkav { box-shadow: 0 0 0 2.5px #4ADE9C, 0 0 0 6px rgba(74,222,156,.3); }
+.pkav.me { box-shadow: 0 0 0 2.5px #4ADE9C; width: 28px; height: 28px; font-size: .8rem; }
+.pkbt:not(:empty)::before { content: ''; display: inline-block; width: .8em; height: .8em; margin-right: 5px; vertical-align: -.1em; border-radius: 50%; background: radial-gradient(circle, #fff 28%, #E5484D 30%, #E5484D 55%, #fff 57%, #E5484D 60%); }
+.pkpot::before { content: ''; display: inline-block; width: .8em; height: .8em; margin-right: 6px; vertical-align: -.05em; border-radius: 50%; background: radial-gradient(circle, #FFD66B 40%, #E39A1B 42%); }
+.pkme .pkc:nth-child(1) { transform: rotate(-4deg); } .pkme .pkc:nth-child(2) { transform: rotate(4deg); }
 .pks { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 14px; position: relative; font-size: .78rem; text-align: center; min-width: 0; transition: background .2s, opacity .2s; }
-.pks.on { background: rgba(255, 255, 255, .14); box-shadow: 0 0 0 2px var(--amber); }
+.pks.on { background: none; box-shadow: none; }
 .pks.fd > :not(.pktag) { opacity: .45; }
-.pks.wn { box-shadow: 0 0 0 2px #4ADE9C; }
+.pks.wn { box-shadow: none; }
 .pks b { font-weight: 800; font-size: .85rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pks .ch { color: #d6f5e6; font-weight: 600; }
 .pkcs { display: flex; gap: 3px; justify-content: center; min-height: calc(var(--cw) * .92); }
 .pktag { min-height: 1.1em; font-weight: 700; color: var(--amber); font-size: .72rem; }
 .pkbt { background: rgba(0, 0, 0, .4); border-radius: 99px; padding: 1px 9px; font-weight: 800; min-height: 1.3em; font-size: .8rem; }
 .pkbt:empty { visibility: hidden; }
-.pkd { position: absolute; top: 2px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--amber); color: #241a00; font-size: .68rem; font-weight: 800; display: grid; place-items: center; }
+.pkd { position: absolute; top: 2px; right: 4px; font-style: normal; width: 18px; height: 18px; border-radius: 50%; background: var(--amber); color: #241a00; font-size: .68rem; font-weight: 800; display: grid; place-items: center; }
 .pkm { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .pkpot { font-weight: 800; background: rgba(0, 0, 0, .4); border-radius: 99px; padding: 3px 16px; }
 .pkbd { display: flex; gap: 5px; justify-content: center; }
@@ -1424,16 +1434,18 @@ body.locked[data-fit] #panel-poker .pk { min-height: 0; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd .bk7 svg, body.locked[data-fit]:has(#panel-poker:not([hidden])) .ghd .spk7 svg { width: 18px; height: 18px; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker:not([hidden]) { position: fixed; inset: 0; z-index: 1; display: block; padding: 0; --cw: min(10vh, 6vw); }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .fitbox { position: absolute; inset: 0; container-type: normal; display: block; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk { position: absolute; inset: 0; max-width: none; width: auto; height: auto; min-height: 0; margin: 0; border-radius: 0; padding: 52px max(36px, env(safe-area-inset-right, 0px)) max(14px, env(safe-area-inset-bottom, 0px)) max(36px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; justify-items: center; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk { border: 0; background: radial-gradient(ellipse at 50% 42%, #23996a 0%, #13603f 58%, #0a3a28 100%); box-shadow: none; position: absolute; inset: 0; max-width: none; width: auto; height: auto; min-height: 0; margin: 0; border-radius: 0; padding: 52px max(36px, env(safe-area-inset-right, 0px)) max(14px, env(safe-area-inset-bottom, 0px)) max(36px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; justify-items: center; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkb { display: contents; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks { display: grid; grid-template-columns: 17px auto auto 17px; justify-content: center; align-items: center; gap: 1px 5px; padding: 4px 8px; border-radius: 14px; flex-direction: unset; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk::before { inset: 10px; border-radius: 0; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pk::after { width: auto; height: 66%; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks { display: grid; grid-template-columns: 30px auto auto 17px; justify-content: center; align-items: center; gap: 1px 5px; padding: 4px 8px; border-radius: 14px; flex-direction: unset; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(1) { grid-area: 2 / 1; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(2) { grid-area: 1 / 2; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks:nth-child(3) { grid-area: 2 / 3; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks b { font-size: .85rem; max-width: 7em; grid-column: 2; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .ch { font-size: .8rem; grid-column: 3; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkcs, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pktag, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkbt { grid-column: 1 / 5; justify-self: center; min-height: 0; }
-  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkd { position: static; grid-column: 1; grid-row: 1; justify-self: center; align-self: center; }
+  body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pks .pkav { grid-column: 1; grid-row: 1; width: 26px; height: 26px; font-size: .8rem; justify-self: center; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pktag:empty, body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkbt:empty { display: none; }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkc.s { width: calc(var(--cw) * .7); height: calc(var(--cw) * .98); font-size: calc(var(--cw) * .3); }
   body.locked[data-fit]:has(#panel-poker:not([hidden])) #panel-poker .pkm { grid-area: 2 / 2; gap: 6px; min-width: 0; }
@@ -8507,12 +8519,12 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
         const i = (ME + k) % 4, p = P[i];
         const cs = p.out || p.fold || !p.hand.length ? '' : p.hand.map((c) => cd(p.show ? c : -1, 's')).join('');
         const tg = p.out ? 'Éliminé' : p.fold ? 'Couché' : p.allin ? 'Tapis' : '';
-        return '<div class="pks' + (turn === i && st === 'play' ? ' on' : '') + (p.fold ? ' fd' : '') + (win.indexOf(i) >= 0 && st !== 'play' ? ' wn' : '') + '">' + (dealer === i ? '<span class="pkd">D</span>' : '')
+        return '<div class="pks' + (turn === i && st === 'play' ? ' on' : '') + (p.fold ? ' fd' : '') + (win.indexOf(i) >= 0 && st !== 'play' ? ' wn' : '') + '">' + '<span class="pkav">' + esc(((nm(i) || '?').trim().charAt(0) || '?').toUpperCase()) + (dealer === i ? '<i class="pkd">D</i>' : '') + '</span>'
           + '<b>' + esc(nm(i)) + '</b><span class="ch">' + fm(p.chips) + '</span><div class="pkcs">' + cs + '</div><span class="pktag">' + tg + '</span><span class="pkbt">' + (p.bet ? fm(p.bet) : '') + '</span></div>';
       }).join('');
       bdEl.innerHTML = [0, 1, 2, 3, 4].map((i) => (board[i] != null ? cd(board[i], '') : '<span class="pkc e" aria-hidden="true"></span>')).join('');
       meEl.className = 'pkme' + (win.indexOf(ME) >= 0 && st !== 'play' ? ' wn' : '');
-      meEl.innerHTML = '<div class="pkcs">' + m.hand.map((c) => cd(c, 'l')).join('') + '</div><div class="pkrow">' + (dealer === ME ? '<span class="pkd">D</span>' : '') + '<b>' + (m.out ? 'Éliminé' : m.fold ? 'Couché' : m.allin ? 'Tapis' : 'Toi') + ' · ' + fm(m.chips) + '</b><span class="pkbt">' + (m.bet ? 'Mise ' + fm(m.bet) : '') + '</span></div>';
+      meEl.innerHTML = '<div class="pkcs">' + m.hand.map((c) => cd(c, 'l')).join('') + '</div><div class="pkrow"><span class="pkav me">' + esc((nm(ME) || 'T').trim().charAt(0).toUpperCase()) + (dealer === ME ? '<i class="pkd">D</i>' : '') + '</span><b>' + (m.out ? 'Éliminé' : m.fold ? 'Couché' : m.allin ? 'Tapis' : 'Toi') + ' · ' + fm(m.chips) + '</b><span class="pkbt">' + (m.bet ? 'Mise ' + fm(m.bet) : '') + '</span></div>';
       let t = evText();
       if (st === 'play') {
         if (turn === ME && !m.fold && !m.allin) { const call = Math.min(cur - m.bet, m.chips); t += (t ? ' ' : '') + (call ? 'À toi : ' + fm(call) + ' pour suivre.' : 'À toi de parler.'); }
