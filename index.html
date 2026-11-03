@@ -85,6 +85,7 @@ h1 {
   letter-spacing: -.035em;
 }
 .home { padding-bottom: calc(28px * var(--u)); }
+.hl { display: contents; }
 .home { overflow-x: clip; }
 /* +160 px : même avec peu de jeux la page garde une vraie marge de défilement, comme « Tous » (qui n'a pas la bande en bas au lancement sur iPhone) */
 body.onhome { box-sizing: border-box; min-height: calc(100vh + 160px); min-height: calc(100dvh + 160px); }
@@ -1686,6 +1687,27 @@ body.fitfree .panel:not([hidden]) .hint { order: 6; }
 body.fitfree .fitpill:not([hidden]) { display: block !important; }
 body.fitfree .fitpill { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + calc(10px * var(--u))); padding: calc(7px * var(--u)) calc(16px * var(--u)); border-radius: 99px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: inherit; font-size: .8rem; white-space: nowrap; box-shadow: 0 calc(6px * var(--u)) calc(18px * var(--u)) rgba(0, 0, 0, .5); transition: opacity .2s; }
 body.fitfree .fitpill.gone, body.fitfree.showmenu .fitpill { opacity: 0; pointer-events: none; }
+
+@media (orientation: landscape) and (max-height: 560px) and (min-width: 640px) {
+  .app:has(#home:not([hidden])) { max-width: none; padding: 0 max(28px, env(safe-area-inset-right, 0px)) 0 max(28px, env(safe-area-inset-left, 0px)); }
+  #home { display: grid; grid-template-columns: 304px minmax(0, 1fr); column-gap: 24px; align-items: start; padding-bottom: 14px; }
+  #home .hl { display: block; grid-column: 1; grid-row: 1 / span 3; position: sticky; top: max(12px, env(safe-area-inset-top, 0px)); max-height: calc(100dvh - 24px); overflow-y: auto; scrollbar-width: none; padding-top: 6px; }
+  #home .hl::-webkit-scrollbar { display: none; }
+  #home .h7 { padding: 0 0 10px; gap: 6px; }
+  #home .h7top { flex-direction: column; align-items: flex-start; gap: 8px; }
+  #home .ttl h1 { font-size: 2rem; }
+  #home .enc, #home .dfl { margin-bottom: 8px; }
+  #home .rsm { padding: 12px 12px 52px; border-radius: 20px; }
+  #home .rsm h2 { font-size: 1.4rem; }
+  #home .rsm p { font-size: .76rem; }
+  #home .rsm .go8 { left: 12px; bottom: 12px; }
+  #home .rsm .art { transform: rotate(-8deg) scale(.6); transform-origin: top right; }
+  #home .cats { grid-column: 2; grid-row: 1; margin-top: 12px; }
+  #home .glist { grid-column: 2; grid-row: 2; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 4px; }
+  #home .glist .gt small { display: none; }
+  #home .glist .gt b { font-size: .8rem; }
+  #home #ptHome { grid-column: 2; grid-row: 3; }
+}
 </style>
 <style>#spl{--k:1;position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#1C1650 0%,#0a0620 60%,#050310 100%);transition:opacity .45s ease}
 /* Pendant le splash, l'accueil reste invisible (sinon ses jeux se devinent dans la bande du bas, que le splash ne couvre pas toujours au lancement sur iPhone) */
@@ -1913,12 +1935,14 @@ html.spl main.app { visibility: hidden; }
 
 <main class="app">
   <section class="home" id="home">
+    <div class="hl">
     <header class="h7">
       <div class="h7top"><div class="ttl"><h1 aria-label="PolyPlays">P<img class="lgo" src="icons/icon-192.png" alt="" aria-hidden="true">lyPlays</h1><button type="button" class="pwr" id="ptLink" aria-label="À propos de PolyTabs">Powered By PolyTabs</button></div><span style="display:flex;gap:8px"><button type="button" class="spk7" id="hShare" aria-label="Partager PolyPlays" title="Partager PolyPlays"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button><button type="button" class="spk7" id="hDuel" aria-label="Duel à deux" title="Duel à deux"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.8" fill="currentColor" opacity=".7"/><path d="M2.5 19c0-3.6 2.7-5.6 6-5.6s6 2 6 5.6zM14.5 14c.7-.2 1.400-.3 2-.3 2.800 0 5 1.700 5 4.800h-5.400c0-1.800-.6-3.400-1.600-4.500z" fill="currentColor"/></svg></button><button type="button" class="spk7" id="hSnd" aria-label="Réglages du son"></button></span></div>
     </header>
     <div class="enc" id="encList"></div>
     <div id="dayCard"></div>
     <div class="dfl" id="dfList"></div>
+    </div>
     <div class="cats" id="cats" role="tablist" aria-label="Catégories"></div>
     <div class="glist" id="glist"></div>
     <div id="ptHome"></div>
