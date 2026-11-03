@@ -1940,28 +1940,6 @@ html.spl main.app { visibility: hidden; }
 </script>
 
 
-<script>
-/* Relais TURN (connexion quand la box bloque le direct). Renseigner UNE des deux options :
-   api  : URL « credentials » de Metered, ex. https://MONAPP.metered.live/api/v1/turn/credentials?apiKey=CLE
-   host/user/pass : serveur coturn perso (ajoute UDP 80/443 + TCP 80/443 + TLS 443). */
-window.__TURN = { api: '', host: '', user: '', pass: '' };
-(function () {
-  var cache = null, asked = false;
-  function load() {
-    var T = window.__TURN || {};
-    if (asked || !T.api || !window.fetch) return; asked = true;
-    try { fetch(T.api).then(function (r) { return r.json(); }).then(function (a) { if (Array.isArray(a) && a.length) cache = a; }).catch(function () { asked = false; }); } catch (e) { asked = false; }
-  }
-  window.__peerOpts = function () {
-    var T = window.__TURN || {}; load();
-    var ice = [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }];
-    if (cache) ice = ice.concat(cache);
-    else if (T.host && T.user && T.pass) ice.push({ urls: ['turn:' + T.host + ':80', 'turn:' + T.host + ':443', 'turn:' + T.host + ':80?transport=tcp', 'turn:' + T.host + ':443?transport=tcp', 'turns:' + T.host + ':443?transport=tcp'], username: T.user, credential: T.pass });
-    return { debug: 0, config: { iceServers: ice, iceCandidatePoolSize: 2 } };
-  };
-  if (window.requestIdleCallback) requestIdleCallback(load); else setTimeout(load, 2000);
-})();
-</script>
 <main class="app">
   <section class="home" id="home">
     <div class="hl">
@@ -3368,7 +3346,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     /* hôte */
     function hostOpen(tries) {
       net.code = Array.from({ length: 6 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
-      const pe = new window.Peer(PFX + net.code, window.__peerOpts()); net.peer = pe;
+      const pe = new window.Peer(PFX + net.code, { debug: 0 }); net.peer = pe;
       pe.on('open', () => { if (net.peer !== pe) return; net.st = 'salon'; draw(); });
       pe.on('connection', (c) => hostAccept(c));
       pe.on('error', (e) => {
@@ -3444,7 +3422,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       net.role = 'guest'; net.code = code; net.tk = newTk(); net.st = 'conn'; net.ek = ''; net.t0 = Date.now(); net.msg = ''; net.retry = 0; net.on = false; net.started = false; draw(); ui();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
-        const pe = new window.Peer(window.__peerOpts()); net.peer = pe;
+        const pe = new window.Peer({ debug: 0 }); net.peer = pe;
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
@@ -7959,7 +7937,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
     /* hôte */
     function hostOpen(tries) {
       net.code = Array.from({ length: 6 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
-      const pe = new window.Peer(PFX + net.code, window.__peerOpts()); net.peer = pe;
+      const pe = new window.Peer(PFX + net.code, { debug: 0 }); net.peer = pe;
       pe.on('open', () => { if (net.peer !== pe) return; net.st = 'salon'; renderOn(); });
       pe.on('connection', (c) => hostAccept(c));
       pe.on('error', (e) => {
@@ -8040,7 +8018,7 @@ const QRG = (function () { var qrcode=function(){var t=function(t,r){var e=t,n=g
       clearTimeout(timer); timer = 0; resEl.hidden = true; renderOn(); netUi();
       loadPeer().then(() => {
         if (net.role !== 'guest') return;
-        const pe = new window.Peer(window.__peerOpts()); net.peer = pe;
+        const pe = new window.Peer({ debug: 0 }); net.peer = pe;
         pe.on('open', () => { if (net.peer === pe) dial(); });
         pe.on('error', (e) => {
           if (net.peer !== pe) return;
