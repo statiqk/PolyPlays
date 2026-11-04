@@ -1077,6 +1077,7 @@ body.locked[data-fit] #panel-belote .blhand { height: 31cqw; padding-top: 3.4cqw
   body.locked[data-fit] #panel-belote .actions { display: none; order: 6; margin-top: 10px; }
   body.locked[data-fit] #panel-belote[data-ph="idle"] .actions, body.locked[data-fit] #panel-belote[data-ph="over"] .actions { display: grid; }
   body.locked[data-fit] #panel-belote .fitmenu, body.locked[data-fit] #panel-belote .hint { display: none; }
+  body.locked[data-fit].showmenu #panel-belote:not([hidden]) .fitmenu { display: grid; }
   body.locked[data-fit] #panel-belote .bllb { bottom: auto; top: 46px; right: 14px; }
   body.locked[data-fit] #panel-belote .bltoast { bottom: calc(var(--bh) + 100px); }
 }
