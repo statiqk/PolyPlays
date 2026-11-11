@@ -1,6 +1,6 @@
-const V = 'polyplays-6aba7df825';
+const V = 'polyplays-80d1575ce7';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
-const OPT = ['peerjs.min.js',
+const OPT = ['peerjs.min.js', 'supabase.min.js',
   'fonts/instrument-sans-latin-400-normal.woff2', 'fonts/instrument-sans-latin-500-normal.woff2', 'fonts/instrument-sans-latin-600-normal.woff2', 'fonts/instrument-sans-latin-700-normal.woff2',
   'fonts/geist-mono-latin-400-normal.woff2', 'fonts/geist-mono-latin-500-normal.woff2', 'fonts/geist-mono-latin-600-normal.woff2',
   'fonts/bricolage-grotesque-latin-400-normal.woff2', 'fonts/bricolage-grotesque-latin-500-normal.woff2', 'fonts/bricolage-grotesque-latin-600-normal.woff2', 'fonts/bricolage-grotesque-latin-700-normal.woff2', 'fonts/bricolage-grotesque-latin-800-normal.woff2'];
